@@ -1,113 +1,278 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { useState, useEffect } from 'react';
+import Head from 'next/head';
+import ProgressiveJackpot from '../components/ProgressiveJackpot';
+import JackpotCard from '../components/JackpotCard';
+import Modal from '../components/Modal';
+import { WalletIcon, TrophyIcon, InfoIcon } from '../components/Icons';
 
 export default function Home() {
+  const [walletConnected, setWalletConnected] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [nftCount, setNftCount] = useState(0); // Simulate NFT holdings
+
+  const generateRandomAddress = () => {
+    const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    return (
+      Array(4)
+        .fill(0)
+        .map(() =>
+          Array(4)
+            .fill(0)
+            .map(() => chars[Math.floor(Math.random() * chars.length)])
+            .join('')
+        )
+        .join('') +
+      '...' +
+      Array(4)
+        .fill(0)
+        .map(() => chars[Math.floor(Math.random() * chars.length)])
+        .join('')
+    );
+  };
+
+  const generateParticipants = (count) =>
+    Array(count)
+      .fill(0)
+      .map(() => ({ address: generateRandomAddress() }));
+
+  const calculateBoostTickets = (nftCount) => {
+    if (nftCount === 0) return 1;
+    if (nftCount >= 10) return 30;
+    const boost = Math.floor(Math.pow(nftCount, 1.5)); // Concave curve approximation
+    return Math.min(boost + 1, 30); // +1 for base ticket
+  };
+
+  // Function to generate a random jackpot size between 1 ETH and 10 ETH
+  const getRandomJackpotSize = () => {
+    return Math.floor(Math.random() * 10) + 1; // Random integer between 1 and 10
+  };
+
+  // Function to generate a random starting amount between 0 and targetAmount
+  const getRandomStartingAmount = (targetAmount) => {
+    return Number((Math.random() * targetAmount).toFixed(2)); // Random value between 0 and targetAmount
+  };
+
+  const [jackpots, setJackpots] = useState({
+    small: {
+      amount: 0, // Will be set to a random value on client side
+      targetAmount: 1, // Fixed initial value for SSR
+      isSpinning: false,
+      winner: null,
+      isActive: true,
+      isFirstCycle: true, // Track if this is the first cycle
+      participants: [], // Initialize empty to avoid hydration issues
+    },
+    medium: {
+      amount: 0, // Will be set to a random value on client side
+      targetAmount: 1, // Fixed initial value for SSR
+      isSpinning: false,
+      winner: null,
+      isActive: true,
+      isFirstCycle: true, // Track if this is the first cycle
+      participants: [],
+    },
+    large: {
+      amount: 0, // Will be set to a random value on client side
+      targetAmount: 1, // Fixed initial value for SSR
+      isSpinning: false,
+      winner: null,
+      isActive: true,
+      isFirstCycle: true, // Track if this is the first cycle
+      participants: [],
+    },
+    progressive: {
+      amount: 435.05, // Start at 435.05 ETH as requested
+      targetAmount: 1000,
+      isSpinning: false,
+      winner: null,
+      isActive: true,
+      isFirstCycle: false, // Progressive jackpot doesn't need this
+      participants: [],
+    },
+  });
+
+  // Set random target amounts, participants, and random starting amounts on the client side only
+  useEffect(() => {
+    setJackpots((prev) => {
+      const newSmallTarget = getRandomJackpotSize();
+      const newMediumTarget = getRandomJackpotSize();
+      const newLargeTarget = getRandomJackpotSize();
+
+      return {
+        ...prev,
+        small: {
+          ...prev.small,
+          targetAmount: newSmallTarget,
+          amount: getRandomStartingAmount(newSmallTarget), // Random starting amount for first cycle
+          participants: generateParticipants(20),
+        },
+        medium: {
+          ...prev.medium,
+          targetAmount: newMediumTarget,
+          amount: getRandomStartingAmount(newMediumTarget), // Random starting amount for first cycle
+          participants: generateParticipants(20),
+        },
+        large: {
+          ...prev.large,
+          targetAmount: newLargeTarget,
+          amount: getRandomStartingAmount(newLargeTarget), // Random starting amount for first cycle
+          participants: generateParticipants(20),
+        },
+        progressive: {
+          ...prev.progressive,
+          participants: generateParticipants(20),
+        },
+      };
+    });
+  }, []); // Empty dependency array ensures this runs only once on the client
+
+  useEffect(() => {
+    const updateJackpots = () => {
+      setJackpots((prev) => {
+        const newState = { ...prev };
+        ['small', 'medium', 'large'].forEach((key) => {
+          if (!newState[key].isActive) return;
+          const increment = 0.01; // Increment by 0.01 ETH
+          const currentAmount = newState[key].amount;
+          const targetAmount = newState[key].targetAmount;
+          let newAmount = Math.min(currentAmount + increment, targetAmount);
+          newAmount = Number(newAmount.toFixed(2));
+          newState[key].amount = newAmount;
+
+          if (newAmount >= targetAmount) {
+            // Contribute 5% to the Mega Jackpot
+            newState.progressive.amount = Math.min(
+              newState.progressive.amount + targetAmount * 0.05,
+              newState.progressive.targetAmount
+            );
+
+            // Reset amount to 0 and set a new random targetAmount
+            newState[key].amount = 0; // Instant reset to 0
+            newState[key].targetAmount = getRandomJackpotSize(); // Random size between 1 and 10 ETH
+            newState[key].isFirstCycle = false; // Mark that the first cycle is complete
+          }
+        });
+        return newState;
+      });
+    };
+
+    const timer = setInterval(updateJackpots, 200); // Update every 200ms
+    return () => clearInterval(timer);
+  }, []);
+
+  const simulatePlay = (jackpotKey) => {
+    if (!walletConnected) {
+      setShowModal(true);
+      return;
+    }
+
+    setJackpots((prev) => ({
+      ...prev,
+      [jackpotKey]: { ...prev[jackpotKey], isSpinning: true, winner: null, isActive: false },
+    }));
+
+    setTimeout(() => {
+      setJackpots((prev) => {
+        const newState = { ...prev };
+        const currentJackpot = newState[jackpotKey];
+
+        if (currentJackpot.amount >= currentJackpot.targetAmount) {
+          const winner =
+            currentJackpot.participants[Math.floor(Math.random() * currentJackpot.participants.length)];
+          currentJackpot.winner = winner;
+
+          if (jackpotKey !== 'progressive') {
+            newState.progressive.amount = Math.min(
+              newState.progressive.amount + currentJackpot.targetAmount * 0.05,
+              newState.progressive.targetAmount
+            );
+            currentJackpot.amount = 0; // Instant reset to 0
+            // Set a new random targetAmount after a win
+            currentJackpot.targetAmount = getRandomJackpotSize();
+            currentJackpot.isFirstCycle = false; // Mark that the first cycle is complete
+          } else {
+            currentJackpot.amount = 0; // Reset progressive
+          }
+
+          setTimeout(() => {
+            setJackpots((prev) => ({
+              ...prev,
+              [jackpotKey]: { ...prev[jackpotKey], winner: null, isActive: true },
+            }));
+          }, 3000);
+        } else {
+          currentJackpot.isActive = true;
+        }
+        currentJackpot.isSpinning = false;
+        return newState;
+      });
+    }, 2000);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <>
+      <Head>
+        <title>Ethereum Multi-Jackpot | ETH Lottery with Multiple Prize Pools</title>
+        <meta
+          name="description"
+          content="Play Ethereum Multi-Jackpot for a chance to win up to 1,000 ETH. Multiple prize pools including 1 ETH, 5 ETH, 10 ETH, and progressive mega jackpot."
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              pages/index.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <meta name="keywords" content="Ethereum lottery, ETH jackpot, crypto lottery, blockchain gambling" />
+        <meta name="robots" content="index, follow" />
+        <meta name="theme-color" content="#6B46C1" />
+      </Head>
+      <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white">
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)} />
+        <header className="p-4 flex justify-between items-center">
+          <div className="text-2xl font-bold">Ethereum Multi-Jackpot</div>
+          <button
+            onClick={() => setWalletConnected(!walletConnected)}
+            className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center text-white"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <WalletIcon className="mr-2" />
+            <span>{walletConnected ? 'Connected' : 'Connect Wallet'}</span>
+          </button>
+        </header>
+        <main className="container mx-auto px-4 py-8">
+          <ProgressiveJackpot
+            {...jackpots.progressive}
+            onPlay={() => simulatePlay('progressive')}
+            participants={jackpots.progressive.participants}
+          />
+          <div className="grid md:grid-cols-3 gap-6">
+            <JackpotCard
+              title={`${jackpots.small.targetAmount} ETH Jackpot`}
+              {...jackpots.small}
+              onPlay={() => simulatePlay('small')}
+              participants={jackpots.small.participants}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            <JackpotCard
+              title={`${jackpots.medium.targetAmount} ETH Jackpot`}
+              {...jackpots.medium}
+              onPlay={() => simulatePlay('medium')}
+              participants={jackpots.medium.participants}
+            />
+            <JackpotCard
+              title={`${jackpots.large.targetAmount} ETH Jackpot`}
+              {...jackpots.large}
+              onPlay={() => simulatePlay('large')}
+              participants={jackpots.large.participants}
+            />
+          </div>
+          <div className="mt-8 text-center">
+            <h2 className="text-xl font-bold">NFT Boost</h2>
+            <p>Hold NFTs to boost your tickets: {calculateBoostTickets(nftCount)} tickets</p>
+            <input
+              type="number"
+              min="0"
+              max="10"
+              value={nftCount}
+              onChange={(e) => setNftCount(Math.min(parseInt(e.target.value) || 0, 10))}
+              className="mt-2 p-2 rounded bg-purple-800 text-white"
+            />
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
