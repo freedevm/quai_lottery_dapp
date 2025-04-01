@@ -7,8 +7,7 @@ export default function Modal({ isOpen, onClose }) {
             <h2 className="text-2xl font-bold mb-4 text-white">Demo</h2>
             <p className="text-center mb-6 text-white">
               For investor inquiries contact<br />
-              Robin Aletras<br />
-              865-414-3009
+              MikeGao<br />
             </p>
             <button onClick={onClose} className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white">
               Close
