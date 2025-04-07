@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import ProgressiveJackpot from '../components/ProgressiveJackpot';
-import JackpotCard from '../components/JackpotCard';
-import Modal from '../components/Modal';
-import { WalletIcon, TrophyIcon, InfoIcon } from '../components/Icons';
+import ProgressiveJackpot from '../src/components/ProgressiveJackpot';
+import JackpotCard from '../src/components/JackpotCard';
+import Modal from '../src/components/Modal';
+import { WalletIcon, TrophyIcon, InfoIcon } from '../src/components/Icons';
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
