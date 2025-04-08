@@ -1,116 +1,80 @@
-import "./style.scss";
+// app/(main)/Home/_components/JackpotCard.tsx
+import { useContext } from "react";
+import { AppContext } from "@/lib/providers/AppContextProvider";
+import { Address, JackpotState } from "@/lib/types/lottery";
 
-import { useState, useEffect } from 'react';
-
-// Define interface for address objects
-interface Address {
-  address: string;
-}
-
-// Define props interfaces
-interface CyclingAddressesProps {
-  addresses: Address[];
-  isSpinning: boolean;
-  winner: Address | null;
-}
-
-interface JackpotCardProps {
+interface JackpotCardProps extends JackpotState {
   title: string;
-  amount: number;
-  targetAmount: number;
-  isSpinning: boolean;
-  winner: Address | null;
   onPlay: () => void;
   participants: Address[];
+  disabled?: boolean;
+  jackpotId: string; // Add jackpotId to identify this jackpot
 }
 
-function CyclingAddresses({ addresses, isSpinning, winner }: CyclingAddressesProps) {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-
-  useEffect(() => {
-    if (!isSpinning) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % addresses.length);
-    }, 100);
-    return () => clearInterval(interval);
-  }, [isSpinning, addresses.length]);
-
-  if (winner) return <div className="text-purple-300 text-sm mt-2">{winner.address}</div>;
-  return (
-    <div className="text-purple-300 text-sm mt-2 h-6">
-      {isSpinning && addresses[currentIndex] ? addresses[currentIndex].address : ''}
-    </div>
-  );
-}
-
-export default function JackpotCard({ 
-  title, 
-  amount, 
-  targetAmount, 
-  isSpinning, 
-  winner, 
-  onPlay, 
-  participants 
+export default function JackpotCard({
+  title,
+  amount,
+  targetAmount,
+  isSpinning,
+  winner,
+  isActive,
+  isFirstCycle,
+  participants,
+  onPlay,
+  disabled = false,
+  jackpotId,
 }: JackpotCardProps) {
-  const [displayedAmount, setDisplayedAmount] = useState<number>(amount);
-  const [previousAmount, setPreviousAmount] = useState<number>(amount);
-
-  useEffect(() => {
-    if (amount === 0 && previousAmount >= targetAmount) {
-      setDisplayedAmount(0);
-      setPreviousAmount(0);
-      return;
-    }
-
-    if (Math.abs(displayedAmount - amount) < 0.01) {
-      setDisplayedAmount(amount);
-      setPreviousAmount(amount);
-      return;
-    }
-
-    const increment = amount > displayedAmount ? 0.01 : -0.01;
-    const interval = setInterval(() => {
-      setDisplayedAmount((prev) => {
-        const newAmount = prev + increment;
-        if (
-          (increment > 0 && newAmount >= amount) ||
-          (increment < 0 && newAmount <= amount)
-        ) {
-          clearInterval(interval);
-          return amount;
-        }
-        return Number(newAmount.toFixed(2));
-      });
-    }, 50);
-
-    setPreviousAmount(amount);
-    return () => clearInterval(interval);
-  }, [amount, displayedAmount, previousAmount, targetAmount]);
+  const { data: appData } = useContext(AppContext);
+  const { participatedJackpots } = appData;
+  const hasParticipated = participatedJackpots.includes(jackpotId);
 
   return (
-    <div className="bg-purple-900/50 rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-2">{title}</h2>
-      <div className="text-4xl font-bold text-purple-400 mb-4">
-        {displayedAmount.toLocaleString()} ETH
+    <div className="p-4 bg-purple-800 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
+      {/* Title */}
+      <h2 className="text-lg sm:text-xl font-bold text-white mb-2">{title}</h2>
+
+      {/* Jackpot Info */}
+      <div className="space-y-2">
+        <p className="text-sm sm:text-base text-purple-200">
+          Current Amount: <span className="font-semibold text-white">{amount} ETH</span>
+        </p>
+        <p className="text-sm sm:text-base text-purple-200">
+          Target Amount: <span className="font-semibold text-white">{targetAmount} ETH</span>
+        </p>
+        <p className="text-sm sm:text-base text-purple-200">
+          Participants: <span className="font-semibold text-white">{participants.length}</span>
+        </p>
       </div>
-      <div className="w-full h-2 bg-purple-900 rounded-full mb-4 overflow-hidden">
-        <div
-          className="h-full bg-purple-500 transition-all duration-300 ease-in-out"
-          style={{ width: `${(displayedAmount / targetAmount) * 100}%` }}
-        />
-      </div>
-      <CyclingAddresses addresses={participants} isSpinning={isSpinning} winner={winner} />
+
+      {/* Winner Info (if applicable) */}
       {winner && (
-        <div className="text-center mt-4 mb-4">
-          <div className="text-xl font-bold text-yellow-400">Winner!</div>
-        </div>
+        <p className="mt-3 text-sm sm:text-base text-purple-300">
+          Winner: <span className="font-semibold">{winner.address}</span>
+        </p>
       )}
+
+      {/* Play Button */}
       <button
         onClick={onPlay}
-        className="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg mt-4 text-white"
+        disabled={disabled || isSpinning || !isActive || hasParticipated}
+        className={`mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 ${
+          disabled || isSpinning || !isActive || hasParticipated
+            ? "bg-purple-400 cursor-not-allowed"
+            : "bg-purple-500 hover:bg-purple-400"
+        }`}
       >
-        Play - 0.05 ETH
+        {hasParticipated ? "Already in this place" : isSpinning ? "Spinning..." : "Play Now - 0.05ETH"}
       </button>
+
+      {/* Status Indicators */}
+      <div className="mt-2 flex flex-wrap gap-2">
+        {!isActive && (
+          <span className="text-xs sm:text-sm text-red-400">Inactive</span>
+        )}
+        {isFirstCycle && (
+          <span className="text-xs sm:text-sm text-yellow-400">First Cycle</span>
+        )}
+      </div>
     </div>
   );
 }

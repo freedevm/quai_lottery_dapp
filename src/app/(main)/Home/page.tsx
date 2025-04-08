@@ -1,40 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import JackpotCard from "./_components/JackpotCard";
 import ProgressiveJackpot from "./_components/ProgressiveJackpot";
-// import Modal from "./_components/Modal";
 import ConfirmModal from "./_components/ConfirmModal";
-
-// Define interfaces
-interface Address {
-  address: string;
-}
-
-interface JackpotState {
-  amount: number;
-  targetAmount: number;
-  isSpinning: boolean;
-  winner: Address | null;
-  isActive: boolean;
-  isFirstCycle: boolean;
-  participants: Address[];
-}
-
-interface Jackpots {
-  small: JackpotState;
-  medium: JackpotState;
-  large: JackpotState;
-  progressive: JackpotState;
-}
+import { AppContext } from "@/lib/providers/AppContextProvider";
+import { Address, JackpotState, Jackpots } from "@/lib/types/lottery";
 
 export default function Page() {
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [selectedPotId, setSelectedPotId] = useState<String>("");
+  // Access wallet connection status from AppContext
+  const { data: appData } = useContext(AppContext);
+  const isWalletConnected = appData.isWalletConnected;
+
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [selectedPotId, setSelectedPotId] = useState<string>("");
 
   const generateRandomAddress = (): string => {
-    const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
     return (
       Array(4)
         .fill(0)
@@ -42,14 +24,14 @@ export default function Page() {
           Array(4)
             .fill(0)
             .map(() => chars[Math.floor(Math.random() * chars.length)])
-            .join('')
+            .join("")
         )
-        .join('') +
-      '...' +
+        .join("") +
+      "..." +
       Array(4)
         .fill(0)
         .map(() => chars[Math.floor(Math.random() * chars.length)])
-        .join('')
+        .join("")
     );
   };
 
@@ -143,7 +125,7 @@ export default function Page() {
     const updateJackpots = () => {
       setJackpots((prev) => {
         const newState = { ...prev };
-        (['small', 'medium', 'large'] as const).forEach((key) => {
+        (["small", "medium", "large"] as const).forEach((key) => {
           if (!newState[key].isActive) return;
           const increment = 0.01;
           const currentAmount = newState[key].amount;
@@ -173,7 +155,12 @@ export default function Page() {
   const simulatePlay = (jackpotKey: keyof Jackpots) => {
     setJackpots((prev) => ({
       ...prev,
-      [jackpotKey]: { ...prev[jackpotKey], isSpinning: true, winner: null, isActive: false },
+      [jackpotKey]: {
+        ...prev[jackpotKey],
+        isSpinning: true,
+        winner: null,
+        isActive: false,
+      },
     }));
 
     setTimeout(() => {
@@ -183,10 +170,12 @@ export default function Page() {
 
         if (currentJackpot.amount >= currentJackpot.targetAmount) {
           const winner =
-            currentJackpot.participants[Math.floor(Math.random() * currentJackpot.participants.length)];
+            currentJackpot.participants[
+              Math.floor(Math.random() * currentJackpot.participants.length)
+            ];
           currentJackpot.winner = winner;
 
-          if (jackpotKey !== 'progressive') {
+          if (jackpotKey !== "progressive") {
             newState.progressive.amount = Math.min(
               newState.progressive.amount + currentJackpot.targetAmount * 0.05,
               newState.progressive.targetAmount
@@ -201,7 +190,11 @@ export default function Page() {
           setTimeout(() => {
             setJackpots((prev) => ({
               ...prev,
-              [jackpotKey]: { ...prev[jackpotKey], winner: null, isActive: true },
+              [jackpotKey]: {
+                ...prev[jackpotKey],
+                winner: null,
+                isActive: true,
+              },
             }));
           }, 3000);
         } else {
@@ -213,44 +206,60 @@ export default function Page() {
     }, 2000);
   };
 
-  const toggleConfirmModal = (id: String) => {
+  const toggleConfirmModal = (id: string) => {
     setSelectedPotId(id);
     setShowConfirmModal(true);
-  }
+  };
 
   const closeConfirmModal = () => {
-    setShowConfirmModal(false)
-  }
+    setShowConfirmModal(false);
+  };
 
   return (
-    <div className="h-full max-h-full overflow-y-auto p-3">
-      {showConfirmModal && 
-        <ConfirmModal isOpen={showConfirmModal} onClose={closeConfirmModal} />
-      }
-      <ProgressiveJackpot
-        {...jackpots.progressive}
-        onPlay={() => simulatePlay('progressive')}
-        participants={jackpots.progressive.participants}
-      />
-      <div className="grid md:grid-cols-3 gap-6">
-        <JackpotCard
-          title={`${jackpots.small.targetAmount} ETH Jackpot`}
-          {...jackpots.small}
-          onPlay={() => toggleConfirmModal('small')}
-          participants={jackpots.small.participants}
+    <div className="h-full max-h-full overflow-y-auto p-3 sm:p-4 md:p-6">
+      {showConfirmModal && (
+        <ConfirmModal
+          isOpen={showConfirmModal}
+          onClose={closeConfirmModal}
+          jackpotId={selectedPotId}
         />
-        <JackpotCard
-          title={`${jackpots.medium.targetAmount} ETH Jackpot`}
-          {...jackpots.medium}
-          onPlay={() => toggleConfirmModal('medium')}
-          participants={jackpots.medium.participants}
+      )}
+      <div className="space-y-6">
+        {/* Progressive Jackpot Section */}
+        <ProgressiveJackpot
+          {...jackpots.progressive}
+          onPlay={() => simulatePlay("progressive")}
+          participants={jackpots.progressive.participants}
+          disabled={!isWalletConnected} // Disable if wallet is not connected
         />
-        <JackpotCard
-          title={`${jackpots.large.targetAmount} ETH Jackpot`}
-          {...jackpots.large}
-          onPlay={() => toggleConfirmModal('large')}
-          participants={jackpots.large.participants}
-        />
+
+        {/* Jackpot Cards Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <JackpotCard
+            title={`${jackpots.small.targetAmount} ETH Jackpot`}
+            {...jackpots.small}
+            onPlay={() => toggleConfirmModal("small")}
+            participants={jackpots.small.participants}
+            disabled={!isWalletConnected}
+            jackpotId="small"
+          />
+          <JackpotCard
+            title={`${jackpots.medium.targetAmount} ETH Jackpot`}
+            {...jackpots.medium}
+            onPlay={() => toggleConfirmModal("medium")}
+            participants={jackpots.medium.participants}
+            disabled={!isWalletConnected}
+            jackpotId="medium"
+          />
+          <JackpotCard
+            title={`${jackpots.large.targetAmount} ETH Jackpot`}
+            {...jackpots.large}
+            onPlay={() => toggleConfirmModal("large")}
+            participants={jackpots.large.participants}
+            disabled={!isWalletConnected}
+            jackpotId="large"
+          />
+        </div>
       </div>
     </div>
   );
