@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .horizontal-possitive-crossing {
+    @apply animate-horizontal-possitive-crossing;
+  }
+  .horizontal-negative-crossing {
+    @apply animate-horizontal-negative-crossing;
+  }
+  .vertical-possitive-crossing {
+    @apply animate-vertical-possitive-crossing;
+  }
+  .vertical-negative-crossing {
+    @apply animate-vertical-negative-crossing;
+  }
+  .fade-in {
+    @apply animate-fade-in;
+  }
+  .fade-in-out {
+    @apply animate-fade-in-out;
+  }
+  .rounds-fade-in-out-one {
+    @apply animate-rounds-fade-in-out-one;
+  }
+  .rounds-fade-in-out-two {
+    @apply animate-rounds-fade-in-out-two;
+  }
+  .rounds-fade-in-out-three {
+    @apply animate-rounds-fade-in-out-three;
+  }
+  .zoom-in {
+    @apply animate-zoom-in;
+  }
+  .swipe-btn-fade-in {
+    @apply animate-swipe-btn-fade-in;
+  }
+}
+
+@layer utilities {
+  .live-dot {
+    @apply relative w-6 h-6 rounded-full flex items-center justify-center animate-glow;
+  }
+  .live-dot::before {
+    @apply absolute w-4 h-4 bg-red-600 rounded-full;
+    content: "";
+  }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+/* For Webkit browsers (Chrome, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+:root {
+  --primary-color: #bcff00;
+  --border-primary-color: #FFF;
+  --info-color: #5bef00;
+  --warning-color: #e33d38;
+  --text-color: #FFF;
+  --background-color: #000;
+  --sport-button-background-color: #1e1e1e;
+  --menu-background-color: #091704;
+  --dark-gray-color: #2f3132;
+  --light-gray-color: #d9d9d9;
+  --betnow-button-background: #bcff00;
+  --betnow-button-color: #000;
+  --footer-background-color: #111;
+  --footer-selection-color: #bcff00;
+  --footer-button-color: #a9a7b9;
+  --card-border-color: #bcff00;
+  --app-height: 100svh;
+  --w3m-z-index: 99999 !important;
+}
+
+html {
+  @apply bg-black;
+}
+
+body {
+  @apply bg-black text-white min-h-[calc(100vh-100px)];
+}
+
+* {
+  scrollbar-color: #333 #222;
+}
+
+*::-webkit-scrollbar {
+  background-color: #333;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #222;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #111;
+}
+
+@font-face {
+  font-family: monument;
+  src: url(../lib/fonts/monument-extended-regular.otf);
+  font-weight: 900;
+}
+
+@layer base {
+  @font-face {
+    font-family: IntegralCF;
+    font-style: normal;
+    font-weight: 400;
+    src: url(../lib/fonts/IntegralCF.otf);
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: MuseoModerno;
+    font-style: normal;
+    font-weight: 400;
+    src: url(../lib/fonts/MuseoModerno.otf);
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: Mulish;
+    font-style: normal;
+    font-weight: 200;
+    src: url(../lib/fonts/Mulish.otf);
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 400;
+    src: url(../lib/fonts/Inter.otf);
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  -webkit-appearance: none;
+  width: 0;
+  height: 0;
+}
+
+body {
+  /* background: linear-gradient(to bottom right, #091a07, black); */
+  background: "#1f1f1f";
+  scrollbar-gutter: stable both-edges;
+  min-height: var(--app-height);
+}
