@@ -21,9 +21,9 @@ export default function NFTBoostCard ({nftName}: Props) {
             <p className="text-sm text-white">{nftName.toLocaleUpperCase()}</p>
             {/* Counter */}
             <div className="w-full flex justify-center">
-                <div className="inline-flex items-center rounded-lg overflow-hidden shadow-sm">
+                <div className="inline-flex items-center overflow-hidden shadow-sm">
                     <button
-                        className="w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-700 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
+                        className="rounded-lg w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 active:bg-purple-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
                     >
                         -
                     </button>
@@ -34,7 +34,7 @@ export default function NFTBoostCard ({nftName}: Props) {
                     />
                     
                     <button
-                        className="w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
+                        className="rounded-lg w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 active:bg-purple-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
                     >
                         +
                     </button>

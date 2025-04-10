@@ -144,7 +144,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <p className="text-center mb-6 text-white">You don’t own any NFTs yet.</p>
           )}
 
-          <div className="flex flex-col gap-3">
+          <div className="w-full flex flex-col gap-3">
             <button
               onClick={handleNFTBoost}
               disabled={isNFTBoostProcessing}
