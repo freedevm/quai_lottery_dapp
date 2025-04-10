@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { AppContext } from "@/lib/providers/AppContextProvider";
 import "./style.scss";
+import Image from "next/image";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,20 +15,20 @@ interface ModalProps {
 }
 
 const MockImages = [
-  { id: "0001", name: "nft-01", imageUrl: "https://via.placeholder.com/150?text=NFT1" },
-  { id: "0002", name: "nft-02", imageUrl: "https://via.placeholder.com/150?text=NFT2" },
-  { id: "0003", name: "nft-03", imageUrl: "https://via.placeholder.com/150?text=NFT3" },
-  { id: "0004", name: "nft-04", imageUrl: "https://via.placeholder.com/150?text=NFT4" },
-  { id: "0005", name: "nft-05", imageUrl: "https://via.placeholder.com/150?text=NFT5" },
-  { id: "0006", name: "nft-06", imageUrl: "https://via.placeholder.com/150?text=NFT6" },
-  { id: "0007", name: "nft-07", imageUrl: "https://via.placeholder.com/150?text=NFT7" },
-  { id: "0008", name: "nft-08", imageUrl: "https://via.placeholder.com/150?text=NFT8" },
-  { id: "0009", name: "nft-09", imageUrl: "https://via.placeholder.com/150?text=NFT9" },
-  { id: "0010", name: "nft-10", imageUrl: "https://via.placeholder.com/150?text=NFT10" },
-  { id: "0011", name: "nft-11", imageUrl: "https://via.placeholder.com/150?text=NFT11" },
-  { id: "0012", name: "nft-12", imageUrl: "https://via.placeholder.com/150?text=NFT12" },
-  { id: "0013", name: "nft-13", imageUrl: "https://via.placeholder.com/150?text=NFT13" },
-  { id: "0014", name: "nft-14", imageUrl: "https://via.placeholder.com/150?text=NFT14" },
+  { id: "0001", name: "nft-01", imageUrl: "./assets/01.jpg" },
+  { id: "0002", name: "nft-02", imageUrl: "./assets/02.jpg" },
+  { id: "0003", name: "nft-03", imageUrl: "./assets/03.jpg" },
+  { id: "0004", name: "nft-04", imageUrl: "./assets/01.jpg" },
+  { id: "0005", name: "nft-05", imageUrl: "./assets/02.jpg" },
+  { id: "0006", name: "nft-06", imageUrl: "./assets/03.jpg" },
+  { id: "0007", name: "nft-07", imageUrl: "./assets/01.jpg" },
+  { id: "0008", name: "nft-08", imageUrl: "./assets/02.jpg" },
+  { id: "0009", name: "nft-09", imageUrl: "./assets/03.jpg" },
+  { id: "0010", name: "nft-10", imageUrl: "./assets/01.jpg" },
+  { id: "0011", name: "nft-11", imageUrl: "./assets/02.jpg" },
+  { id: "0012", name: "nft-12", imageUrl: "./assets/03.jpg" },
+  { id: "0013", name: "nft-13", imageUrl: "./assets/01.jpg" },
+  { id: "0014", name: "nft-14", imageUrl: "./assets/02.jpg" },
 ];
 
 export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps) {
@@ -162,11 +163,17 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                     aria-label={`Select ${nft.name}`}
                     aria-pressed={selectedNFTs.includes(nft.id)}
                   >
-                    <img
-                      src={nft.imageUrl}
-                      alt={nft.name}
-                      className="w-full h-24 object-cover rounded-md mb-2 nft-image"
-                    />
+                    <div className={
+                      selectedNFTs.includes(nft.id)
+                        ? "w-full h-28 relative rounded-md mb-2 overflow-hidden opacity-70"
+                        : "w-full h-28 relative rounded-md mb-2 overflow-hidden"
+                      }>
+                      <Image 
+                        src="https://ipfs.io/ipfs/bafybeifvvgn4l3ntgitxq2j7gnrlt76bwzsqgpfrjxxrqt6m4am5mxpgeu" 
+                        alt="nft" 
+                        fill
+                      />
+                    </div>
                     <p className="text-sm text-white">{nft.name}</p>
                   </div>
                 ))}
