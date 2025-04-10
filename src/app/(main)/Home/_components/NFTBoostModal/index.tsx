@@ -161,7 +161,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                 isPlayTicketProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isPlayTicketProcessing ? "processing..." : "no, by ticket"}
+              {isPlayTicketProcessing ? "processing..." : "no, by one ticket"}
             </button>
             <button
               onClick={onClose}
