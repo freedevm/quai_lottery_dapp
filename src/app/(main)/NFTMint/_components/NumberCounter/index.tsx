@@ -5,6 +5,7 @@ interface NumberCounterProps {
   max?: number;
   initialValue?: number;
   onChange?: (value: number) => void;
+  className?: string;
 }
 
 export default function NumberCounter({
@@ -12,6 +13,7 @@ export default function NumberCounter({
   max = 100,
   initialValue = 0,
   onChange,
+  className = '',
 }: NumberCounterProps) {
   const [count, setCount] = useState<number>(initialValue);
 
@@ -40,31 +42,33 @@ export default function NumberCounter({
   };
 
   return (
-    <div className="flex items-center space-x-2 text-black">
-      <button
-        onClick={handleDecrement}
-        disabled={count <= min}
-        className="w-10 h-10 flex items-center justify-center bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 transition-colors"
-      >
-        -
-      </button>
-      
-      <input
-        type="number"
-        value={count}
-        onChange={handleChange}
-        min={min}
-        max={max}
-        className="w-20 h-10 text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      />
-      
-      <button
-        onClick={handleIncrement}
-        disabled={count >= max}
-        className="w-10 h-10 flex items-center justify-center bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400 transition-colors"
-      >
-        +
-      </button>
+    <div className={`flex w-full max-w-xs ${className}`}>
+      <div className="inline-flex items-stretch rounded-lg overflow-hidden">
+        <button
+          onClick={handleDecrement}
+          disabled={count <= min}
+          className="w-7 h-10 flex items-center justify-center bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
+        >
+          -
+        </button>
+        
+        <input
+          type="number"
+          value={count}
+          onChange={handleChange}
+          min={min}
+          max={max}
+          className="w-14 h-10 text-center bg-white text-black border-none focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        
+        <button
+          onClick={handleIncrement}
+          disabled={count >= max}
+          className="w-7 h-10 flex items-center justify-center bg-purple-600 text-white font-semibold hover:bg-purple-500 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
+        >
+          +
+        </button>
+      </div>
     </div>
   );
 }
