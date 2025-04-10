@@ -63,11 +63,14 @@ export default function JackpotCard({
             : "bg-purple-500 hover:bg-purple-400"
         }`}
       >
-        {hasParticipated ? "Already in this place" : isSpinning ? "Spinning..." : "Play Now - 0.05ETH"}
+        {hasParticipated ? "Already in this place" : isSpinning ? "PROCESSING..." : "PLAY NOW - 0.05ETH"}
       </button>
 
       {/* Status Indicators */}
       <div className="mt-2 flex flex-wrap gap-2">
+        {disabled && (
+          <span className="text-xs sm:text-sm text-red-400">You must connect your wallet to play</span>
+        )}
         {!isActive && (
           <span className="text-xs sm:text-sm text-red-400">Inactive</span>
         )}

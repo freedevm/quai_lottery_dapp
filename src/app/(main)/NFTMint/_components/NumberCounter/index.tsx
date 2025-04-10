@@ -42,7 +42,7 @@ export default function NumberCounter({
   };
 
   return (
-    <div className={`flex w-full max-w-xs ${className}`}>
+    <div className={'flex w-full max-w-xs'}>
       <div className="inline-flex items-stretch rounded-lg overflow-hidden">
         <button
           onClick={handleDecrement}
