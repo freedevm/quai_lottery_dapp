@@ -7,7 +7,7 @@ export default function BoostInfo() {
 
   return (
     <div className="w-full p-2 sm:px-4 sm:py-3 flex flex-col ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
-      <h1 className="text-2xl text-center">🚀 NFT Boost Mint</h1>
+      <h1 className="text-2xl text-center">🚀 NFT Boost System</h1>
       <p>
         Our NFTs give you a boost in Entry Games by increasing your ticket count!<br />
         The more NFTs you hold, the bigger the boost—but we’ve balanced it to keep things fair.

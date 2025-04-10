@@ -6,6 +6,8 @@ import ProgressiveJackpot from "./_components/ProgressiveJackpot";
 import ConfirmModal from "./_components/ConfirmModal";
 import { AppContext } from "@/lib/providers/AppContextProvider";
 import { Address, JackpotState, Jackpots } from "@/lib/types/lottery";
+import NFTBoostModal from "./_components/NFTBoostModal";
+import { setEngine } from "crypto";
 
 export default function Page() {
   // Access wallet connection status from AppContext
@@ -13,7 +15,13 @@ export default function Page() {
   const isWalletConnected = appData.isWalletConnected;
 
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [showNFTBoostModal, setShowNFTBoostModal] = useState<boolean>(false);
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [selectedPotId, setSelectedPotId] = useState<string>("");
+
+  useEffect(() => {
+    setButtonDisabled(!isWalletConnected)
+  }, [isWalletConnected])
 
   const generateRandomAddress = (): string => {
     const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -215,12 +223,24 @@ export default function Page() {
     setShowConfirmModal(false);
   };
 
+  const closeNFTBoostModal = () => {
+    setShowNFTBoostModal(false);
+  }
+
   return (
     <div className="h-full max-h-full overflow-y-auto p-3 sm:p-4 md:p-6">
       {showConfirmModal && (
         <ConfirmModal
           isOpen={showConfirmModal}
           onClose={closeConfirmModal}
+          jackpotId={selectedPotId}
+          setShowNFTBoostModal={setShowNFTBoostModal}
+        />
+      )}
+      {showNFTBoostModal && (
+        <NFTBoostModal
+          isOpen={showNFTBoostModal}
+          onClose={closeNFTBoostModal}
           jackpotId={selectedPotId}
         />
       )}
@@ -230,7 +250,7 @@ export default function Page() {
           {...jackpots.progressive}
           onPlay={() => simulatePlay("progressive")}
           participants={jackpots.progressive.participants}
-          disabled={!isWalletConnected} // Disable if wallet is not connected
+          disabled={buttonDisabled} // Disable if wallet is not connected
         />
 
         {/* Jackpot Cards Section */}
@@ -240,7 +260,7 @@ export default function Page() {
             {...jackpots.small}
             onPlay={() => toggleConfirmModal("small")}
             participants={jackpots.small.participants}
-            disabled={!isWalletConnected}
+            disabled={buttonDisabled}
             jackpotId="small"
           />
           <JackpotCard
@@ -248,7 +268,7 @@ export default function Page() {
             {...jackpots.medium}
             onPlay={() => toggleConfirmModal("medium")}
             participants={jackpots.medium.participants}
-            disabled={!isWalletConnected}
+            disabled={buttonDisabled}
             jackpotId="medium"
           />
           <JackpotCard
@@ -256,7 +276,7 @@ export default function Page() {
             {...jackpots.large}
             onPlay={() => toggleConfirmModal("large")}
             participants={jackpots.large.participants}
-            disabled={!isWalletConnected}
+            disabled={buttonDisabled}
             jackpotId="large"
           />
         </div>

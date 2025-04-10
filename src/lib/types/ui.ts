@@ -8,6 +8,7 @@ export const defaultTheme = Theme.dark;
 export type PageName =
   | "home"
   | "jackpot"
+  | "nftMint"
   | "nftBoost";
 
 export interface PageData {
