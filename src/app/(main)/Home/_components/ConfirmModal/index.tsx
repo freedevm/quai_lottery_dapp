@@ -67,7 +67,7 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               <p className="text-center mb-6 text-white">
                 Are you ready to participate in this jackpot?
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="w-full justify-center flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handlePlayWithTicket}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
