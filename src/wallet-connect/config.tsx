@@ -1,7 +1,7 @@
 import { defaultWagmiConfig } from "@web3modal/wagmi/react/config";
 
 import { cookieStorage, createStorage } from "wagmi";
-import { optimism, arbitrum } from "wagmi/chains";
+import { mainnet, sepolia } from "wagmi/chains";
 
 import env from "@/lib/config/general";
 
@@ -11,14 +11,14 @@ export const projectId = env.WALLET_CONNECT_PROJECT_ID;
 if (!projectId) throw new Error("Project ID is not defined");
 
 const metadata = {
-  name: "Sports Gambit",
-  description: "Sports Gambit",
+  name: "Ethereum Lottery",
+  description: "Ethereum Mega Jackpot",
   url: env.WALLET_CONNECT_ORIGIN!, // origin must match your domain & subdomain
-  icons: ["https://sportsgambit.io/wallet-icon.png"],
+  icons: ["https://ethereumlottery.io/wallet-icon.png"],
 };
 
 // Create wagmiConfig
-const chains = [optimism, arbitrum] as const;
+const chains = [mainnet, sepolia] as const;
 export const config = defaultWagmiConfig({
   chains,
   projectId,
