@@ -10,6 +10,8 @@ import nftImage1 from './assets/01.jpg';
 import nftImage2 from './assets/02.jpg';
 import nftImage3 from './assets/03.jpg';
 import { toast } from 'react-toastify';
+import Image from 'next/image';
+import NFTMintItem from '../NFTMintItem';
 
 export default function NFTMintCard() {
   const { data, mintNFTs, addParticipation } = useContext(AppContext);
@@ -84,31 +86,15 @@ export default function NFTMintCard() {
   };
 
   return (
-    <div className="w-full border border-[--border-primary-color] rounded-2xl p-2 sm:px-4 sm:py-3 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
-      {/* <div className="w-full h-40 mb-4 flex items-center justify-center bg-gray-800 rounded-lg overflow-hidden"> */}
-        {/* {data.userNFTCount > 0 && currentNFTImage ? ( */}
-        {/* {currentNFTImage ? (
-          <img
-            src={currentNFTImage}
-            alt="User NFT"
-            className="h-full w-auto object-cover"
-          />
-        ) : (
-          <p className="text-gray-400">No NFTs yet. Mint some below!</p>
-        )} */}
-      {/* </div> */}
+    <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-3 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
+      <div className="flex flex-col gap-2 min-h-30">
+        <NFTMintItem nftName='DIAMOND' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='PLATINUM' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='GOLDEN' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='SILVER' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='BRONZE' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='IRON' handleCountChange={handleCountChange} />
 
-      <div className="flex flex-col gap-2 items-center justify-center min-h-30">
-        <h1 className="text-3xl font-bold">Start Minting</h1>
-        <div className="relative flex items-center gap-3">
-          <span className="text-2xl">Mint: </span>
-          <NumberCounter
-            min={0}
-            max={10} // Limit based on balance, capped at 10
-            initialValue={0}
-            onChange={handleCountChange}
-          />
-        </div>
         <div className="relative flex items-center gap-3">
           <p className="font-semibold text-lg">Your NFTs: </p>
           <p className="font-bold text-lg">{data.userNFTCount}</p>
@@ -118,17 +104,6 @@ export default function NFTMintCard() {
           <p className="font-bold text-lg">{data.userBalance} ETH</p>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={handleMintClick}
-            disabled={isLoading || mintCount === 0}
-            className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
-              isLoading || mintCount === 0
-                ? 'bg-purple-400 cursor-not-allowed'
-                : 'bg-purple-600 hover:bg-purple-700 active:bg-purple-800'
-            }`}
-          >
-            {isLoading ? 'Minting...' : 'Mint Now'}
-          </button>
           <button
             onClick={handlePlayWithTicket}
             disabled={isLoading || data.userTickets < 1}
