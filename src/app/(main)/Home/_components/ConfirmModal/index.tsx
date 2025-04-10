@@ -63,28 +63,28 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
         <div className="flex flex-col items-center">
           {isNFTHolder ? (
             <>
-              <h2 className="text-2xl font-bold mb-4 text-white">Confirm Participation</h2>
+              <h2 className="text-2xl font-bold mb-4 text-white uppercase">Confirm Participation</h2>
               <p className="text-center mb-6 text-white">
                 Are you ready to participate in this jackpot?
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handlePlayWithTicket}
-                  className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
                 >
-                  {isPlayTicketProcessing ? "Processing..." : "Play with Ticket"}
+                  {isPlayTicketProcessing ? "processing..." : "by one ticket"}
                 </button>
                 <button
                   onClick={handleShowNFTBoostModal}
-                  className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
                 >
-                  NFT Boost
+                  by card boost
                 </button>
                 <button
                   onClick={onClose}
-                  className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
                 >
-                  Cancel
+                  cancel
                 </button>
               </div>
             </>
@@ -99,19 +99,19 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
                   onClick={handlePlayWithTicket}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
                 >
-                  {isPlayTicketProcessing ? "Processing..." : "Play with Ticket"}
+                  {isPlayTicketProcessing ? "Processing..." : "BY ONE TICKET"}
                 </button>
                 <button
                   onClick={handlePurchaseNFT}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
                 >
-                  Purchase NFT
+                  PURCHASE CARD
                 </button>
                 <button
                   onClick={onClose}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
                 >
-                  Cancel
+                  CANCEL
                 </button>
               </div>
             </>

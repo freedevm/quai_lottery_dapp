@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { AppContext } from "@/lib/providers/AppContextProvider";
 import "./style.scss";
 import Image from "next/image";
+import NFTBoostCard from "../NFTBoostCard";
 
 interface ModalProps {
   isOpen: boolean;
@@ -112,71 +113,31 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-110 overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[110] overflow-y-auto">
       <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4">
         <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-4 text-white">NFT Boost</h2>
+          <h2 className="text-2xl font-bold mb-4 text-white uppercase">card boost</h2>
           <p className="text-center mb-6 text-white">
             Are you ready to boost your NFTs in this jackpot?
           </p>
 
-          {/* Display NFTs with Selection */}
           {nftsToDisplay.length > 0 ? (
             <div className="mb-6 w-full">
-              <div className="flex items-center mb-2 justify-between">
-                <div
-                  className="select-all-container"
-                  onClick={handleSelectAll}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === "Enter" && handleSelectAll()}
-                  aria-label={isSelectAll ? "Deselect all NFTs" : "Select all NFTs"}
-                  aria-pressed={isSelectAll}
-                >
-                  <div className="select-all-label">
-                    <span
-                      className={`select-all-radio ${isSelectAll ? "selected" : ""}`}
-                    ></span>
-                    {isSelectAll ? "Deselect All" : "Select All"}
-                  </div>
-                </div>
+              <div className="flex items-center mb-2 justify-end">
                 <button
                   onClick={handlePurchaseNFT}
-                  className="bg-purple-500 hover:bg-purple-400 px-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 px-2 rounded-lg text-white uppercase"
                 >
-                  Purchase NFT
+                  purchase card
                 </button>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 p-1 nft-grid">
-                {nftsToDisplay.map((nft) => (
-                  <div
-                    key={nft.id}
-                    onClick={() => handleNFTSelect(nft.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === "Enter" && handleNFTSelect(nft.id)}
-                    className={
-                      selectedNFTs.includes(nft.id)
-                        ? "bg-purple-800 rounded-lg pb-2 flex flex-col items-center relative nft-card cursor-pointer"
-                        : "bg-purple-700 rounded-lg pb-2 flex flex-col items-center relative nft-card cursor-pointer"
-                    }
-                    aria-label={`Select ${nft.name}`}
-                    aria-pressed={selectedNFTs.includes(nft.id)}
-                  >
-                    <div className={
-                      selectedNFTs.includes(nft.id)
-                        ? "w-full h-28 relative rounded-md mb-2 overflow-hidden opacity-70"
-                        : "w-full h-28 relative rounded-md mb-2 overflow-hidden"
-                      }>
-                      <Image 
-                        src="https://ipfs.io/ipfs/bafybeifvvgn4l3ntgitxq2j7gnrlt76bwzsqgpfrjxxrqt6m4am5mxpgeu" 
-                        alt="nft" 
-                        fill
-                      />
-                    </div>
-                    <p className="text-sm text-white">{nft.name}</p>
-                  </div>
-                ))}
+              <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
+                <NFTBoostCard nftName="diamond" />
+                <NFTBoostCard nftName="platinum" />
+                <NFTBoostCard nftName="golden" />
+                <NFTBoostCard nftName="silver" />
+                <NFTBoostCard nftName="bronze" />
+                <NFTBoostCard nftName="iron" />
               </div>
             </div>
           ) : (
@@ -187,26 +148,26 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <button
               onClick={handleNFTBoost}
               disabled={isNFTBoostProcessing}
-              className={`bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white ${
+              className={`bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase ${
                 isNFTBoostProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isNFTBoostProcessing ? "Processing..." : "Yes, boost with NFTs"}
+              {isNFTBoostProcessing ? "processing..." : "yes, by card boost"}
             </button>
             <button
               onClick={handlePlayWithTicket}
               disabled={isPlayTicketProcessing}
-              className={`bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white ${
+              className={`bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase ${
                 isPlayTicketProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isPlayTicketProcessing ? "Processing..." : "No, with One Ticket"}
+              {isPlayTicketProcessing ? "processing..." : "no, by ticket"}
             </button>
             <button
               onClick={onClose}
-              className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
+              className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
             >
-              Cancel
+              cancel
             </button>
           </div>
         </div>
