@@ -87,27 +87,12 @@ export default function NFTMintCard() {
 
   return (
     <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-3 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
-      <div className="flex flex-col gap-2 min-h-30">
-        <NFTMintItem nftName='DIAMOND' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='PLATINUM' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='GOLDEN' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='SILVER' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='BRONZE' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='IRON' handleCountChange={handleCountChange} />
-
-        <div className="relative flex items-center gap-3">
-          <p className="font-semibold text-lg">Your NFTs: </p>
-          <p className="font-bold text-lg">{data.userNFTCount}</p>
-        </div>
-        <div className="relative flex items-center gap-3">
-          <p className="font-semibold text-lg">Balance: </p>
-          <p className="font-bold text-lg">{data.userBalance} ETH</p>
-        </div>
-        <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-6 mb-4 px-4">
+        <div className="flex items-center justify-start sm:justify-end">
           <button
             onClick={handlePlayWithTicket}
             disabled={isLoading || data.userTickets < 1}
-            className={`px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
+            className={`w-full sm:w-auto px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
               isLoading || data.userTickets < 1
                 ? 'bg-purple-400 cursor-not-allowed'
                 : 'bg-purple-600 hover:bg-purple-700 active:bg-purple-800'
@@ -116,6 +101,19 @@ export default function NFTMintCard() {
             {isLoading ? 'Processing...' : 'Play with One Ticket'}
           </button>
         </div>
+        <div className="flex items-center gap-3">
+          <p className="font-semibold text-lg text-white">Balance:</p>
+          <p className="font-bold text-lg text-white">{data.userBalance} ETH</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col">
+        <NFTMintItem nftName='DIAMOND' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='PLATINUM' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='GOLDEN' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='SILVER' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='BRONZE' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='IRON' handleCountChange={handleCountChange} />
       </div>
     </div>
   );
