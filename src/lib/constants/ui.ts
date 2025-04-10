@@ -8,6 +8,11 @@ export const pages: { [key in PageName]: PageData } = {
     title: `Home | ${appTitle}`,
     path: "/Home",
   },
+  nftMint: {
+    name: "nftMint",
+    title: `NFTMint | ${appTitle}`,
+    path: "/NFTMint",
+  },
   nftBoost: {
     name: "nftBoost",
     title: `NFTBoost | ${appTitle}`,

@@ -12,23 +12,27 @@ import { toast } from "react-toastify";
 import { useAccount, useChainId, useBalance } from "wagmi";
 import PreLoading from "@/components/PreLoading";
 
-// Define the shape of the context data for the lottery app
+// Define the shape of an NFT
+interface NFT {
+  id: string;
+  name: string;
+  imageUrl: string;
+}
+
 interface ContextData {
-  // Wallet-related data
   network: number | null;
   userAddress: string | null;
   userBalance: string | null;
   isWalletConnected: boolean;
-
-  // Lottery-related data
   currentJackpot: string | null;
   userTickets: number;
   lotteryStatus: "active" | "closed" | "pending" | null;
   lastWinner: string | null;
-
-  // New: NFT holder and participation tracking
   isNFTHolder: boolean;
   participatedJackpots: string[];
+  userNFTCount: number;
+  userNFTs: NFT[];
+  boostedNFTs: { [jackpotId: string]: NFT[] }; // New: Store boosted NFTs per jackpot
 }
 
 const initialData: ContextData = {
@@ -40,66 +44,112 @@ const initialData: ContextData = {
   userTickets: 0,
   lotteryStatus: null,
   lastWinner: null,
-  isNFTHolder: false, // Default: user is not an NFT holder
-  participatedJackpots: [], // Default: user has not participated in any jackpots
+  isNFTHolder: false,
+  participatedJackpots: [],
+  userNFTCount: 0,
+  userNFTs: [],
+  boostedNFTs: {}, // Initialize as empty object
 };
 
-// Create the context with initial values and types for the setter functions
 export const AppContext = createContext<{
   data: ContextData;
   setData: (data: Partial<ContextData>) => void;
   setDataT: (value: SetStateAction<ContextData>) => void;
-  addParticipation: (jackpotId: string) => Promise<boolean>; // New: Add participation
+  addParticipation: (jackpotId: string) => Promise<boolean>;
+  mintNFTs: (count: number) => Promise<boolean>;
+  boostNFTs: (jackpotId: string, nfts: NFT[]) => Promise<boolean>; // New: Boost NFTs
 }>({
   data: initialData,
   setData: () => {},
   setDataT: () => {},
   addParticipation: async () => false,
+  mintNFTs: async () => false,
+  boostNFTs: async () => false,
 });
 
-// AppContextProvider component
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [data, setDataT] = useState<ContextData>(initialData);
   const [firstLoad, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(true);
 
-  // Wagmi hooks for wallet data
   const chainId = useChainId();
   const account = useAccount();
   const { data: balanceData } = useBalance({
     address: account.address,
   });
 
-  // Helper to update context data partially
   const setData = (d: Partial<ContextData>) =>
     setDataT((prevData) => ({ ...prevData, ...d }));
 
-  // Function to add participation to a jackpot
   const addParticipation = async (jackpotId: string): Promise<boolean> => {
     try {
-      // Simulate an API call or smart contract interaction to add participation
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
-  
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setDataT((prev) => ({
         ...prev,
-        userTickets: prev.userTickets + 1, // Increment user tickets
-        participatedJackpots: [...prev.participatedJackpots, jackpotId], // Add jackpot to participated list
+        userTickets: prev.userTickets + 1,
+        participatedJackpots: [...prev.participatedJackpots, jackpotId],
       }));
-      return true; // Success
+      return true;
     } catch (error) {
       console.error("Failed to add participation:", error);
-      return false; // Failure
+      return false;
     }
   };
 
-  // Persist context data to localStorage whenever it changes
+  const mintNFTs = async (count: number): Promise<boolean> => {
+    if (!account.isConnected) {
+      console.error("Wallet not connected");
+      return false;
+    }
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const newNFTs: NFT[] = Array.from({ length: count }, (_, index) => ({
+        id: `${data.userNFTCount + index + 1}`,
+        name: `NFT #${data.userNFTCount + index + 1}`,
+        imageUrl: `https://via.placeholder.com/150?text=NFT${data.userNFTCount + index + 1}`,
+      }));
+
+      setDataT((prev) => ({
+        ...prev,
+        userNFTCount: prev.userNFTCount + count,
+        userNFTs: [...prev.userNFTs, ...newNFTs],
+        isNFTHolder: true,
+        userTickets: prev.userTickets + count * 2,
+      }));
+      return true;
+    } catch (error) {
+      console.error("Failed to mint NFTs:", error);
+      return false;
+    }
+  };
+
+  // New: Function to boost NFTs for a jackpot
+  const boostNFTs = async (jackpotId: string, nfts: NFT[]): Promise<boolean> => {
+    try {
+      // Simulate boosting NFTs (replace with real smart contract call in production)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setDataT((prev) => ({
+        ...prev,
+        boostedNFTs: {
+          ...prev.boostedNFTs,
+          [jackpotId]: nfts, // Store the boosted NFTs for this jackpot
+        },
+      }));
+      return true;
+    } catch (error) {
+      console.error("Failed to boost NFTs:", error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (data !== initialData) {
       localStorage.setItem("lottery-app-data", JSON.stringify(data));
     }
   }, [data]);
 
-  // Load persisted data from localStorage on mount
   useEffect(() => {
     const appDataJson = localStorage.getItem("lottery-app-data");
     if (appDataJson) {
@@ -108,7 +158,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Update wallet-related data when the account or chain changes
   useEffect(() => {
     if (account.isConnected && account.address) {
       setData({
@@ -116,8 +165,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         userAddress: account.address,
         userBalance: balanceData?.formatted || "0",
         isWalletConnected: true,
-        // Simulate NFT holder check (replace with real check in production)
-        isNFTHolder: false, // For testing, set to true; in production, query a smart contract
+        isNFTHolder: true,
       });
     } else {
       setData({
@@ -127,11 +175,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         isWalletConnected: false,
         isNFTHolder: false,
         participatedJackpots: [],
+        userNFTCount: 0,
+        userNFTs: [],
+        boostedNFTs: {},
       });
     }
-  }, [account.isConnected, account.address, chainId, balanceData]);
+  }, [account.isConnected, account.address, chainId, balanceData, data.userNFTCount]);
 
-  // Fetch lottery-related data on first load
   useEffect(() => {
     (async function init() {
       if (!firstLoad) return;
@@ -156,7 +206,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [firstLoad, account.isConnected]);
 
-  // Handle chain ID changes
   useEffect(() => {
     if (!account.isConnected) return;
 
@@ -185,6 +234,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         setData,
         setDataT,
         addParticipation,
+        mintNFTs,
+        boostNFTs,
       }}
     >
       {children}
