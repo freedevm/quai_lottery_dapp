@@ -10,8 +10,14 @@ import {
 import { toast } from "react-toastify";
 import { useAccount, useChainId, useBalance } from "wagmi";
 import PreLoading from "@/components/PreLoading";
-import { NFT } from "@/lib/types/lottery"
 
+// Define the shape of an NFT
+export interface NFT {
+  id: string;
+  name: string; // e.g., "diamond", "platinum", etc.
+  imageUrl: string;
+  count?: number; // Optional count for boosting
+}
 
 interface ContextData {
   network: number | null;
@@ -50,7 +56,7 @@ export const AppContext = createContext<{
   setData: (data: Partial<ContextData>) => void;
   setDataT: (value: SetStateAction<ContextData>) => void;
   addParticipation: (jackpotId: string) => Promise<boolean>;
-  mintNFTs: (count: number) => Promise<boolean>;
+  mintNFTs: (nfts: { name: string; count: number }[]) => Promise<boolean>;
   boostNFTs: (jackpotId: string, nfts: NFT[]) => Promise<boolean>;
 }>({
   data: initialData,
@@ -90,7 +96,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const mintNFTs = async (count: number): Promise<boolean> => {
+  const mintNFTs = async (nfts: { name: string; count: number }[]): Promise<boolean> => {
     if (!account.isConnected) {
       console.error("Wallet not connected");
       return false;
@@ -98,22 +104,26 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const nftTypes = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
-      const newNFTs: NFT[] = Array.from({ length: count }, (_, index) => {
-        const type = nftTypes[Math.floor(Math.random() * nftTypes.length)];
-        return {
-          id: `${data.userNFTCount + index + 1}`,
-          name: type,
-          imageUrl: `https://via.placeholder.com/150?text=${type}`,
-        };
+      let newNFTs: NFT[] = [];
+      let totalCount = 0;
+
+      nfts.forEach(({ name, count }) => {
+        totalCount += count;
+        for (let i = 0; i < count; i++) {
+          newNFTs.push({
+            id: `${data.userNFTCount + newNFTs.length + 1}`,
+            name: name.toLowerCase(), // Ensure consistent casing
+            imageUrl: `https://via.placeholder.com/150?text=${name}`,
+          });
+        }
       });
 
       setDataT((prev) => ({
         ...prev,
-        userNFTCount: prev.userNFTCount + count,
+        userNFTCount: prev.userNFTCount + totalCount,
         userNFTs: [...prev.userNFTs, ...newNFTs],
         isNFTHolder: true,
-        userTickets: prev.userTickets + count * 2,
+        userTickets: prev.userTickets + totalCount * 2,
       }));
       return true;
     } catch (error) {
@@ -160,8 +170,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         userAddress: account.address,
         userBalance: balanceData?.formatted || "0",
         isWalletConnected: true,
-        // isNFTHolder: data.userNFTCount > 0,
-        isNFTHolder: true,
+        isNFTHolder: data.userNFTCount > 0,
       });
     } else {
       setData({

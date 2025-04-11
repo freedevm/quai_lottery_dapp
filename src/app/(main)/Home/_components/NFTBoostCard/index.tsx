@@ -71,7 +71,7 @@ export default function NFTBoostCard({ nftName, userNFTs, setSelectedNFTs }: Pro
           fill
         />
       </div>
-      <p className="text-sm text-white">{nftName.toUpperCase()}</p>
+      <p className="text-sm text-white">{nftName.toUpperCase()} : {availableCount}</p>
       {/* Counter */}
       <div className="w-full flex justify-center">
         <div className="inline-flex items-center overflow-hidden shadow-sm">
