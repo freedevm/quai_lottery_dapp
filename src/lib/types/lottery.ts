@@ -19,3 +19,10 @@ export interface Jackpots {
     large: JackpotState;
     progressive: JackpotState;
 }
+
+export interface NFT {
+    id: string;
+    name: string; // e.g., "diamond", "platinum", etc.
+    imageUrl: string;
+    count?: number; // Optional count for boosting
+}

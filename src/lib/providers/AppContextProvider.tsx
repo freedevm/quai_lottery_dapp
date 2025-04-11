@@ -10,13 +10,8 @@ import {
 import { toast } from "react-toastify";
 import { useAccount, useChainId, useBalance } from "wagmi";
 import PreLoading from "@/components/PreLoading";
+import { NFT } from "@/lib/types/lottery"
 
-// Define the shape of an NFT
-interface NFT {
-  id: string;
-  name: string;
-  imageUrl: string;
-}
 
 interface ContextData {
   network: number | null;
@@ -31,7 +26,7 @@ interface ContextData {
   participatedJackpots: string[];
   userNFTCount: number;
   userNFTs: NFT[];
-  boostedNFTs: { [jackpotId: string]: NFT[] }; // New: Store boosted NFTs per jackpot
+  boostedNFTs: { [jackpotId: string]: NFT[] }; // Store boosted NFTs per jackpot
 }
 
 const initialData: ContextData = {
@@ -47,7 +42,7 @@ const initialData: ContextData = {
   participatedJackpots: [],
   userNFTCount: 0,
   userNFTs: [],
-  boostedNFTs: {}, // Initialize as empty object
+  boostedNFTs: {},
 };
 
 export const AppContext = createContext<{
@@ -56,7 +51,7 @@ export const AppContext = createContext<{
   setDataT: (value: SetStateAction<ContextData>) => void;
   addParticipation: (jackpotId: string) => Promise<boolean>;
   mintNFTs: (count: number) => Promise<boolean>;
-  boostNFTs: (jackpotId: string, nfts: NFT[]) => Promise<boolean>; // New: Boost NFTs
+  boostNFTs: (jackpotId: string, nfts: NFT[]) => Promise<boolean>;
 }>({
   data: initialData,
   setData: () => {},
@@ -103,11 +98,15 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const newNFTs: NFT[] = Array.from({ length: count }, (_, index) => ({
-        id: `${data.userNFTCount + index + 1}`,
-        name: `NFT #${data.userNFTCount + index + 1}`,
-        imageUrl: `https://via.placeholder.com/150?text=NFT${data.userNFTCount + index + 1}`,
-      }));
+      const nftTypes = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
+      const newNFTs: NFT[] = Array.from({ length: count }, (_, index) => {
+        const type = nftTypes[Math.floor(Math.random() * nftTypes.length)];
+        return {
+          id: `${data.userNFTCount + index + 1}`,
+          name: type,
+          imageUrl: `https://via.placeholder.com/150?text=${type}`,
+        };
+      });
 
       setDataT((prev) => ({
         ...prev,
@@ -123,17 +122,14 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // New: Function to boost NFTs for a jackpot
   const boostNFTs = async (jackpotId: string, nfts: NFT[]): Promise<boolean> => {
     try {
-      // Simulate boosting NFTs (replace with real smart contract call in production)
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       setDataT((prev) => ({
         ...prev,
         boostedNFTs: {
           ...prev.boostedNFTs,
-          [jackpotId]: nfts, // Store the boosted NFTs for this jackpot
+          [jackpotId]: nfts,
         },
       }));
       return true;
@@ -164,6 +160,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         userAddress: account.address,
         userBalance: balanceData?.formatted || "0",
         isWalletConnected: true,
+        // isNFTHolder: data.userNFTCount > 0,
         isNFTHolder: true,
       });
     } else {
