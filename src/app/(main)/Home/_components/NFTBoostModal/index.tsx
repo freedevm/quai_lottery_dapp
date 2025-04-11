@@ -134,7 +134,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
               <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
                 <NFTBoostCard nftName="diamond" />
                 <NFTBoostCard nftName="platinum" />
-                <NFTBoostCard nftName="golden" />
+                <NFTBoostCard nftName="gold" />
                 <NFTBoostCard nftName="silver" />
                 <NFTBoostCard nftName="bronze" />
                 <NFTBoostCard nftName="iron" />

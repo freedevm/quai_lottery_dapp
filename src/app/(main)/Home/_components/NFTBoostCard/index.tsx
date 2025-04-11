@@ -1,3 +1,4 @@
+import { cardImages } from "@/lib/constants/cardImages";
 import Image from "next/image";
 
 interface Props {
@@ -13,7 +14,7 @@ export default function NFTBoostCard ({nftName}: Props) {
         >
             <div className="w-full h-28 relative rounded-md mb-2 overflow-hidden">
                 <Image
-                    src={`/image/NFTs/${nftName}.png`} 
+                    src={cardImages[nftName]} 
                     alt={`${nftName} card`}
                     fill
                 />
