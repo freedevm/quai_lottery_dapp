@@ -58,7 +58,7 @@ export default function NumberCounter({
           onChange={handleChange}
           min={min}
           max={max}
-          className="w-14 h-10 text-center bg-white text-black border-none focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="bg-purple-400 w-14 h-10 text-center text-white border-none focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         
         <button

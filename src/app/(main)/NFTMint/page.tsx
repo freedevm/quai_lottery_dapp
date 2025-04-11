@@ -114,12 +114,11 @@ export default function NFTMints() {
         {cards.map((card) => (
           <NFTMintItem
             key={card.name}
-            nftName={card.name}
-            nftPrice={card.price}
+            data={card}
             handleCountChange={(value: number) => handleCountChange(card.name, value)}
             onMint={handleMintClick}
             isLoading={isLoading}
-            maxMintable={Math.floor(userBalance / nftPrice)}
+            maxMintable={5}
           />
         ))}
       </div>

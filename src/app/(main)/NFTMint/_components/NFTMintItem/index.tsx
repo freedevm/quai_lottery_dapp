@@ -4,9 +4,14 @@ import Image from "next/image";
 import NumberCounter from "../NumberCounter";
 import { cardImages } from "@/lib/constants/cardImages";
 
+interface Card {
+    name: string; // Name of the card/item
+    price?: number; // Optional price for minting
+    ticket?: number;
+}
+
 interface MintItemProps {
-  nftName: string;
-  nftPrice: number;
+  data: Card;
   handleCountChange: (value: number) => void;
   onMint: () => void;
   isLoading: boolean;
@@ -15,8 +20,7 @@ interface MintItemProps {
 }
 
 export default function NFTMintItem({
-  nftName,
-  nftPrice,
+  data,
   handleCountChange,
   onMint,
   isLoading,
@@ -30,8 +34,8 @@ export default function NFTMintItem({
         {/* Image Container */}
         <div className="relative w-full sm:w-[300px] h-64 shrink-0">
           <Image
-            src={cardImages[nftName]}
-            alt={`${nftName}`}
+            src={cardImages[data.name]}
+            alt={`${data.name}`}
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, 300px"
@@ -43,23 +47,24 @@ export default function NFTMintItem({
         </div>
 
         {/* Content Container */}
-        <div className="flex-1 p-4 flex flex-col gap-4">
+        <div className="flex-1 p-4 flex flex-col">
           {/* NFT Info - Top */}
-          <div className="space-y-2">
             <h3 className="text-lg font-semibold text-white truncate uppercase">
-              {nftName} card - {nftPrice} ETH
+              {data.name} card
             </h3>
-            <h3 className="text-md font-semibold text-white truncate uppercase">
+            <h3 className="text-md font-semibold text-white uppercase">
+                price: {data.price} ETH
+            </h3>
+            <h3 className="text-md font-semibold text-white uppercase">
               {(maxMintable !== 0) ? `${maxMintable} in stock` : "out of stock"} 
             </h3>
             <p className="text-sm text-gray-300 line-clamp-3">{description}</p>
-          </div>
 
           {/* Spacer */}
           <div className="flex-1" />
 
           {/* Controls - Bottom */}
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-2">
             <NumberCounter
               min={0}
               max={maxMintable}

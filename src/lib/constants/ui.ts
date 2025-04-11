@@ -26,10 +26,10 @@ export const pages: { [key in PageName]: PageData } = {
 };
 
 export const cards = [
-  { name: "diamond", price: 0.5 },
-  { name: "platinum", price: 0.4 },
-  { name: "gold", price: 0.3 },
-  { name: "silver", price: 0.2 },
-  { name: "bronze", price: 0.1 },
-  { name: "iron", price: 0.05 },
+  { name: "diamond", price: 0.5, ticket: 60 },
+  { name: "platinum", price: 0.4, ticket: 40 },
+  { name: "gold", price: 0.3, ticket: 30 },
+  { name: "silver", price: 0.2, ticket: 20 },
+  { name: "bronze", price: 0.1, ticket: 10 },
+  { name: "iron", price: 0.05, ticket: 5 },
 ]
