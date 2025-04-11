@@ -1,4 +1,3 @@
-// app/(main)/Home/_components/NFTBoostModal/index.tsx
 "use client";
 
 import React, { useContext, useState } from "react";
@@ -6,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { AppContext } from "@/lib/providers/AppContextProvider";
 import "./style.scss";
-import Image from "next/image";
 import NFTBoostCard from "../NFTBoostCard";
 
 interface ModalProps {
@@ -15,48 +13,14 @@ interface ModalProps {
   jackpotId?: string;
 }
 
-const MockImages = [
-  { id: "0001", name: "nft-01", imageUrl: "./assets/01.jpg" },
-  { id: "0002", name: "nft-02", imageUrl: "./assets/02.jpg" },
-  { id: "0003", name: "nft-03", imageUrl: "./assets/03.jpg" },
-  { id: "0004", name: "nft-04", imageUrl: "./assets/01.jpg" },
-  { id: "0005", name: "nft-05", imageUrl: "./assets/02.jpg" },
-  { id: "0006", name: "nft-06", imageUrl: "./assets/03.jpg" },
-  { id: "0007", name: "nft-07", imageUrl: "./assets/01.jpg" },
-  { id: "0008", name: "nft-08", imageUrl: "./assets/02.jpg" },
-  { id: "0009", name: "nft-09", imageUrl: "./assets/03.jpg" },
-  { id: "0010", name: "nft-10", imageUrl: "./assets/01.jpg" },
-  { id: "0011", name: "nft-11", imageUrl: "./assets/02.jpg" },
-  { id: "0012", name: "nft-12", imageUrl: "./assets/03.jpg" },
-  { id: "0013", name: "nft-13", imageUrl: "./assets/01.jpg" },
-  { id: "0014", name: "nft-14", imageUrl: "./assets/02.jpg" },
-];
-
 export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps) {
   const { data: appData, addParticipation, boostNFTs } = useContext(AppContext);
-  const { isWalletConnected, isNFTHolder, userNFTs } = appData;
   const router = useRouter();
-  const [showNFTCheck, setShowNFTCheck] = useState(false);
   const [isPlayTicketProcessing, setIsPlayTicketProcessing] = useState(false);
   const [isNFTBoostProcessing, setIsNFTBoostProcessing] = useState(false);
-  const [selectedNFTs, setSelectedNFTs] = useState<string[]>([]); // Track selected NFT IDs
-
-  // Use MockImages for now; switch to userNFTs when ready
-  const nftsToDisplay = MockImages; // Replace with userNFTs when integrating with real data
+  const [selectedNFTs, setSelectedNFTs] = useState<{ id: string; count: number }[]>([]); // Track selected NFT IDs and counts
 
   if (!isOpen) return null;
-
-  // Derive selectAll state from selectedNFTs
-  const isSelectAll = nftsToDisplay.length > 0 && selectedNFTs.length === nftsToDisplay.length;
-
-  // Handle individual NFT selection
-  const handleNFTSelect = (nftId: string) => {
-    setSelectedNFTs((prev) =>
-      prev.includes(nftId)
-        ? prev.filter((id) => id !== nftId)
-        : [...prev, nftId]
-    );
-  };
 
   const handleNFTBoost = async () => {
     if (!jackpotId) {
@@ -64,22 +28,30 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
       return;
     }
 
-    if (selectedNFTs.length === 0) {
+    if (selectedNFTs.length === 0 || selectedNFTs.every((nft) => nft.count === 0)) {
       toast.error("Please select at least one Card to boost!");
       return;
     }
 
     setIsNFTBoostProcessing(true);
-    const nftsToBoost = nftsToDisplay.filter((nft) => selectedNFTs.includes(nft.id));
-    const success = await boostNFTs(jackpotId, nftsToBoost);
+    // Map selectedNFTs to the format expected by boostNFTs
+    const nftsToBoost = selectedNFTs
+      .filter((nft) => nft.count > 0)
+      .map((nft) => ({
+        id: nft.id,
+        name: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.name || "",
+        imageUrl: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.imageUrl || "",
+        count: nft.count,
+      }));
 
+    const success = await boostNFTs(jackpotId, nftsToBoost);
     if (success) {
-      toast.success("NFTs boosted successfully!");
-      router.push("/Home");
+      toast.success("Card(s) boosted successfully!");
     } else {
-      toast.error("Failed to boost NFTs!");
+      toast.error("Failed to boost Card(s)!");
     }
     setIsNFTBoostProcessing(false);
+    onClose();
   };
 
   const handlePlayWithTicket = async () => {
@@ -112,28 +84,26 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             Are you ready to boost your NFTs in this jackpot?
           </p>
 
-          {nftsToDisplay.length > 0 ? (
-            <div className="mb-6 w-full">
-              <div className="flex items-center mb-2 justify-end">
-                <button
-                  onClick={handlePurchaseNFT}
-                  className="bg-purple-500 hover:bg-purple-400 px-2 rounded-lg text-white uppercase"
-                >
-                  buy card(s)
-                </button>
-              </div>
-              <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
-                <NFTBoostCard nftName="diamond" />
-                <NFTBoostCard nftName="platinum" />
-                <NFTBoostCard nftName="gold" />
-                <NFTBoostCard nftName="silver" />
-                <NFTBoostCard nftName="bronze" />
-                <NFTBoostCard nftName="iron" />
-              </div>
+          <div className="mb-6 w-full">
+            <div className="flex items-center mb-2 justify-end">
+              <button
+                onClick={handlePurchaseNFT}
+                className="bg-purple-500 hover:bg-purple-400 px-2 rounded-lg text-white uppercase"
+              >
+                buy card(s)
+              </button>
             </div>
-          ) : (
-            <p className="text-center mb-6 text-white">You don’t own any NFTs yet.</p>
-          )}
+            <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
+              {["diamond", "platinum", "gold", "silver", "bronze", "iron"].map((nftName) => (
+                <NFTBoostCard
+                  key={nftName}
+                  nftName={nftName}
+                  userNFTs={appData.userNFTs}
+                  setSelectedNFTs={setSelectedNFTs}
+                />
+              ))}
+            </div>
+          </div>
 
           <div className="w-full flex flex-col gap-3">
             <button
