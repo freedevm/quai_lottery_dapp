@@ -58,15 +58,6 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
     );
   };
 
-  // Handle "Select All" toggle
-  const handleSelectAll = () => {
-    if (isSelectAll) {
-      setSelectedNFTs([]); // Deselect all
-    } else {
-      setSelectedNFTs(nftsToDisplay.map((nft) => nft.id)); // Select all
-    }
-  };
-
   const handleNFTBoost = async () => {
     if (!jackpotId) {
       toast.error("Jackpot ID is missing!");
@@ -74,7 +65,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
     }
 
     if (selectedNFTs.length === 0) {
-      toast.error("Please select at least one NFT to boost!");
+      toast.error("Please select at least one Card to boost!");
       return;
     }
 
@@ -128,7 +119,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                   onClick={handlePurchaseNFT}
                   className="bg-purple-500 hover:bg-purple-400 px-2 rounded-lg text-white uppercase"
                 >
-                  purchase card
+                  buy card(s)
                 </button>
               </div>
               <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
@@ -152,7 +143,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                 isNFTBoostProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isNFTBoostProcessing ? "processing..." : "yes, by card boost"}
+              {isNFTBoostProcessing ? "processing..." : "yes, boost card(s)"}
             </button>
             <button
               onClick={handlePlayWithTicket}
@@ -161,7 +152,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                 isPlayTicketProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isPlayTicketProcessing ? "processing..." : "no, by one ticket"}
+              {isPlayTicketProcessing ? "processing..." : "no, buy one ticket"}
             </button>
             <button
               onClick={onClose}

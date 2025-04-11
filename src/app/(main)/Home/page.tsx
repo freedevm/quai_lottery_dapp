@@ -85,8 +85,8 @@ export default function Page() {
       participants: [],
     },
     progressive: {
-      amount: 435.05,
-      targetAmount: 1000,
+      amount: 43.05,
+      targetAmount: 100,
       isSpinning: false,
       winner: null,
       isActive: true,
