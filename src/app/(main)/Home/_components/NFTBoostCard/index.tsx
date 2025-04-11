@@ -9,7 +9,7 @@ export default function NFTBoostCard ({nftName}: Props) {
         <div
             role="button"
             tabIndex={0}
-            className="bg-purple-700 rounded-lg flex flex-col items-center relative cursor-pointer"
+            className="bg-purple-700 rounded-lg flex flex-col items-center relative cursor-pointer pb-1"
         >
             <div className="w-full h-28 relative rounded-md mb-2 overflow-hidden">
                 <Image
