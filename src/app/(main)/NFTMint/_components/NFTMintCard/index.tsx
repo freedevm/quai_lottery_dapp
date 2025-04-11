@@ -108,12 +108,12 @@ export default function NFTMintCard() {
       </div>
 
       <div className="flex flex-col">
-        <NFTMintItem nftName='DIAMOND' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='PLATINUM' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='GOLDEN' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='SILVER' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='BRONZE' handleCountChange={handleCountChange} />
-        <NFTMintItem nftName='IRON' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='diamond' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='platinum' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='gold' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='silver' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='bronze' handleCountChange={handleCountChange} />
+        <NFTMintItem nftName='iron' handleCountChange={handleCountChange} />
       </div>
     </div>
   );
