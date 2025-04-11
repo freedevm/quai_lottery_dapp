@@ -74,7 +74,7 @@ export default function ProgressiveJackpot({
     <div className="text-center mb-8 sm:mb-10 md:mb-12">
       {/* Title */}
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-        1,000 ETH Progressive Mega Jackpot
+        100 ETH Progressive Mega Jackpot
         <Tooltip>
           <span className="inline-block ml-1 sm:ml-2 align-middle cursor-help">
             <svg

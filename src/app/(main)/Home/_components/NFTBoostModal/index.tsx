@@ -58,15 +58,6 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
     );
   };
 
-  // Handle "Select All" toggle
-  const handleSelectAll = () => {
-    if (isSelectAll) {
-      setSelectedNFTs([]); // Deselect all
-    } else {
-      setSelectedNFTs(nftsToDisplay.map((nft) => nft.id)); // Select all
-    }
-  };
-
   const handleNFTBoost = async () => {
     if (!jackpotId) {
       toast.error("Jackpot ID is missing!");
