@@ -1,4 +1,3 @@
-// app/(main)/Home/_components/JackpotCard.tsx
 import { ReactNode, useContext } from "react";
 import { AppContext } from "@/lib/providers/AppContextProvider";
 import { Address, JackpotState } from "@/lib/types/lottery";
