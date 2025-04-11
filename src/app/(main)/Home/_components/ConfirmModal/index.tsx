@@ -72,13 +72,13 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
                   onClick={handlePlayWithTicket}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
                 >
-                  {isPlayTicketProcessing ? "processing..." : "by one ticket"}
+                  {isPlayTicketProcessing ? "processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={handleShowNFTBoostModal}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
                 >
-                  by card boost
+                  boost card(s)
                 </button>
                 <button
                   onClick={onClose}
@@ -99,19 +99,19 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
                   onClick={handlePlayWithTicket}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
                 >
-                  {isPlayTicketProcessing ? "Processing..." : "BY ONE TICKET"}
+                  {isPlayTicketProcessing ? "Processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={handlePurchaseNFT}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
                 >
-                  PURCHASE CARD
+                  buy card(s)
                 </button>
                 <button
                   onClick={onClose}
                   className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white"
                 >
-                  CANCEL
+                  cancel
                 </button>
               </div>
             </>

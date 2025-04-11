@@ -1,16 +1,10 @@
-// app/(main)/NFTBoost/_components/NFTMintCard.tsx
 'use client';
 
 import { useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import NumberCounter from '../NumberCounter';
 import { AppContext } from '@/lib/providers/AppContextProvider';
 
-import nftImage1 from './assets/01.jpg';
-import nftImage2 from './assets/02.jpg';
-import nftImage3 from './assets/03.jpg';
 import { toast } from 'react-toastify';
-import Image from 'next/image';
 import NFTMintItem from '../NFTMintItem';
 
 export default function NFTMintCard() {
@@ -19,8 +13,6 @@ export default function NFTMintCard() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // const [currentNFTImage, setCurrentNFTImage] = useState<string>('');
   const router = useRouter();
-
-  const mockNFTImages = [nftImage1, nftImage2, nftImage3];
 
   // Calculate max mintable NFTs based on balance (assuming 0.01 ETH per NFT)
   const nftPrice = 0.01; // ETH per NFT
@@ -92,13 +84,13 @@ export default function NFTMintCard() {
           <button
             onClick={handlePlayWithTicket}
             disabled={isLoading || data.userTickets < 1}
-            className={`w-full sm:w-auto px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
+            className={`uppercase w-full sm:w-auto px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
               isLoading || data.userTickets < 1
                 ? 'bg-purple-400 cursor-not-allowed'
                 : 'bg-purple-600 hover:bg-purple-700 active:bg-purple-800'
             }`}
           >
-            {isLoading ? 'Processing...' : 'Play with One Ticket'}
+            {isLoading ? 'Processing...' : 'buy one ticket'}
           </button>
         </div>
         <div className="flex items-center gap-3">
