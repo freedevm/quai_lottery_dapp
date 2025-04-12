@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 @layer components {
-  .horizontal-possitive-crossing {
-    @apply animate-horizontal-possitive-crossing;
+  .vertical-title-possitive-crossing {
+    @apply animate-vertical-title-possitive-crossing;
   }
-  .horizontal-negative-crossing {
-    @apply animate-horizontal-negative-crossing;
+  .vertical-title-negative-crossing {
+    @apply animate-vertical-title-negative-crossing;
   }
   .vertical-possitive-crossing {
     @apply animate-vertical-possitive-crossing;
