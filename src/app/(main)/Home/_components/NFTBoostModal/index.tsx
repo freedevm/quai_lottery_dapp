@@ -77,9 +77,9 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[110] overflow-y-auto">
-      <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4">
+      <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4 animate-glare">
         <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-4 text-white uppercase">card boost</h2>
+          <h2 className="text-2xl font-bold mb-4 text-white uppercase animate-text-glare">card boost</h2>
           <p className="text-center mb-6 text-white">
             Are you ready to boost your NFTs in this jackpot?
           </p>
@@ -88,7 +88,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <div className="flex items-center mb-2 justify-end">
               <button
                 onClick={handlePurchaseNFT}
-                className="bg-purple-500 hover:bg-purple-400 px-2 rounded-lg text-white uppercase"
+                className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-2 rounded-lg text-white uppercase animate-glare"
               >
                 buy card(s)
               </button>
@@ -109,7 +109,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <button
               onClick={handleNFTBoost}
               disabled={isNFTBoostProcessing}
-              className={`bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase ${
+              className={`animate-glare bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-2 rounded-lg text-white uppercase ${
                 isNFTBoostProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -118,7 +118,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <button
               onClick={handlePlayWithTicket}
               disabled={isPlayTicketProcessing}
-              className={`bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase ${
+              className={`bg-orange-500 hover:bg-orange-400 active:bg-orange-600 px-4 py-2 rounded-lg text-white uppercase ${
                 isPlayTicketProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -126,7 +126,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             </button>
             <button
               onClick={onClose}
-              className="bg-purple-500 hover:bg-purple-400 px-4 py-2 rounded-lg text-white uppercase"
+              className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
             >
               cancel
             </button>

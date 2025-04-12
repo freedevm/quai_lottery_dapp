@@ -170,7 +170,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         userAddress: account.address,
         userBalance: balanceData?.formatted || "0",
         isWalletConnected: true,
-        isNFTHolder: data.userNFTCount > 0,
+        isNFTHolder: true,
+        // isNFTHolder: data.userNFTCount > 0,
       });
     } else {
       setData({

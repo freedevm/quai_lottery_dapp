@@ -97,8 +97,8 @@ export default function NFTMints() {
             disabled={isLoading || data.userTickets < 1}
             className={`uppercase w-full sm:w-auto px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
               isLoading || data.userTickets < 1
-                ? "bg-purple-400 cursor-not-allowed"
-                : "bg-purple-600 hover:bg-purple-700 active:bg-purple-800"
+                ? "bg-orange-400 cursor-not-allowed"
+                : "bg-orange-500 hover:bg-orange-400 active:bg-orange-600"
             }`}
           >
             {isLoading ? "Processing..." : "buy one ticket - 0.05 eth"}

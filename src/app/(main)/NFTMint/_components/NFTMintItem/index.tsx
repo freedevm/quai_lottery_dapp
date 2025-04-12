@@ -30,7 +30,7 @@ export default function NFTMintItem({
 
   return (
     <div className="w-full mx-auto p-4">
-      <div className="bg-purple-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row">
+      <div className="bg-purple-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row animate-glare">
         {/* Image Container */}
         <div className="relative w-full sm:w-[300px] h-64 shrink-0">
           <Image
@@ -49,7 +49,7 @@ export default function NFTMintItem({
         {/* Content Container */}
         <div className="flex-1 p-4 flex flex-col">
           {/* NFT Info - Top */}
-            <h3 className="text-lg font-semibold text-white truncate uppercase">
+            <h3 className="text-lg font-semibold text-white truncate uppercase animate-text-glare">
               {data.name} card
             </h3>
             <h3 className="text-md font-semibold text-white uppercase">
@@ -74,7 +74,7 @@ export default function NFTMintItem({
             <button
               onClick={onMint}
               disabled={isLoading}
-              className="w-full max-w-xs px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-500 active:bg-purple-700 disabled:bg-purple-400 disabled:cursor-not-allowed transition-all duration-200"
+              className="animate-glare w-full max-w-xs px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-400 active:bg-red-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? "Processing..." : "Mint"}
             </button>
