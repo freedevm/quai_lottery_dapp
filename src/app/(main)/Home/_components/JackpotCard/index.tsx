@@ -94,7 +94,7 @@ export default function JackpotCard({
             <button
               onClick={onPlay}
               disabled={true}
-              style={{ backgroundColor: "#9f7aea" }}
+              style={buttonStyle}
               className="uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 cursor-not-allowed animate-glare"
             >
               play now
