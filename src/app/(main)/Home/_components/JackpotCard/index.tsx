@@ -2,7 +2,6 @@ import { ReactNode, useContext } from "react";
 import { AppContext } from "@/lib/providers/AppContextProvider";
 import { Address, JackpotState } from "@/lib/types/lottery";
 import Image from "next/image";
-import "./style.scss";
 
 interface TooltipProps {
   children: ReactNode;
@@ -19,11 +18,11 @@ interface JackpotCardProps extends JackpotState {
 function Tooltip({ children }: TooltipProps) {
   return (
     <div className="relative w-full group inline-block">
-      {children}
-      <div className="opacity-0 bg-purple-900 text-white text-xs sm:text-sm rounded-lg py-2 px-3 absolute z-10 top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 sm:w-64 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
+      <div className="opacity-0 bg-purple-900 text-white text-xs sm:text-sm rounded-lg py-2 px-3 absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mt-2 w-48 sm:w-64 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
         You must connect your wallet to play
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-8 border-transparent border-b-purple-900"></div>
       </div>
+      {children}
     </div>
   );
 }

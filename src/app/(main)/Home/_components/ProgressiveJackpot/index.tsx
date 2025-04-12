@@ -58,6 +58,18 @@ function Tooltip({ children }: TooltipProps) {
   );
 }
 
+function WalletConnectTooltip({ children }: TooltipProps) {
+  return (
+    <div className="relative w-full group inline-block">
+      <div className="opacity-0 bg-purple-900 text-white text-xs sm:text-sm rounded-lg py-2 px-3 absolute z-10 top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 sm:w-64 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
+        You must connect your wallet to play
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-8 border-transparent border-b-purple-900"></div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 export default function ProgressiveJackpot({
   amount,
   targetAmount,
@@ -70,10 +82,25 @@ export default function ProgressiveJackpot({
   const { data: appData } = useContext(AppContext);
   const isWalletConnected = appData.isWalletConnected;
 
+  // Calculate progress percentage
+  const percentage = Math.min((amount / targetAmount) * 100, 100);
+
+  // Determine color based on percentage
+  const getColor = (percent: number) => {
+    if (percent <= 30) return "#22c55e"; // green-500
+    else if (percent <= 60) return "#eab308"; // yellow-500
+    else if (percent <= 90) return "#f97316"; // orange-500
+    else return "#ef4444"; // red-500
+  };
+  const color = getColor(percentage);
+
+  // Define button style
+  const buttonStyle = { background: `linear-gradient(to right, ${color} ${percentage}%, #ccc ${percentage}%)` }; // Enabled state: progress gradient
+
   return (
     <div className="text-center mb-8 sm:mb-10 md:mb-12">
       {/* Title */}
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
         100 ETH Progressive Mega Jackpot
         <Tooltip>
           <span className="inline-block ml-1 sm:ml-2 align-middle cursor-help">
@@ -93,32 +120,27 @@ export default function ProgressiveJackpot({
         </Tooltip>
       </h1>
 
-      {/* Amount */}
-      <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-purple-400 mb-3 sm:mb-4">
-        {amount.toLocaleString()} ETH
-      </div>
-
-      {/* Progress Bar */}
-      <div className="w-full h-6 sm:h-8 bg-purple-900 rounded-full mb-6 sm:mb-8 overflow-hidden">
-        <div
-          className="h-full bg-purple-500 transition-all duration-300"
-          style={{ width: `${(amount / targetAmount) * 100}%` }}
-        />
-      </div>
-
-      {/* Play Button */}
-      <button
-        onClick={onPlay}
-        disabled={disabled || isSpinning}
-        className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
-          disabled || isSpinning
-            ? "bg-purple-400 cursor-not-allowed"
-            : "bg-purple-500 hover:bg-purple-600"
-        }`}
-        aria-label="Participate in the Progressive Mega Jackpot"
+      <div
+        style={buttonStyle}
+        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase my-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 animate-glare"
       >
-        {isSpinning ? "Spinning..." : "Investor Inquiry"}
-      </button>
+        {amount.toLocaleString()} eth
+      </div>
+
+      <WalletConnectTooltip>
+        <button
+          onClick={onPlay}
+          disabled={disabled || isSpinning}
+          className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
+            disabled || isSpinning
+              ? "bg-purple-400 cursor-not-allowed"
+              : "bg-purple-500 hover:bg-purple-600"
+          }`}
+          aria-label="Participate in the Progressive Mega Jackpot"
+        >
+          {isSpinning ? "Spinning..." : "Investor Inquiry"}
+        </button>
+      </WalletConnectTooltip>
 
       {/* Cycling Addresses */}
       <CyclingAddresses

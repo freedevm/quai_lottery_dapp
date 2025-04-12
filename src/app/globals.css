@@ -173,3 +173,23 @@ body {
   scrollbar-gutter: stable both-edges;
   min-height: var(--app-height);
 }
+
+@keyframes text-glare {
+  0% { text-shadow: 0 0 5px #fff; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
+  100% { text-shadow: 0 0 5px #fff; }
+}
+
+@keyframes glare {
+  0% { box-shadow: 0 0 5px #fff; }
+  50% { box-shadow: 0 0 10px #fff, 0 0 20px #fff; }
+  100% { box-shadow: 0 0 5px #fff; }
+}
+
+.animate-text-glare {
+  animation: text-glare 2s infinite;
+}
+
+.animate-glare {
+  animation: glare 2s infinite;
+}
