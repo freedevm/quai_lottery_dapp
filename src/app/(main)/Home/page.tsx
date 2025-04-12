@@ -228,7 +228,7 @@ export default function Page() {
   }
 
   return (
-    <div className="h-full max-h-full overflow-y-auto p-3 sm:p-4 md:p-6">
+    <div className="h-full max-h-full p-3 sm:p-4 md:p-6">
       {showConfirmModal && (
         <ConfirmModal
           isOpen={showConfirmModal}
