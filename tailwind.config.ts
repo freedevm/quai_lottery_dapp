@@ -19,14 +19,14 @@ const config: Config = {
       colors: {},
       keyframes: {
         verticalTitlePossitiveCrossing: {
-          "0%": { transform: "translateY(600%)" },
-          "60%": { transform: "translateY(600%)" },
+          "0%": { transform: "translateY(1000%)" },
+          "60%": { transform: "translateY(1000%)" },
           "80%": { transform: "translateY(0%)" },
           "100%": { transform: "translateY(0%)" },
         },
         verticalTitleNegativeCrossing: {
-          "0%": { transform: "translateY(-600%)" },
-          "60%": { transform: "translateY(-600%)" },
+          "0%": { transform: "translateY(-1000%)" },
+          "60%": { transform: "translateY(-1000%)" },
           "80%": { transform: "translateY(0%)" },
           "100%": { transform: "translateY(0%)" },
         },
