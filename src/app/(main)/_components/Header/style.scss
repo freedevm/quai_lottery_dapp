@@ -1,7 +1,7 @@
 .header-button {
-  @apply rounded-full overflow-hidden flex justify-center items-center opacity-50 hover:bg-[--footer-selection-color] hover:text-[#000000] transition-all duration-100 ease-in px-2 py-1 xl:px-4 xl:py-2;
+  @apply overflow-hidden flex justify-center items-center hover:bg-purple-300 hover:text-purple-800 transition-all duration-100 ease-in px-2 xl:px-4;
 
   &[data-selected="true"] {
-    @apply bg-[--footer-selection-color] opacity-100 text-[#000000];
+    @apply border-b-5 border-white text-purple-800 bg-purple-300;
   }
 }

@@ -18,17 +18,17 @@ const config: Config = {
       },
       colors: {},
       keyframes: {
-        horizontalPossitiveCrossing: {
-          "0%": { transform: "translateX(-600%)" },
-          "60%": { transform: "translateX(-600%)" },
-          "90%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(0%)" },
+        verticalTitlePossitiveCrossing: {
+          "0%": { transform: "translateY(600%)" },
+          "60%": { transform: "translateY(600%)" },
+          "80%": { transform: "translateY(0%)" },
+          "100%": { transform: "translateY(0%)" },
         },
-        horizontalNegativeCrossing: {
-          "0%": { transform: "translateX(600%)" },
-          "60%": { transform: "translateX(600%)" },
-          "90%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(0%)" },
+        verticalTitleNegativeCrossing: {
+          "0%": { transform: "translateY(-600%)" },
+          "60%": { transform: "translateY(-600%)" },
+          "80%": { transform: "translateY(0%)" },
+          "100%": { transform: "translateY(0%)" },
         },
         verticalPossitiveCrossing: {
           "0%": { transform: "translateY(-150%)" },
@@ -97,10 +97,10 @@ const config: Config = {
         },
       },
       animation: {
-        "horizontal-possitive-crossing":
-          "horizontalPossitiveCrossing 5s ease-in-out ",
-        "horizontal-negative-crossing":
-          "horizontalNegativeCrossing 5s ease-in-out ",
+        "vertical-title-possitive-crossing":
+          "verticalTitlePossitiveCrossing 5s ease-in-out ",
+        "vertical-title-negative-crossing":
+          "verticalTitleNegativeCrossing 5s ease-in-out ",
         "vertical-possitive-crossing":
           "verticalPossitiveCrossing 5s ease-in-out ",
         "vertical-negative-crossing":

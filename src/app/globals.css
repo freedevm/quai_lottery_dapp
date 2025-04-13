@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 @layer components {
-  .horizontal-possitive-crossing {
-    @apply animate-horizontal-possitive-crossing;
+  .vertical-title-possitive-crossing {
+    @apply animate-vertical-title-possitive-crossing;
   }
-  .horizontal-negative-crossing {
-    @apply animate-horizontal-negative-crossing;
+  .vertical-title-negative-crossing {
+    @apply animate-vertical-title-negative-crossing;
   }
   .vertical-possitive-crossing {
     @apply animate-vertical-possitive-crossing;
@@ -172,4 +172,24 @@ body {
   background: "#1f1f1f";
   scrollbar-gutter: stable both-edges;
   min-height: var(--app-height);
+}
+
+@keyframes text-glare {
+  0% { text-shadow: 0 0 5px #fff; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
+  100% { text-shadow: 0 0 5px #fff; }
+}
+
+@keyframes glare {
+  0% { box-shadow: 0 0 5px #fff; }
+  50% { box-shadow: 0 0 10px #fff, 0 0 20px #fff; }
+  100% { box-shadow: 0 0 5px #fff; }
+}
+
+.animate-text-glare {
+  animation: text-glare 2s infinite;
+}
+
+.animate-glare {
+  animation: glare 2s infinite;
 }

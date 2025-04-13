@@ -12,27 +12,24 @@ export default function ConnectButton() {
   const { address, isConnected } = useAccount();
 
   return (
-    <>
-      {isConnected ? (
-        <div className="flex gap-2 items-center px-2 text-green-500">
-          <span style={{ color: "#FFF" }}>
-            <FontAwesomeIcon icon={faWallet} />
-          </span>
-          <span
-            className="text-xs px-3 py-1 rounded-lg font-semibold text-[#FFF]"
-            onClick={() => open({ view: "Account" })}
-          >
-            {truncateAddress(address)}
-          </span>
-        </div>
-      ) : (
-        <button
-          onClick={() => open()}
-          className="bg-[--primary-color] text-[--text-color] text-xs px-3 py-1 font-semibold"
+    <div className="flex gap-1 items-center px-2 text-green-500 uppercase">
+      <span style={{ color: "#FFF" }}>
+        <FontAwesomeIcon icon={faWallet} />
+      </span>
+      {isConnected ?
+        <span
+          className="text-xs px-3 py-1 rounded-lg font-semibold text-[#FFF]"
+          onClick={() => open({ view: "Account" })}
         >
-          Connect Wallet
-        </button>
-      )}
-    </>
+          {truncateAddress(address)}
+        </span> :
+        <span
+          className="text-xs py-1 rounded-lg font-semibold text-[#FFF]"
+          onClick={() => open()}
+        >
+          connect wallet
+        </span>
+      }
+    </div>
   );
 }

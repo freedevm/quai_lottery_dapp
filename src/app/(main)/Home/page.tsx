@@ -8,11 +8,15 @@ import { AppContext } from "@/lib/providers/AppContextProvider";
 import { Address, JackpotState, Jackpots } from "@/lib/types/lottery";
 import NFTBoostModal from "./_components/NFTBoostModal";
 import { setEngine } from "crypto";
+import Image from "next/image";
+import { carouselImages } from "@/lib/constants/carouselImages";
+import ImageCarousel from "../_components/ImageCarousel";
 
 export default function Page() {
   // Access wallet connection status from AppContext
   const { data: appData } = useContext(AppContext);
   const isWalletConnected = appData.isWalletConnected;
+  console.log("### app data => ", appData)
 
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [showNFTBoostModal, setShowNFTBoostModal] = useState<boolean>(false);
@@ -227,8 +231,10 @@ export default function Page() {
     setShowNFTBoostModal(false);
   }
 
+  
+
   return (
-    <div className="h-full max-h-full overflow-y-auto p-3 sm:p-4 md:p-6">
+    <div className="h-full max-h-full">
       {showConfirmModal && (
         <ConfirmModal
           isOpen={showConfirmModal}
@@ -245,40 +251,45 @@ export default function Page() {
         />
       )}
       <div className="space-y-6">
-        {/* Progressive Jackpot Section */}
-        <ProgressiveJackpot
-          {...jackpots.progressive}
-          onPlay={() => simulatePlay("progressive")}
-          participants={jackpots.progressive.participants}
-          disabled={buttonDisabled} // Disable if wallet is not connected
-        />
+        {/* Image Carousel */}
+        <ImageCarousel carouselImages={carouselImages} />
 
-        {/* Jackpot Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <JackpotCard
-            title={`${jackpots.small.targetAmount} ETH Jackpot`}
-            {...jackpots.small}
-            onPlay={() => toggleConfirmModal("small")}
-            participants={jackpots.small.participants}
+        {/* Progressive Jackpot Section */}
+        <div className="p-3 sm:p-4 md:p-6">
+          <ProgressiveJackpot
+            {...jackpots.progressive}
+            onPlay={() => simulatePlay("progressive")}
+            participants={jackpots.progressive.participants}
             disabled={buttonDisabled}
-            jackpotId="small"
           />
-          <JackpotCard
-            title={`${jackpots.medium.targetAmount} ETH Jackpot`}
-            {...jackpots.medium}
-            onPlay={() => toggleConfirmModal("medium")}
-            participants={jackpots.medium.participants}
-            disabled={buttonDisabled}
-            jackpotId="medium"
-          />
-          <JackpotCard
-            title={`${jackpots.large.targetAmount} ETH Jackpot`}
-            {...jackpots.large}
-            onPlay={() => toggleConfirmModal("large")}
-            participants={jackpots.large.participants}
-            disabled={buttonDisabled}
-            jackpotId="large"
-          />
+
+          {/* Jackpot Cards Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <JackpotCard
+              title={`${jackpots.small.targetAmount} ETH Jackpot`}
+              {...jackpots.small}
+              onPlay={() => toggleConfirmModal("small")}
+              participants={jackpots.small.participants}
+              disabled={buttonDisabled}
+              jackpotId="01"
+            />
+            <JackpotCard
+              title={`${jackpots.medium.targetAmount} ETH Jackpot`}
+              {...jackpots.medium}
+              onPlay={() => toggleConfirmModal("medium")}
+              participants={jackpots.medium.participants}
+              disabled={buttonDisabled}
+              jackpotId="02"
+            />
+            <JackpotCard
+              title={`${jackpots.large.targetAmount} ETH Jackpot`}
+              {...jackpots.large}
+              onPlay={() => toggleConfirmModal("large")}
+              participants={jackpots.large.participants}
+              disabled={buttonDisabled}
+              jackpotId="03"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -32,7 +32,7 @@ export default function PreLoading({
 
         <div className="absolute w-full h-full flex items-center justify-center">
           <div>
-            <span className="font-normal text-purple-500 text-[51.85px] leading-[38.77px] font-[IntegralCF] fade-in-out">
+            <span className="font-normal text-purple-500 text-[51.85px] leading-[38.77px] font-[Inter] fade-in-out">
               MEGA JACKPOT
             </span>
           </div>
@@ -58,11 +58,11 @@ export default function PreLoading({
 
         <div className=" absolute w-full h-full">
           <div className=" h-full  flex items-center justify-center">
-            <div className="text-center font-[IntegralCF]">
-              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] italic horizontal-negative-crossing">
+            <div className="text-center font-[Inter]">
+              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] italic vertical-title-negative-crossing">
                 ETHEREUM
               </p>
-              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] italic horizontal-possitive-crossing">
+              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] italic vertical-title-possitive-crossing">
                 LOTTERY
               </p>
             </div>
