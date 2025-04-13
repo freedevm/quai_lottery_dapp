@@ -271,7 +271,7 @@ export default function Page() {
               onPlay={() => toggleConfirmModal("small")}
               participants={jackpots.small.participants}
               disabled={buttonDisabled}
-              jackpotId="small"
+              jackpotId="01"
             />
             <JackpotCard
               title={`${jackpots.medium.targetAmount} ETH Jackpot`}
@@ -279,7 +279,7 @@ export default function Page() {
               onPlay={() => toggleConfirmModal("medium")}
               participants={jackpots.medium.participants}
               disabled={buttonDisabled}
-              jackpotId="medium"
+              jackpotId="02"
             />
             <JackpotCard
               title={`${jackpots.large.targetAmount} ETH Jackpot`}
@@ -287,7 +287,7 @@ export default function Page() {
               onPlay={() => toggleConfirmModal("large")}
               participants={jackpots.large.participants}
               disabled={buttonDisabled}
-              jackpotId="large"
+              jackpotId="03"
             />
           </div>
         </div>

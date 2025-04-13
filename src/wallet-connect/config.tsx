@@ -14,11 +14,12 @@ const metadata = {
   name: "Ethereum Lottery",
   description: "Ethereum Mega Jackpot",
   url: env.WALLET_CONNECT_ORIGIN!, // origin must match your domain & subdomain
-  icons: ["https://eth-lottery-game.vercel.app/tab_logo.png"],
+  icons: ["https://ipfs.io/ipfs/bafybeidm6vl3azmfjth4lbhpfctw7zxxwxg7dpt76vx5dvusmzquwc3gnm"],
 };
 
 // Create wagmiConfig
 const chains = [mainnet, sepolia] as const;
+
 export const config = defaultWagmiConfig({
   chains,
   projectId,

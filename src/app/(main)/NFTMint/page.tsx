@@ -89,7 +89,7 @@ export default function NFTMints() {
   };
 
   return (
-    <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-3 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
+    <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-5 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
       <div className="flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-6 mb-4 px-4">
         <div className="flex items-center justify-start sm:justify-end">
           <button

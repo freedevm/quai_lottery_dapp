@@ -33,7 +33,7 @@ export default function ImageCarousel ({carouselImages}: CarouselProps) {
     };
 
     return (
-        <div className="relative h-[300px] sm:h-[450px] md:h-[600px] w-full overflow-hidden">
+        <div className="relative h-[300px] sm:h-[500px] md:h-[700px] w-full overflow-hidden">
           <div className="relative w-full h-full">
             {carouselImages.map((src, index) => (
               <div

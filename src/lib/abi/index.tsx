@@ -5,5 +5,5 @@ import lotterySettingAbi from "./LotterySetting.json";
 export namespace ABI {
     export const lotteryGame = lotteryGameAbi;
     export const lotteryGameNFTCard = lotteryGameNFTCardAbi;
-    export const LotterySetting = lotterySettingAbi;
+    export const lotterySetting = lotterySettingAbi;
 }

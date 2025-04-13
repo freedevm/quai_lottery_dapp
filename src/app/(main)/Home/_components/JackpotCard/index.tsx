@@ -15,6 +15,8 @@ interface JackpotCardProps extends JackpotState {
   jackpotId: string;
 }
 
+const imageFolder = "https://ipfs.io/ipfs/bafybeiclfbxuz3qeb5mevmxkzho6lznqguqt4pg3u5ihmsqcoxdon4odya/"
+
 function Tooltip({ children }: TooltipProps) {
   return (
     <div className="relative w-full group inline-block">
@@ -34,7 +36,6 @@ export default function JackpotCard({
   isSpinning,
   winner,
   isActive,
-  isFirstCycle,
   participants,
   onPlay,
   disabled = false,
@@ -62,10 +63,15 @@ export default function JackpotCard({
     : { background: `linear-gradient(to right, ${color} ${percentage}%, #ccc ${percentage}%)` }; // Enabled state: progress gradient
 
   return (
-    <div className="w-full bg-purple-800 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl max-w-sm mx-auto">
+    <div className="w-full bg-purple-800 rounded-lg shadow-xl/20 transition-all duration-300 hover:shadow-xl/30 max-w-sm mx-auto">
       {/* Image */}
       <div className="w-full h-0 pb-[100%] relative rounded-lg overflow-hidden mb-4">
-        <Image src="https://ipfs.io/ipfs/bafkreihhgfsvvlowniwumnfygu4faveaxc7j6er4m6gvg3fd3tmskzhcr4" alt={title} layout="fill" objectFit="cover" />
+        <Image
+          src={`${imageFolder}${jackpotId}.jpg`}
+          alt={title}
+          layout="fill" 
+          objectFit="cover" 
+        />
       </div>
 
       {/* Content */}

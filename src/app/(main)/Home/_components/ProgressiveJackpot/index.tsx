@@ -58,18 +58,6 @@ function Tooltip({ children }: TooltipProps) {
   );
 }
 
-function WalletConnectTooltip({ children }: TooltipProps) {
-  return (
-    <div className="relative w-full group inline-block">
-      <div className="opacity-0 bg-purple-900 text-white text-xs sm:text-sm rounded-lg py-2 px-3 absolute z-10 top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 sm:w-64 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
-        You must connect your wallet to play
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-8 border-transparent border-b-purple-900"></div>
-      </div>
-      {children}
-    </div>
-  );
-}
-
 export default function ProgressiveJackpot({
   amount,
   targetAmount,
@@ -79,9 +67,6 @@ export default function ProgressiveJackpot({
   participants,
   disabled = false,
 }: ProgressiveJackpotProps) {
-  const { data: appData } = useContext(AppContext);
-  const isWalletConnected = appData.isWalletConnected;
-
   // Calculate progress percentage
   const percentage = Math.min((amount / targetAmount) * 100, 100);
 
@@ -122,25 +107,23 @@ export default function ProgressiveJackpot({
 
       <div
         style={buttonStyle}
-        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase my-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 animate-glare"
+        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase my-4 w-full py-2 rounded-lg transition-colors duration-200 animate-glare"
       >
         {amount.toLocaleString()} eth
       </div>
 
-      <WalletConnectTooltip>
-        <button
-          onClick={onPlay}
-          disabled={disabled || isSpinning}
-          className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
-            disabled || isSpinning
-              ? "bg-purple-400 cursor-not-allowed"
-              : "bg-purple-500 hover:bg-purple-600"
-          }`}
-          aria-label="Participate in the Progressive Mega Jackpot"
-        >
-          {isSpinning ? "Spinning..." : "Investor Inquiry"}
-        </button>
-      </WalletConnectTooltip>
+      <button
+        onClick={onPlay}
+        disabled={disabled || isSpinning}
+        className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
+          disabled || isSpinning
+            ? "bg-purple-400 cursor-not-allowed"
+            : "bg-purple-500 hover:bg-purple-600"
+        }`}
+        aria-label="Participate in the Progressive Mega Jackpot"
+      >
+        {isSpinning ? "Spinning..." : "Investor Inquiry"}
+      </button>
 
       {/* Cycling Addresses */}
       <CyclingAddresses
