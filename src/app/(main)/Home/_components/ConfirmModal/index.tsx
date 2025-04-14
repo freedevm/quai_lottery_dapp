@@ -59,7 +59,7 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4 animate-glare">
+      <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4">
         <div className="flex flex-col items-center">
           {isNFTHolder ? (
             <>
