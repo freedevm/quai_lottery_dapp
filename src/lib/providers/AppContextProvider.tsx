@@ -24,13 +24,11 @@ interface ContractsMap {
   [chainId: number]: ContractAddresses;
 }
 
-const CONTRACTS: ContractsMap = {
-  11155111: {
-    lottery: "0xddc8f2ef961678c604be9aada94e41e20e598337",
-    nft: "0xce710a9a71a9601da9744b698fc6aa3a758eae4c",
-    setting: "0xde3c7f250c65ae302148a700d2506bb200f7959f",
-  },
-};
+const CONTRACTS = {
+  lottery: "0xddc8f2ef961678c604be9aada94e41e20e598337",
+  nft: "0xce710a9a71a9601da9744b698fc6aa3a758eae4c",
+  setting: "0xde3c7f250c65ae302148a700d2506bb200f7959f"
+}
 
 interface ContextData {
   network: number | null;
@@ -102,24 +100,28 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const getContracts = async () => {
     try {
+      console.log("### hello getContract")
       const provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
+      console.log("### provider", provider)
 
       const lotteryContract = new ethers.Contract(
-        CONTRACTS[chainId as keyof typeof CONTRACTS].lottery,
+        CONTRACTS.lottery,
         ABI.lotteryGame,
         provider,
       );
+
+      console.log("### lottery contract => ", lotteryContract)
       const nftContract = new ethers.Contract(
-        CONTRACTS[chainId as keyof typeof CONTRACTS].nft,
+        CONTRACTS.nft,
         ABI.lotteryGameNFTCard,
         provider,
       );
       const settingContract = new ethers.Contract(
-        CONTRACTS[chainId as keyof typeof CONTRACTS].setting,
+        CONTRACTS.setting,
         ABI.lotterySetting,
         provider,
       );
-  
+
       return { lotteryContract, nftContract, settingContract };
     } catch (error) {
       console.error("Failed to initialize contracts:", error);
@@ -446,7 +448,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         toast.error("Failed to load lottery data");
       }
     })();
-  }, [firstLoad, account.isConnected, walletClient]);
+  }, [firstLoad, account.address, account.isConnected, walletClient]);
 
   // useEffect(() => {
   //   if (!account.isConnected || !CONTRACTS[chainId as keyof typeof CONTRACTS]) {

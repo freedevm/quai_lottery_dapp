@@ -42,7 +42,7 @@ export default function ImageCarousel () {
     }, 3000); // Slide every 3 seconds
 
     return () => clearInterval(interval);
-  }, [isPaused, perView, carouselImages.length]);
+  }, [isPaused, perView]);
 
   const handlePrev = () => {
     setIsPaused(true);
