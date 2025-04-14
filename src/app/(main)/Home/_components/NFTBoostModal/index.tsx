@@ -77,9 +77,9 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[110] overflow-y-auto">
-      <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4 animate-glare">
+      <div className="bg-purple-900 rounded-lg p-6 max-w-lg w-full mx-4">
         <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-4 text-white uppercase animate-text-glare">card boost</h2>
+          <h2 className="text-2xl font-bold mb-4 text-white uppercase">card boost</h2>
           <p className="text-center mb-6 text-white">
             Are you ready to boost your NFTs in this jackpot?
           </p>
