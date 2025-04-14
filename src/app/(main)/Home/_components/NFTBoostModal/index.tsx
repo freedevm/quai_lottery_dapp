@@ -10,7 +10,7 @@ import NFTBoostCard from "../NFTBoostCard";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  jackpotId?: string;
+  jackpotId?: number;
 }
 
 export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps) {

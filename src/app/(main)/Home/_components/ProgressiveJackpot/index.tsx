@@ -16,6 +16,7 @@ interface TooltipProps {
 
 interface ProgressiveJackpotProps extends JackpotState {
   onPlay: () => void;
+  winner: Address | null;
   participants: Address[];
   disabled?: boolean;
 }
@@ -59,16 +60,17 @@ function Tooltip({ children }: TooltipProps) {
 }
 
 export default function ProgressiveJackpot({
-  amount,
-  targetAmount,
-  isSpinning,
+  amount = 0,
+  targetAmount= 100,
+  isSpinning = false,
   winner,
   onPlay,
-  participants,
+  participants = [],
   disabled = false,
 }: ProgressiveJackpotProps) {
   // Calculate progress percentage
-  const percentage = Math.min((amount / targetAmount) * 100, 100);
+  let percentage = 0;
+  if (amount) percentage = Math.min((amount / targetAmount) * 100, 100);
 
   // Determine color based on percentage
   const getColor = (percent: number) => {
@@ -107,9 +109,9 @@ export default function ProgressiveJackpot({
 
       <div
         style={buttonStyle}
-        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase my-4 w-full py-2 rounded-lg transition-colors duration-200 animate-glare"
+        className="text-4xl sm:text-5xl md:text-6xl font-bold text-white uppercase my-4 w-full py-2 rounded-lg transition-colors duration-200"
       >
-        {amount.toLocaleString()} eth
+        {amount ? amount.toLocaleString() : 0} eth
       </div>
 
       <button

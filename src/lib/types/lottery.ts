@@ -4,13 +4,10 @@ export interface Address {
   }
   
 export interface JackpotState {
-    amount: number;
+    amount: number | null;
     targetAmount: number;
     isSpinning: boolean;
-    winner: Address | null;
     isActive: boolean;
-    isFirstCycle: boolean;
-    participants: Address[];
 }
   
 export interface Jackpots {
@@ -21,8 +18,29 @@ export interface Jackpots {
 }
 
 export interface NFT {
-    id: string;
-    name: string; // e.g., "diamond", "platinum", etc.
-    imageUrl: string;
-    count?: number; // Optional count for boosting
+  id: string;
+  name: string;
+  imageUrl: string;
+  boostValue: number;
+  isLocked: boolean;
+}
+
+export interface GameData {
+  gameIndex: number;
+  jackpotSize: number;
+  currentSize: number;
+  status: "started" | "finished" | "calculating" | "rewarded";
+  userTickets: number;
+  players: number;
+  prizePool?: {
+    mainReward: string;
+    randomTenReward: string;
+  };
+}
+
+export interface Card {
+  cardName: string;
+  cardPrice: string;
+  boostValue: number;
+  supplyLimits: number;
 }

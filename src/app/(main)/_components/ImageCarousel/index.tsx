@@ -68,7 +68,7 @@ export default function ImageCarousel () {
         <motion.div
           className="flex"
           animate={{ x: `-${currentIndex * (100 / perView)}%` }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          // transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
           {carouselImages.map((block) => (
             <div
@@ -76,12 +76,12 @@ export default function ImageCarousel () {
               className={`flex-shrink-0 px-4`}
               style={{ width: `${100 / perView}%` }}
             >
-              <div className="relative flex h-40 items-center justify-center rounded-3xl shadow-xl/30 transition-transform duration-300 ease-in-out">
+              <div className="relative flex h-48 items-center justify-center rounded-3xl shadow-xl/30 transition-transform duration-300 ease-in-out">
                 <Image
                   src={block.imageUrl}
                   alt={block.alt}
-                  width={160}
-                  height={160}
+                  width={640}
+                  height={640}
                   className="h-full w-full rounded-3xl object-cover"
                   priority={block.id === '1'} // Optimize first image
                 />

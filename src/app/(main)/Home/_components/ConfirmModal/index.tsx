@@ -9,7 +9,7 @@ import "./style.scss";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  jackpotId?: string; // Add jackpotId to identify which jackpot the user is participating in
+  jackpotId?: number; // Add jackpotId to identify which jackpot the user is participating in
   setShowNFTBoostModal: (value: boolean) => void;
 }
 
@@ -97,19 +97,19 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               <div className="flex gap-3">
                 <button
                   onClick={handlePlayWithTicket}
-                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   {isPlayTicketProcessing ? "Processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={handlePurchaseNFT}
-                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   buy card(s)
                 </button>
                 <button
                   onClick={onClose}
-                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white"
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   cancel
                 </button>

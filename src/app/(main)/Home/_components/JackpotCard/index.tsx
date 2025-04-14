@@ -10,12 +10,12 @@ interface TooltipProps {
 interface JackpotCardProps extends JackpotState {
   title: string;
   onPlay: () => void;
-  participants: Address[];
   disabled?: boolean;
-  jackpotId: string;
+  jackpotId: number;
+  imageIndexes: number[];
 }
 
-const imageFolder = "https://ipfs.io/ipfs/bafybeiclfbxuz3qeb5mevmxkzho6lznqguqt4pg3u5ihmsqcoxdon4odya/"
+const imageFolder = "https://ipfs.io/ipfs/bafybeidt4rnvygim42sxyy4icxyasabzbvoegxbw5ew5ww3lcnggyhyjoa/"
 
 function Tooltip({ children }: TooltipProps) {
   return (
@@ -33,20 +33,20 @@ export default function JackpotCard({
   title,
   amount,
   targetAmount,
-  isSpinning,
-  winner,
+  isSpinning = false,
   isActive,
-  participants,
   onPlay,
   disabled = false,
   jackpotId,
+  imageIndexes,
 }: JackpotCardProps) {
   const { data: appData } = useContext(AppContext);
-  const { participatedJackpots } = appData;
+  const participatedJackpots = appData.participatedGames;
   const hasParticipated = participatedJackpots.includes(jackpotId);
 
   // Calculate progress percentage
-  const percentage = Math.min((amount / targetAmount) * 100, 100);
+  let percentage = 0;
+  if(amount) percentage = Math.min((amount / targetAmount) * 100, 100);
 
   // Determine color based on percentage
   const getColor = (percent: number) => {
@@ -67,7 +67,7 @@ export default function JackpotCard({
       {/* Image */}
       <div className="w-full h-0 pb-[100%] relative rounded-lg overflow-hidden mb-4">
         <Image
-          src={`${imageFolder}${jackpotId}.jpg`}
+          src={`${imageFolder}${imageIndexes[jackpotId - 1]}.jpg`}
           alt={title}
           layout="fill" 
           objectFit="cover" 
@@ -84,15 +84,12 @@ export default function JackpotCard({
           <p className="text-sm sm:text-base text-purple-200">
             Target Amount: <span className="font-semibold text-white">{targetAmount} ETH</span>
           </p>
-          <p className="text-sm sm:text-base text-purple-200">
-            Participants: <span className="font-semibold text-white">{participants.length}</span>
-          </p>
         </div>
-        {winner && (
+        {/* {winner && (
           <p className="mt-3 text-sm sm:text-base text-purple-300">
             Winner: <span className="font-semibold">{winner.address}</span>
           </p>
-        )}
+        )} */}
 
         {/* Play Button */}
         {disabled ? (
