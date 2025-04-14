@@ -7,11 +7,7 @@ import { toast } from "react-toastify";
 import NFTMintItem from "./_components/NFTMintItem";
 import { cards } from "@/lib/constants/ui";
 
-interface NFTMintsProps {
-  jackpotId?: number; // Optional prop
-}
-
-export default function NFTMints({ jackpotId }: NFTMintsProps) {
+export default function NFTMints() {
   const { data, mintNFTs, addParticipation } = useContext(AppContext);
   const [nftCounts, setNftCounts] = useState<number[]>([0,0,0,0,0,0]);
   const [isLoading, setIsLoading] = useState<boolean>(false);

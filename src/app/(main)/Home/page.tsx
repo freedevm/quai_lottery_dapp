@@ -86,10 +86,13 @@ export default function Page() {
         <ProgressiveJackpot
           // {...jackpots.progressive}
           amount={appData.megaJackpot}
-          winner={appData.lastWinner}
+          targetAmount={100}
+          // winner={appData.lastWinner}
           // onPlay={() => simulatePlay("progressive")}
           participants={[]}
           disabled={buttonDisabled}
+          isActive={false}
+          isSpinning={false}
         />
 
         {/* Jackpot Cards Section */}

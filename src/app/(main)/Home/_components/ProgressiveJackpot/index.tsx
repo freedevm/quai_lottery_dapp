@@ -15,8 +15,8 @@ interface TooltipProps {
 }
 
 interface ProgressiveJackpotProps extends JackpotState {
-  onPlay: () => void;
-  winner: Address | null;
+  // onPlay: () => void;
+  // winner: Address | null;
   participants: Address[];
   disabled?: boolean;
 }
@@ -63,8 +63,8 @@ export default function ProgressiveJackpot({
   amount = 0,
   targetAmount= 100,
   isSpinning = false,
-  winner,
-  onPlay,
+  // winner,
+  // onPlay,
   participants = [],
   disabled = false,
 }: ProgressiveJackpotProps) {
@@ -115,7 +115,7 @@ export default function ProgressiveJackpot({
       </div>
 
       <button
-        onClick={onPlay}
+        // onClick={onPlay}
         disabled={disabled || isSpinning}
         className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
           disabled || isSpinning
@@ -128,20 +128,20 @@ export default function ProgressiveJackpot({
       </button>
 
       {/* Cycling Addresses */}
-      <CyclingAddresses
+      {/* <CyclingAddresses
         addresses={participants}
         isSpinning={isSpinning}
         winner={winner}
-      />
+      /> */}
 
       {/* Winner Announcement */}
-      {winner && (
+      {/* {winner && (
         <div className="mt-4 sm:mt-6 text-center">
           <div className="text-lg sm:text-xl font-bold text-yellow-400">
             Winner!
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

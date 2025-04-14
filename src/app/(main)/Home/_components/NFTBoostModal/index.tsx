@@ -44,12 +44,12 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
         count: nft.count,
       }));
 
-    const success = await boostNFTs(jackpotId, nftsToBoost);
-    if (success) {
-      toast.success("Card(s) boosted successfully!");
-    } else {
-      toast.error("Failed to boost Card(s)!");
-    }
+    // const success = await boostNFTs(jackpotId, nftsToBoost);
+    // if (success) {
+    //   toast.success("Card(s) boosted successfully!");
+    // } else {
+    //   toast.error("Failed to boost Card(s)!");
+    // }
     setIsNFTBoostProcessing(false);
     onClose();
   };
