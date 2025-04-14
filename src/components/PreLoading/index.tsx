@@ -59,10 +59,10 @@ export default function PreLoading({
         <div className=" absolute w-full h-full">
           <div className=" h-full  flex items-center justify-center">
             <div className="text-center font-[Inter]">
-              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] italic vertical-title-negative-crossing">
+              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] vertical-title-negative-crossing">
                 ETHEREUM
               </p>
-              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] italic vertical-title-possitive-crossing">
+              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] vertical-title-possitive-crossing">
                 LOTTERY
               </p>
             </div>

@@ -7,16 +7,13 @@ import { toast } from "react-toastify";
 import NFTMintItem from "./_components/NFTMintItem";
 import { cards } from "@/lib/constants/ui";
 
-export default function NFTMints() {
+interface NFTMintsProps {
+  jackpotId?: number; // Optional prop
+}
+
+export default function NFTMints({ jackpotId }: NFTMintsProps) {
   const { data, mintNFTs, addParticipation } = useContext(AppContext);
-  const [nftCounts, setNftCounts] = useState<{ [key: string]: number }>({
-    diamond: 0,
-    platinum: 0,
-    gold: 0,
-    silver: 0,
-    bronze: 0,
-    iron: 0,
-  });
+  const [nftCounts, setNftCounts] = useState<number[]>([0,0,0,0,0,0]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -38,8 +35,15 @@ export default function NFTMints() {
     }
 
     // Calculate total NFTs and cost
-    const totalNfts = Object.values(nftCounts).reduce((sum, count) => sum + count, 0);
-    const totalCost = totalNfts * nftPrice;
+    let totalCost = 0;
+    let totalNfts = 0;
+
+    if (data.cards) {
+      for (let i = 0; i < nftCounts.length; i++) {
+        totalCost += parseFloat(data.cards[i].cardPrice) * nftCounts[i];
+        totalNfts += nftCounts[i];
+      }
+    }
 
     if (totalNfts === 0) {
       toast.error("Please select at least one NFT to mint.");
@@ -52,73 +56,29 @@ export default function NFTMints() {
     }
 
     setIsLoading(true);
-    const nftsToMint = Object.entries(nftCounts)
-      .filter(([_, count]) => count > 0)
-      .map(([name, count]) => ({ name, count }));
 
-    const success = await mintNFTs(nftsToMint);
-    if (success) {
-      toast.success("NFTs minted successfully!");
-      router.push("/Home");
-    } else {
-      toast.error("Failed to mint NFTs!");
-    }
-    setIsLoading(false);
-  };
-
-  const handlePlayWithTicket = async () => {
-    if (!data.isWalletConnected) {
-      toast.error("Please connect your wallet to participate.");
-      return;
-    }
-
-    if (data.userTickets < 1) {
-      toast.error("You need at least 1 ticket to play!");
-      return;
-    }
-
-    setIsLoading(true);
-    const success = await addParticipation(`jackpot-${Date.now()}`);
-    if (success) {
-      toast.success("Added successfully!");
-      router.push("/Home");
-    } else {
-      toast.error("Failed to add participation!");
-    }
+    // const success = await mintNFTs(nftCounts);
+    // if (success) {
+    //   toast.success("NFTs minted successfully!");
+    //   router.push("/Home");
+    // } else {
+    //   toast.error("Failed to mint NFTs!");
+    // }
     setIsLoading(false);
   };
 
   return (
     <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-5 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
-      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-6 mb-4 px-4">
-        <div className="flex items-center justify-start sm:justify-end">
-          <button
-            onClick={handlePlayWithTicket}
-            disabled={isLoading || data.userTickets < 1}
-            className={`uppercase w-full sm:w-auto px-6 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200 ease-in-out ${
-              isLoading || data.userTickets < 1
-                ? "bg-orange-400 cursor-not-allowed"
-                : "bg-orange-500 hover:bg-orange-400 active:bg-orange-600"
-            }`}
-          >
-            {isLoading ? "Processing..." : "buy one ticket - 0.05 eth"}
-          </button>
-        </div>
-        <div className="flex items-center gap-3">
-          <p className="font-semibold text-lg text-white">Balance:</p>
-          <p className="font-bold text-lg text-white">{data.userBalance} ETH</p>
-        </div>
-      </div>
-
       <div className="flex flex-col">
-        {cards.map((card) => (
+        {data.cards && data.cards.map((card) => (
           <NFTMintItem
-            key={card.name}
+            key={card.cardName}
             data={card}
-            handleCountChange={(value: number) => handleCountChange(card.name, value)}
+            handleCountChange={(value: number) => handleCountChange(card.cardName, value)}
             onMint={handleMintClick}
             isLoading={isLoading}
-            maxMintable={5}
+            maxMintable={data.maxMintCount}
+            stockNum={card.supplyLimits}
           />
         ))}
       </div>

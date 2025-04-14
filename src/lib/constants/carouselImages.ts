@@ -1,6 +1,32 @@
 export const carouselImages = [
-    "https://ipfs.io/ipfs/bafkreiftskhef7yhaxeplkxhfe5xz3fctnnydptys6443nxiuan55gi6mq",
-    "https://ipfs.io/ipfs/bafkreifgbib3y4ohq4vlgfdxv2yq5r7k2fjpuayiuen6jqwt2mfr4cjhby", // Add more images as needed
-    "https://ipfs.io/ipfs/bafybeibpgjc2ydhmsi2ampxsc2awaikzeihya2mcgxo4pjk3w6t2npmpw4/003.png", // Add more images as needed
-    "https://ipfs.io/ipfs/bafybeibpgjc2ydhmsi2ampxsc2awaikzeihya2mcgxo4pjk3w6t2npmpw4/002.png",
-  ];
+  {
+    id: '1',
+    imageUrl: 'https://ipfs.io/ipfs/bafybeibz4kq6ljsnn7oqs4v4qqbry4pw4yoqtda4txnxvh2rm4irllyskm/01.png',
+    alt: 'Carousel Image-1',
+  },
+  {
+    id: '2',
+    imageUrl: 'https://ipfs.io/ipfs/bafybeibz4kq6ljsnn7oqs4v4qqbry4pw4yoqtda4txnxvh2rm4irllyskm/02.png',
+    alt: 'Carousel Image-2',
+  },
+  {
+    id: '3',
+    imageUrl: 'https://ipfs.io/ipfs/bafybeibz4kq6ljsnn7oqs4v4qqbry4pw4yoqtda4txnxvh2rm4irllyskm/03.png',
+    alt: 'Carousel Image-3',
+  },
+  {
+    id: '4',
+    imageUrl: 'https://ipfs.io/ipfs/bafybeibz4kq6ljsnn7oqs4v4qqbry4pw4yoqtda4txnxvh2rm4irllyskm/04.png',
+    alt: 'Carousel Image-4',
+  },
+  {
+    id: '5',
+    imageUrl: 'https://ipfs.io/ipfs/bafybeibz4kq6ljsnn7oqs4v4qqbry4pw4yoqtda4txnxvh2rm4irllyskm/05.png',
+    alt: 'Carousel Image-5',
+  },
+  {
+    id: '6',
+    imageUrl: 'https://ipfs.io/ipfs/bafybeibz4kq6ljsnn7oqs4v4qqbry4pw4yoqtda4txnxvh2rm4irllyskm/06.png',
+    alt: 'Carousel Image-6',
+  },
+];

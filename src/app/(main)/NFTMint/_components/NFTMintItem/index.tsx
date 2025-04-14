@@ -3,12 +3,8 @@
 import Image from "next/image";
 import NumberCounter from "../NumberCounter";
 import { cardImages } from "@/lib/constants/cardImages";
-
-interface Card {
-    name: string; // Name of the card/item
-    price?: number; // Optional price for minting
-    ticket?: number;
-}
+import { Card } from "@/lib/types/lottery"
+import { useEffect } from "react";
 
 interface MintItemProps {
   data: Card;
@@ -16,6 +12,7 @@ interface MintItemProps {
   onMint: () => void;
   isLoading: boolean;
   maxMintable: number;
+  stockNum: number;
   description?: string;
 }
 
@@ -25,19 +22,20 @@ export default function NFTMintItem({
   onMint,
   isLoading,
   maxMintable,
+  stockNum,
   description = "Boost your chances with this exclusive NFT card!",
 }: MintItemProps) {
 
   return (
     <div className="w-full mx-auto p-4">
-      <div className="bg-purple-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row animate-glare">
+      <div className="bg-purple-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row">
         {/* Image Container */}
         <div className="relative w-full sm:w-[300px] h-64 shrink-0">
           <Image
-            src={cardImages[data.name]}
-            alt={`${data.name}`}
+            src={cardImages[data.cardName]}
+            alt={`${data.cardName}`}
             fill
-            className="object-cover"
+            objectFit="cover"
             sizes="(max-width: 640px) 100vw, 300px"
             priority
             quality={85}
@@ -50,13 +48,13 @@ export default function NFTMintItem({
         <div className="flex-1 p-4 flex flex-col">
           {/* NFT Info - Top */}
             <h3 className="text-lg font-semibold text-white truncate uppercase animate-text-glare">
-              {data.name} card
+              {data.cardName} card
             </h3>
             <h3 className="text-md font-semibold text-white uppercase">
-                price: {data.price} ETH
+                price: {data.cardPrice} ETH
             </h3>
             <h3 className="text-md font-semibold text-white uppercase">
-              {(maxMintable !== 0) ? `${maxMintable} in stock` : "out of stock"} 
+              {(stockNum !== 0) ? `${stockNum} in stock` : "out of stock"} 
             </h3>
             <p className="text-sm text-gray-300 line-clamp-3">{description}</p>
 
@@ -74,7 +72,7 @@ export default function NFTMintItem({
             <button
               onClick={onMint}
               disabled={isLoading}
-              className="animate-glare w-full max-w-xs px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-400 active:bg-red-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full max-w-xs px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-400 active:bg-red-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? "Processing..." : "Mint"}
             </button>
