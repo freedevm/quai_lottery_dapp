@@ -9,19 +9,6 @@ import { Address, GameData, JackpotState, Jackpots } from "@/lib/types/lottery";
 import NFTBoostModal from "./_components/NFTBoostModal";
 import ImageCarousel from "../_components/ImageCarousel";
 
-const getRandomImageIndexes = (countNumber: number) => {
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const result = [];
-  
-  while (result.length < countNumber) {
-      const randomIndex = Math.floor(Math.random() * numbers.length);
-      const selectedNumber = numbers.splice(randomIndex, 1)[0];
-      result.push(selectedNumber);
-  }
-  
-  return result;
-}
-
 export default function Page() {
   // Access wallet connection status from AppContext
   const { data: appData } = useContext(AppContext);
@@ -33,7 +20,6 @@ export default function Page() {
   const [showNFTBoostModal, setShowNFTBoostModal] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [selectedPotId, setSelectedPotId] = useState<number>(0);
-  const [imageIndexes, setImageIndexes] = useState<number[]>([])
 
   useEffect(() => {
     setButtonDisabled(!isWalletConnected)
@@ -42,10 +28,6 @@ export default function Page() {
   useEffect(() => {
     appData.games.length && setGames(appData.games);
   }, [appData])
-
-  useEffect(() => {
-    if (games.length) setImageIndexes(getRandomImageIndexes(games.length))
-  }, [games])
 
   const toggleConfirmModal = (id: number) => {
     setSelectedPotId(id);
@@ -98,9 +80,7 @@ export default function Page() {
         {/* Jackpot Cards Section */}
         {
           games.length > 0 ? (
-            <div 
-              className={`grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-${games.length > 4 ? 4 : games.length}`}
-            >
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {games.map((game) => (
                 <JackpotCard
                   key={game.gameIndex}
@@ -112,7 +92,6 @@ export default function Page() {
                   disabled={buttonDisabled}
                   isSpinning={false}
                   onPlay={() => toggleConfirmModal(game.gameIndex)}
-                  imageIndexes={imageIndexes}
                 />
               ))}
             </div>
