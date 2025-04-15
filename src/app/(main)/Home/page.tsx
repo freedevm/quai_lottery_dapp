@@ -80,9 +80,7 @@ export default function Page() {
         {/* Jackpot Cards Section */}
         {
           games.length > 0 ? (
-            <div 
-              className={`grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-${games.length > 3 ? 3 : games.length} sm:grid-cols-${games.length > 4 ? 4 : games.length}`}
-            >
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               {games.map((game) => (
                 <JackpotCard
                   key={game.gameIndex}
