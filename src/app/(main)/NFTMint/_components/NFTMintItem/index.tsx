@@ -30,7 +30,7 @@ export default function NFTMintItem({
     <div className="w-full mx-auto p-4">
       <div className="bg-purple-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row">
         {/* Image Container */}
-        <div className="relative w-full sm:w-[300px] h-64 shrink-0">
+        <div className="relative w-full sm:w-[200px] h-64 shrink-0">
           <Image
             src={cardImages[data.cardName]}
             alt={`${data.cardName}`}
