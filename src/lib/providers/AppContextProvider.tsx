@@ -446,6 +446,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       } catch (error: any) {
         console.error("Init error:", error);
         toast.error("Failed to load lottery data");
+      } finally {
+        setFirstLoad(false);
+        setLoading(false);
       }
     })();
   }, [firstLoad, account.address, account.isConnected, walletClient]);
