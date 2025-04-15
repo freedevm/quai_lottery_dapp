@@ -35,6 +35,7 @@ interface ContextData {
   userAddress: string | null;
   userBalance: string | null;
   isWalletConnected: boolean;
+  entryPrice: number | null;
   games: GameData[];
   megaJackpot: number | null;
   cards: Card[] | null;
@@ -54,6 +55,7 @@ const initialData: ContextData = {
   userAddress: null,
   userBalance: null,
   isWalletConnected: false,
+  entryPrice: 0,
   games: [],
   megaJackpot: null,
   cards: [],
@@ -100,9 +102,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const getContracts = async () => {
     try {
-      console.log("### hello getContract")
       const provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
-      console.log("### provider", provider)
 
       const lotteryContract = new ethers.Contract(
         CONTRACTS.lottery,
@@ -352,6 +352,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         if (!contracts) throw new Error("Contracts not initialized");
 
         const { lotteryContract, nftContract, settingContract } = contracts;
+
+        // Fetch Setting Data
+        const entryPrice = parseFloat(ethers.formatEther(await settingContract.ENTRY_PRICE()));
+        console.log("### entry price => ", entryPrice)
         
         // Fetch Game Data
         const megaJackpot = parseFloat(ethers.formatEther(await lotteryContract.megaJackpot()));
@@ -435,6 +439,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         const games = await Promise.all(gamePromises);
 
         setData({
+          entryPrice,
           games,
           megaJackpot,
           cards,

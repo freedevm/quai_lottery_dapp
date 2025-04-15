@@ -110,7 +110,7 @@ export default function JackpotCard({
               isSpinning || !isActive || hasParticipated ? "cursor-not-allowed" : ""
             }`}
           >
-            {hasParticipated ? "already in this place" : isSpinning ? "processing..." : "play now - 0.05eth"}
+            {hasParticipated ? "already in this place" : isSpinning ? "processing..." : `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
           </button>
         )}
       </div>
