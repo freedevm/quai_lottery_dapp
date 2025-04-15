@@ -12,7 +12,6 @@ interface JackpotCardProps extends JackpotState {
   onPlay: () => void;
   disabled?: boolean;
   jackpotId: number;
-  imageIndexes: number[];
 }
 
 const imageFolder = "https://ipfs.io/ipfs/bafybeidt4rnvygim42sxyy4icxyasabzbvoegxbw5ew5ww3lcnggyhyjoa/"
@@ -38,7 +37,6 @@ export default function JackpotCard({
   onPlay,
   disabled = false,
   jackpotId,
-  imageIndexes,
 }: JackpotCardProps) {
   const { data: appData } = useContext(AppContext);
   const participatedJackpots = appData.participatedGames;
@@ -67,7 +65,7 @@ export default function JackpotCard({
       {/* Image */}
       <div className="w-full h-0 pb-[100%] relative rounded-lg overflow-hidden mb-4">
         <Image
-          src={`${imageFolder}${imageIndexes[jackpotId - 1]}.jpg`}
+          src={`${imageFolder}${(jackpotId%12===0)?12:(jackpotId%12)}.jpg`}
           alt={title}
           layout="fill" 
           objectFit="cover" 
