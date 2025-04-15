@@ -35,14 +35,14 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
 
     setIsNFTBoostProcessing(true);
     // Map selectedNFTs to the format expected by boostNFTs
-    const nftsToBoost = selectedNFTs
-      .filter((nft) => nft.count > 0)
-      .map((nft) => ({
-        id: nft.id,
-        name: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.name || "",
-        imageUrl: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.imageUrl || "",
-        count: nft.count,
-      }));
+    // const nftsToBoost = selectedNFTs
+    //   .filter((nft) => nft.count > 0)
+    //   .map((nft) => ({
+    //     id: nft.id,
+    //     name: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.name || "",
+    //     imageUrl: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.imageUrl || "",
+    //     count: nft.count,
+    //   }));
 
     // const success = await boostNFTs(jackpotId, nftsToBoost);
     // if (success) {
@@ -81,23 +81,24 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
         <div className="flex flex-col items-center">
           <h2 className="text-2xl font-bold mb-4 text-white uppercase">card boost</h2>
           <p className="text-center mb-6 text-white">
-            Are you ready to boost your NFTs in this jackpot?
+            Are you ready to boost your Cards in this jackpot?
           </p>
 
           <div className="mb-6 w-full">
             <div className="flex items-center mb-2 justify-end">
               <button
                 onClick={handlePurchaseNFT}
-                className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-2 rounded-lg text-white uppercase animate-glare"
+                className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-2 rounded-lg text-white uppercase"
               >
                 buy card(s)
               </button>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-3 gap-4">
-              {["diamond", "platinum", "gold", "silver", "bronze", "iron"].map((nftName) => (
+              {appData.cards?.map((card, index) => (
                 <NFTBoostCard
-                  key={nftName}
-                  nftName={nftName}
+                  key={index}
+                  index={index}
+                  nftName={card.cardName}
                   userNFTs={appData.userNFTs}
                   setSelectedNFTs={setSelectedNFTs}
                 />
@@ -109,7 +110,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <button
               onClick={handleNFTBoost}
               disabled={isNFTBoostProcessing}
-              className={`animate-glare bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-2 rounded-lg text-white uppercase ${
+              className={`bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase ${
                 isNFTBoostProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -118,7 +119,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
             <button
               onClick={handlePlayWithTicket}
               disabled={isPlayTicketProcessing}
-              className={`bg-orange-500 hover:bg-orange-400 active:bg-orange-600 px-4 py-2 rounded-lg text-white uppercase ${
+              className={`bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase ${
                 isPlayTicketProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
