@@ -82,7 +82,7 @@ export default function ProgressiveJackpot({
   const color = getColor(percentage);
 
   // Define button style
-  const buttonStyle = { background: `linear-gradient(to right, ${color} ${percentage}%, #ccc ${percentage}%)` }; // Enabled state: progress gradient
+  const buttonStyle = { background: `linear-gradient(to right, ${color} ${percentage}%, #D8B4FE ${percentage}%)` }; // Enabled state: progress gradient
 
   return (
     <div className="text-center mb-8 sm:mb-10 md:mb-12">

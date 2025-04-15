@@ -58,7 +58,7 @@ export default function JackpotCard({
   // Define button style
   const buttonStyle = isSpinning || !isActive || hasParticipated
     ? { backgroundColor: "#9f7aea" } // Disabled state: purple-400
-    : { background: `linear-gradient(to right, ${color} ${percentage}%, #ccc ${percentage}%)` }; // Enabled state: progress gradient
+    : { background: `linear-gradient(to right, ${color} ${percentage}%, #D8B4FE ${percentage}%)` }; // Enabled state: progress gradient
 
   return (
     <div className="w-full bg-purple-800 rounded-lg shadow-xl/20 transition-all duration-300 hover:shadow-xl/30 max-w-sm mx-auto">
@@ -96,7 +96,7 @@ export default function JackpotCard({
               onClick={onPlay}
               disabled={true}
               style={buttonStyle}
-              className="uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 cursor-not-allowed animate-glare"
+              className=" uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 cursor-not-allowed"
             >
               play now
             </button>
@@ -106,7 +106,7 @@ export default function JackpotCard({
             onClick={onPlay}
             disabled={isSpinning || !isActive || hasParticipated}
             style={buttonStyle}
-            className={`uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 animate-glare ${
+            className={`uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 ${
               isSpinning || !isActive || hasParticipated ? "cursor-not-allowed" : ""
             }`}
           >
