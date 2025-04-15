@@ -92,6 +92,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [data, setDataT] = useState<ContextData>(initialData);
   const [firstLoad, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false);
 
   const chainId = useChainId();
   const account = useAccount();
@@ -428,8 +429,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         console.error("Init error:", error);
         toast.error("Failed to load lottery data");
       } finally {
-        setFirstLoad(false);
-        setLoading(false);
+        setDataFetched(true)
       }
     })();
   }, [firstLoad, account.address, account.isConnected, walletClient]);
@@ -457,6 +457,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         loading={firstLoad || loading}
         setLoading={setLoading}
         setFirstLoad={setFirstLoad}
+        dataFetched={dataFetched}
       />
     );
   }
