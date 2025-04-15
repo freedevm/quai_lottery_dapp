@@ -69,16 +69,16 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               </p>
               <div className="w-full justify-center flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={handlePlayWithTicket}
-                  className="bg-orange-500 hover:bg-orange-400 active:bg-orange-600 px-4 py-2 rounded-lg text-white uppercase"
-                >
-                  {isPlayTicketProcessing ? "processing..." : "buy one ticket"}
-                </button>
-                <button
                   onClick={handleShowNFTBoostModal}
-                  className="bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-2 rounded-lg text-white uppercase animate-glare"
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   boost card(s)
+                </button>
+                <button
+                  onClick={handlePlayWithTicket}
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
+                >
+                  {isPlayTicketProcessing ? "processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={onClose}
@@ -96,16 +96,16 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               </p>
               <div className="flex gap-3">
                 <button
-                  onClick={handlePlayWithTicket}
-                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
-                >
-                  {isPlayTicketProcessing ? "Processing..." : "buy one ticket"}
-                </button>
-                <button
                   onClick={handlePurchaseNFT}
                   className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   buy card(s)
+                </button>
+                <button
+                  onClick={handlePlayWithTicket}
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
+                >
+                  {isPlayTicketProcessing ? "Processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={onClose}

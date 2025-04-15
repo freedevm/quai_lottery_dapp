@@ -4,13 +4,13 @@ import Image from "next/image";
 import NumberCounter from "../NumberCounter";
 import { cardImages } from "@/lib/constants/cardImages";
 import { Card } from "@/lib/types/lottery"
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { AppContext } from "@/lib/providers/AppContextProvider";
+import { NFTCount } from "@/lib/types/lottery";
 
 interface MintItemProps {
   data: Card;
-  handleCountChange: (value: number) => void;
-  onMint: () => void;
-  isLoading: boolean;
   maxMintable: number;
   stockNum: number;
   description?: string;
@@ -18,13 +18,55 @@ interface MintItemProps {
 
 export default function NFTMintItem({
   data,
-  handleCountChange,
-  onMint,
-  isLoading,
   maxMintable,
   stockNum,
   description = "Boost your chances with this exclusive NFT card!",
 }: MintItemProps) {
+  const { data: appData, mintNFTs } = useContext(AppContext);
+
+  const [nftToMint, setNftToMint] = useState<NFTCount>({
+    name: data.cardName,
+    count: 0,
+  })
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleCountChange = (cardName: string, cardCounts: number) => {
+    setNftToMint({
+      name: cardName,
+      count: cardCounts,
+    });
+  };
+
+  const handleMintClick = async () => {
+    if (!appData.isWalletConnected) {
+      toast.warning("Please connect your wallet to mint Cards.");
+      return;
+    }
+
+    // Calculate total cost
+    let totalCost =  nftToMint.count * parseFloat(data.cardPrice);
+    const userBalance = parseFloat(appData.userBalance || "0");
+
+    if (nftToMint.count === 0) {
+      toast.warning("Please select at least one Card to mint.");
+      return;
+    }
+
+    if (totalCost > userBalance) {
+      toast.warning("Insufficient balance to mint these Cards.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const success = await mintNFTs(nftToMint);
+    if (success) {
+      toast.success("NFTs minted successfully!");
+    } else {
+      toast.error("Failed to mint NFTs!");
+    }
+    setIsLoading(false);
+  };
 
   return (
     <div className="w-full mx-auto p-4">
@@ -56,7 +98,7 @@ export default function NFTMintItem({
             <h3 className="text-md font-semibold text-white uppercase">
               {(stockNum !== 0) ? `${stockNum} in stock` : "out of stock"} 
             </h3>
-            <p className="text-sm text-gray-300 line-clamp-3">{description}</p>
+            <p className="text-sm text-gray-300 line-clamp-4">{description}</p>
 
           {/* Spacer */}
           <div className="flex-1" />
@@ -67,12 +109,12 @@ export default function NFTMintItem({
               min={0}
               max={maxMintable}
               initialValue={0}
-              onChange={handleCountChange}
+              onChange={(value: number) => handleCountChange(data.cardName, value)}
             />
             <button
-              onClick={onMint}
+              onClick={handleMintClick}
               disabled={isLoading}
-              className="w-full max-w-xs px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-400 active:bg-red-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full max-w-xs px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-400 active:bg-red-600 disabled:bg-red-400 disabled:cursor-not-allowed transition-all duration-200"
             >
               {isLoading ? "Processing..." : "Mint"}
             </button>

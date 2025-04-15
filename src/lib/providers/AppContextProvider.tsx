@@ -12,7 +12,7 @@ import { useAccount, useChainId, useBalance, usePublicClient, useWalletClient } 
 import { ethers } from "ethers";
 import PreLoading from "@/components/PreLoading";
 import { ABI } from "../abi";
-import { Address, NFT, GameData, Card } from "../types/lottery";
+import { Address, NFT, GameData, Card, NFTCount } from "../types/lottery";
 
 interface ContractAddresses {
   lottery: string;
@@ -30,6 +30,8 @@ const CONTRACTS = {
   setting: "0xde3c7f250c65ae302148a700d2506bb200f7959f"
 }
 
+const ALCHEMY_KEY = "hra0WS7LQz4cQfdKoscbvfEFBDB54ELk";
+
 interface ContextData {
   network: number | null;
   userAddress: string | null;
@@ -44,7 +46,7 @@ interface ContextData {
   lastWinner: Address | null; // Winner of the latest rewarded game
   isNFTHolder: boolean;
   userNFTCount: number;
-  userNFTs: NFT[];
+  userNFTs: number[];
   boostedNFTs: { [gameIndex: string]: NFT[] };
   participatedGames: number[];
   userTickets: number;
@@ -64,7 +66,7 @@ const initialData: ContextData = {
   lastWinner: null,
   isNFTHolder: false,
   userNFTCount: 0,
-  userNFTs: [],
+  userNFTs: [0,0,0,0,0,0],
   boostedNFTs: {},
   participatedGames: [],
   userTickets: 0,
@@ -75,7 +77,7 @@ export const AppContext = createContext<{
   setData: (data: Partial<ContextData>) => void;
   setDataT: (value: SetStateAction<ContextData>) => void;
   addParticipation: (gameIndex: number) => Promise<boolean>;
-  mintNFTs: (nfts: number[]) => Promise<boolean>;
+  mintNFTs: (nfts: NFTCount) => Promise<boolean>;
   boostNFTs: (gameIndex: number, nfts: NFT[]) => Promise<boolean>;
 }>({
   data: initialData,
@@ -101,27 +103,37 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setDataT((prevData) => ({ ...prevData, ...d }));
 
   const getContracts = async () => {
+    const walletConnected = !!walletClient; // Simplified check
+  
     try {
-      const provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
-
+      let signer;
+      let publicProvider;
+  
+      if (walletConnected && walletClient) {
+        const provider = new ethers.BrowserProvider(walletClient);
+        signer = await provider.getSigner();
+      } else {
+        publicProvider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`);
+      }
+  
       const lotteryContract = new ethers.Contract(
         CONTRACTS.lottery,
         ABI.lotteryGame,
-        provider,
+        walletConnected && signer ? signer : publicProvider
       );
-
-      console.log("### lottery contract => ", lotteryContract)
+  
       const nftContract = new ethers.Contract(
         CONTRACTS.nft,
         ABI.lotteryGameNFTCard,
-        provider,
+        walletConnected && signer ? signer : publicProvider
       );
+  
       const settingContract = new ethers.Contract(
         CONTRACTS.setting,
         ABI.lotterySetting,
-        provider,
+        walletConnected && signer ? signer : publicProvider
       );
-
+  
       return { lotteryContract, nftContract, settingContract };
     } catch (error) {
       console.error("Failed to initialize contracts:", error);
@@ -130,7 +142,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const mintNFTs = async (nftCounts: number[]): Promise<boolean> => {
+  const mintNFTs = async (nftCounts: NFTCount): Promise<boolean> => {
     if (!account.isConnected || !walletClient) {
       toast.error("Wallet not connected");
       return false;
@@ -141,57 +153,39 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       if (!nftContract) throw new Error("Contracts not initialized");
 
       const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
-      const boostValues = [60, 40, 30, 20, 10, 5];
-      let newNFTs: NFT[] = [];
-      let totalCount = 0;
+      const cardIndex = cardNames.indexOf(nftCounts.name);
 
-      for (let i = 0; i < nftCounts.length; i++) {
-        if (nftCounts[i] > 3) throw new Error("Max 3 cards per mint");
+      if(cardIndex === -1) throw new Error(`Invalid card type: ${nftCounts.name}`);
+      const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
+
+      const cardPrice = ethers.formatEther(await nftContract.cardPrices(cardIndex));
+      const mintedCount = parseInt(await nftContract.mintedCounts(cardIndex));
+      const supplyLimit = parseInt(await nftContract.totalSupplyLimits(cardIndex));
+
+      if (nftCounts.count > maxMintCount) throw new Error(`Max ${maxMintCount} cards per mint`);
+
+      if (mintedCount + nftCounts.count > supplyLimit) {
+        throw new Error(`Exceeds supply limit for ${nftCounts.name}`);
       }
-      // for (const { cardType, count } of nfts) {
-      //   if (cardType >= 6) throw new Error(`Invalid card type: ${cardType}`);
-      //   if (count > 3) throw new Error("Max 3 cards per mint");
 
-      //   const price = await nftContract.cardPrices(i);
-      //   const minted = await nftContract.mintedCounts(i);
-      //   const supplyLimit = [5, 50, 100, 200, 400, 800][i];
+      const totalPrice = parseFloat(cardPrice) * nftCounts.count;
 
-      //   if (Number(minted) + count > supplyLimit) {
-      //     throw new Error(`Exceeds supply limit for ${cardNames[cardType]}`);
-      //   }
-
-      //   const totalPrice = price * BigInt(count);
-      //   const tx = await nftContract.mint(account.address, cardType, count, {
-      //     value: totalPrice,
-      //   });
-      //   await tx.wait();
-
-      //   const uri = await nftContract.uri(cardType);
-      //   for (let i = 0; i < count; i++) {
-      //     const nftId = `${cardType}-${Number(minted) + i + 1}`;
-      //     newNFTs.push({
-      //       id: nftId,
-      //       name: cardNames[cardType],
-      //       imageUrl: uri.replace(".json", ".png"),
-      //       boostValue: boostValues[cardType],
-      //       isLocked: false,
-      //     });
-      //   }
-      //   totalCount += count;
-      // }
+      // Call mint with correct arguments and value
+      const tx = await nftContract.mint(account.address, cardIndex, nftCounts.count, {
+        value: ethers.parseEther(totalPrice.toString()),
+      });
+      await tx.wait(); // Wait for the transaction to be confirmed
 
       setDataT((prev) => ({
         ...prev,
-        userNFTCount: prev.userNFTCount + totalCount,
-        userNFTs: [...prev.userNFTs, ...newNFTs],
+        userNFTCount: prev.userNFTCount + nftCounts.count,
+        userNFTs: prev.userNFTs.splice(cardIndex, 1, mintedCount),
         isNFTHolder: true,
       }));
 
-      toast.success("NFTs minted successfully!");
       return true;
     } catch (error: any) {
       console.error("Failed to mint NFTs:", error);
-      toast.error(error.reason || "Failed to mint NFTs");
       return false;
     }
   };
@@ -355,7 +349,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
         // Fetch Setting Data
         const entryPrice = parseFloat(ethers.formatEther(await settingContract.ENTRY_PRICE()));
-        console.log("### entry price => ", entryPrice)
         
         // Fetch Game Data
         const megaJackpot = parseFloat(ethers.formatEther(await lotteryContract.megaJackpot()));
@@ -393,36 +386,19 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
         const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
         const numCardTypes = parseInt(await nftContract.NUM_CARD_TYPES());
-        const balances = account.isConnected ? await nftContract.getUserBalances(account.address) : null;
 
         let cardPrices = [];
         let boostValues = [];
         let supplyLimits = [];
-        let newNFTs: NFT[] = [];
+        let userNFTs = [];
         let totalCount = 0;
 
         for (let i = 0; i < numCardTypes; i++) {
           cardPrices.push(ethers.formatEther(await nftContract.cardPrices(i)));
           boostValues.push(parseInt(await nftContract.boostValues(i)));
           supplyLimits.push(parseInt(await nftContract.totalSupplyLimits(i)));
-
-          if (balances) {
-            const totalBalance = Number(balances.totalBalances[i]);
-            const lockedBalance = Number(balances.lockedBalances[i]);
-            if (totalBalance > 0) {
-              const uri = await nftContract.uri(i);
-              for (let j = 0; j < totalBalance; j++) {
-                newNFTs.push({
-                  id: `${i}-${j + 1}`,
-                  name: cardNames[i],
-                  imageUrl: uri.replace(".json", ".png"),
-                  boostValue: boostValues[i],
-                  isLocked: j < lockedBalance,
-                });
-              }
-              totalCount += totalBalance;
-            }
-          }
+          userNFTs.push(parseInt(await nftContract.mintedCounts(i)));
+          totalCount += userNFTs[i];
         }
 
         let cards = [];
@@ -445,7 +421,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           cards,
           maxMintCount,
           userNFTCount: totalCount,
-          userNFTs: newNFTs,
+          userNFTs,
           isNFTHolder: totalCount > 0,
         });
       } catch (error: any) {

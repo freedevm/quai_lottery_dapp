@@ -18,11 +18,8 @@ export interface Jackpots {
 }
 
 export interface NFT {
-  id: string;
   name: string;
-  imageUrl: string;
   boostValue: number;
-  isLocked: boolean;
 }
 
 export interface GameData {
@@ -43,4 +40,9 @@ export interface Card {
   cardPrice: string;
   boostValue: number;
   supplyLimits: number;
+}
+
+export interface NFTCount {
+  name: string;
+  count: number;
 }
