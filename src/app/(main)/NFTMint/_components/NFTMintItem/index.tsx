@@ -23,7 +23,6 @@ export default function NFTMintItem({
   description = "Boost your chances with this exclusive NFT card!",
 }: MintItemProps) {
   const { data: appData, mintNFTs } = useContext(AppContext);
-  console.log("stockNum > ", stockNum)
 
   const [nftToMint, setNftToMint] = useState<NFTCount>({
     name: data.cardName,
@@ -62,7 +61,7 @@ export default function NFTMintItem({
 
     const success = await mintNFTs(nftToMint);
     if (success) {
-      toast.success("NFTs minted successfully!");
+      toast.success(`${nftToMint.count} of ${nftToMint.name} Card${nftToMint.count === 1 ? "" : "(s)"} has been minted successfully!`);
     } else {
       toast.error("Failed to mint NFTs!");
     }

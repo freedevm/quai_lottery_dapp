@@ -23,7 +23,10 @@ export default function Page() {
 
   const randomSeedGenerator = () => {
     const seed = Math.floor(Math.random() * 1000000);
-    !!seed ? setUserSeed(seed) : randomSeedGenerator();
+    if (!!seed) {
+      localStorage.setItem("seed", JSON.stringify(seed));
+      setUserSeed(seed);
+    } else randomSeedGenerator();
   }
 
   useEffect(() => {
@@ -66,7 +69,6 @@ export default function Page() {
           isOpen={showNFTBoostModal}
           onClose={closeNFTBoostModal}
           jackpotId={selectedPotId}
-          userSeed={userSeed}
         />
       )}
 

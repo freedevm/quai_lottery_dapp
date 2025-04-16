@@ -20,14 +20,10 @@ interface ContractAddresses {
   setting: string;
 }
 
-interface ContractsMap {
-  [chainId: number]: ContractAddresses;
-}
-
 const CONTRACTS = {
-  lottery: "0xf95Ecbc1cBe909FF2F6ab50DA6897de83B3cB1d6",
+  lottery: "0xC181C594EBC724A1Acc8EF711ff5921281ba461d",
   nft: "0xBd24551fcce10c059614A18a46eF4D3E4118F1BA",
-  setting: "0xC181C594EBC724A1Acc8EF711ff5921281ba461d"
+  setting: "0xf95Ecbc1cBe909FF2F6ab50DA6897de83B3cB1d6"
 }
 
 const ALCHEMY_KEY = "hra0WS7LQz4cQfdKoscbvfEFBDB54ELk";
@@ -105,7 +101,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const getContracts = async () => {
     const walletConnected = !!walletClient; // Simplified check
-    console.log("### wallet connected => ", walletConnected)
   
     try {
       let signer;
@@ -156,7 +151,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
       const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
       const cardIndex = cardNames.indexOf(nftCounts.name);
-      console.log("### card index > ", cardIndex)
 
       if(cardIndex === -1) throw new Error(`Invalid card type: ${nftCounts.name}`);
       const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
@@ -230,13 +224,15 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       let tokenIds: number[] = [];
       let counts: number[] = [];
       let ticketCount = 1;
-
+      
       if (boostCards && boostCards.length > 0) {
         tokenIds = boostCards.map(card => card.id);
         counts = boostCards.map(card => card.count);
         ticketCount = boostCards.reduce((sum, card) => sum + card.count, 1);
       }
 
+      console.log("### token ids => ", boostCards)
+      
       const tx = await lotteryContract.buyTickets(gameIndex, tokenIds, counts, userSeed, {
         value: entryPrice,
       });
@@ -319,8 +315,11 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           const players = new Set(game.players).size;
           const currentSize = ethers.formatEther(game.currentSize);
           const jackpotSize = ethers.formatEther(game.jackpotSize);
-          const ticketInGame = await lotteryContract.getTickets(index, account.address);
-          const isParticipated = !!ticketInGame;
+          let isParticipated = false;
+          if (!!account.address) {
+            const ticketInGame = await lotteryContract.getTickets(index, account.address);
+            isParticipated = !!ticketInGame;
+          }
 
           // Calculate prize pool
           const mainRewardPercent = Number(await settingContract.MAIN_REWARD_PERCENT()) / 10000;
@@ -346,8 +345,12 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
         const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
         const numCardTypes = parseInt(await nftContract.NUM_CARD_TYPES());
-        const {totalBalances, lockedBalances, unlockedBalances} = await nftContract.getUserBalances(account.address);
-        const userNFTs = totalBalances.map((balance: string) => parseInt(balance));
+        let userNFTs = [];
+        
+        if (!!account.address) {
+          const {totalBalances, lockedBalances, unlockedBalances} = await nftContract.getUserBalances(account.address);
+          userNFTs = totalBalances.map((balance: string) => parseInt(balance));
+        }
 
         let cardPrices = [];
         let boostValues = [];
@@ -376,7 +379,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         }
 
         const games = await Promise.all(gamePromises);
-        console.log("### games => ", games)
 
         setData({
           entryPrice,

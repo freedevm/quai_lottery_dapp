@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { AppContext } from "@/lib/providers/AppContextProvider";
@@ -11,16 +11,22 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   jackpotId?: number;
-  userSeed: number;
 }
 
-export default function NFTBoostModal({ isOpen, onClose, jackpotId, userSeed }: ModalProps) {
+export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps) {
   const { data: appData, addParticipation } = useContext(AppContext);
   const router = useRouter();
   const [isNFTBoostProcessing, setIsNFTBoostProcessing] = useState(false);
   const [boostCards, setBoostCards] = useState<{ id: number; count: number }[]>([]); // Track selected NFT IDs and counts
+  const [userSeed, setUserSeed] = useState<number>(0);
 
   if (!isOpen) return null;
+  
+  useEffect(() => {
+    const randomSeed = localStorage.getItem("seed");
+    !!randomSeed && setUserSeed(JSON.parse(randomSeed));
+    localStorage.removeItem("seed");
+  })
 
   const handleNFTBoost = async () => {
     if (!jackpotId) {
@@ -28,13 +34,23 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId, userSeed }: 
       return;
     }
 
+    const totalCount = boostCards.reduce((sum, card) => sum + card.count, 0);
+    console.log("### totalcount => ", totalCount)
+    if (totalCount === 0) {
+      toast.warning("You have to choose at least 1 card.");
+      return;
+    }
+
     if (!userSeed) {
       toast.error("Seed is missing!");
+      return;
     }
 
     setIsNFTBoostProcessing(true);
 
-    const success = await addParticipation(jackpotId, userSeed, boostCards);
+    const boostCardsArr = boostCards.filter(item => item.count !== 0);
+
+    const success = await addParticipation(jackpotId, userSeed, boostCardsArr);
     if (success) {
       toast.success("You have been added successfully!");
     } else {
@@ -48,6 +64,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId, userSeed }: 
   const handlePurchaseNFT = () => {
     router.push("/NFTMint");
   };
+  console.log("### seed => ", userSeed)
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[110] overflow-y-auto">
@@ -74,6 +91,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId, userSeed }: 
                   index={index}
                   nftName={card.cardName}
                   userNFTs={appData.userNFTs}
+                  boostCards={boostCards}
                   setBoostCards={setBoostCards}
                 />
               ))}

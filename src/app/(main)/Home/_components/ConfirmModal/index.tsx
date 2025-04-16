@@ -72,7 +72,7 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, userSeed, ran
               <div className="w-full sm:w-[90%] h-8 justify-center items-center flex flex-row mb-3 border border-purple-900 rounded-lg overflow-hidden">
                 <p
                   className="bg-purple-300 w-[60%] border-none cursor-not-allowed h-full text-center content-center"
-                >{!!userSeed ? userSeed : "" }</p>
+                >{!!userSeed ? userSeed : "Generate your seed..." }</p>
                 <button
                   onClick={randomSeedGenerator}
                   className="w-[40%] bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-1 text-white"
