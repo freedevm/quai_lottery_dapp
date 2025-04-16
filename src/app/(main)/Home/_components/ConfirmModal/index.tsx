@@ -107,6 +107,17 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, userSeed, ran
               <p className="text-center mb-6 text-white">
                 You are not an NFT holder. Would you like to play with a ticket or buy NFTs?
               </p>
+              <div className="w-full sm:w-[90%] h-8 justify-center items-center flex flex-row mb-3 border border-purple-900 rounded-lg overflow-hidden">
+                <p
+                  className="bg-purple-300 w-[60%] border-none cursor-not-allowed h-full text-center content-center"
+                >{!!userSeed ? userSeed : "Generate your seed..." }</p>
+                <button
+                  onClick={randomSeedGenerator}
+                  className="w-[40%] bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-1 text-white"
+                >
+                  Generate
+                </button>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={handlePurchaseNFT}
