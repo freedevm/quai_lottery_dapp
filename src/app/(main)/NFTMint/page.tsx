@@ -7,6 +7,7 @@ import { cardDescriptions } from "@/lib/constants/cardDescriptions";
 
 export default function NFTMints() {
   const { data } = useContext(AppContext);
+  console.log("##### appData => ", data);
 
   return (
     <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-5 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">

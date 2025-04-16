@@ -13,6 +13,7 @@ export default function Page() {
   // Access wallet connection status from AppContext
   const { data: appData } = useContext(AppContext);
   const isWalletConnected = appData.isWalletConnected;
+  console.log("##### appData => ", appData);
 
   const [games, setGames] = useState<GameData[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
@@ -94,11 +95,12 @@ export default function Page() {
               {games.map((game) => (
                 <JackpotCard
                   key={game.gameIndex}
-                  title={`${game.jackpotSize} ETH Jackpot`}
+                  title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
                   jackpotId={game.gameIndex}
                   targetAmount={game.jackpotSize}
                   isActive={game.status === "started"}
                   isParticipated={game.isParticipated}
+                  userTickets={game.userTickets}
                   amount={game.currentSize}
                   disabled={buttonDisabled}
                   isSpinning={false}

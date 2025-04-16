@@ -20,13 +20,15 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
   const [boostCards, setBoostCards] = useState<{ id: number; count: number }[]>([]); // Track selected NFT IDs and counts
   const [userSeed, setUserSeed] = useState<number>(0);
 
-  if (!isOpen) return null;
-  
   useEffect(() => {
     const randomSeed = localStorage.getItem("seed");
-    !!randomSeed && setUserSeed(JSON.parse(randomSeed));
-    localStorage.removeItem("seed");
-  })
+    if (randomSeed) {
+      setUserSeed(JSON.parse(randomSeed));
+      localStorage.removeItem("seed");
+    }
+  });
+
+  if (!isOpen) return null;
 
   const handleNFTBoost = async () => {
     if (!jackpotId) {

@@ -47,7 +47,7 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, userSeed, ran
 
     const success = await addParticipation(jackpotId, userSeed);
     if (success) {
-      toast.success("You have been added successfully!");
+      toast.success("You have been added in this game successfully!");
     } else {
       toast.error("Failed to play game!");
     }

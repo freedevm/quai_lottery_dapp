@@ -12,6 +12,7 @@ interface JackpotCardProps extends JackpotState {
   onPlay: () => void;
   disabled?: boolean;
   jackpotId: number;
+  userTickets: number;
 }
 
 const imageFolder = "https://ipfs.io/ipfs/bafybeidt4rnvygim42sxyy4icxyasabzbvoegxbw5ew5ww3lcnggyhyjoa/"
@@ -35,12 +36,14 @@ export default function JackpotCard({
   isSpinning = false,
   isActive,
   isParticipated,
+  userTickets,
   onPlay,
   disabled = false,
   jackpotId,
 }: JackpotCardProps) {
   const { data: appData } = useContext(AppContext);
   const participatedJackpots = appData.participatedGames;
+  console.log("### => ", isActive, disabled, isParticipated)
 
   // Calculate progress percentage
   let percentage = 0;
@@ -53,11 +56,20 @@ export default function JackpotCard({
     else if (percent <= 90) return "#f97316"; // orange-500
     else return "#ef4444"; // red-500
   };
+
+  const getDisabledColor = (percent: number) => {
+    if (percent <= 30) return "#4ade80"; // green-400
+    else if (percent <= 60) return "#facc15"; // yellow-400
+    else if (percent <= 90) return "#fb923c"; // orange-400
+    else return "#f87171"; // red-400
+  };
+
   const color = getColor(percentage);
+  const disabledColor = getDisabledColor(percentage);
 
   // Define button style
   const buttonStyle = isSpinning || !isActive || isParticipated
-    ? { backgroundColor: "#9f7aea" } // Disabled state: purple-400
+    ? { background: `linear-gradient(to right, ${disabledColor} ${percentage}%, #E9D5FF ${percentage}%)` } // Disabled state: purple-400
     : { background: `linear-gradient(to right, ${color} ${percentage}%, #D8B4FE ${percentage}%)` }; // Enabled state: progress gradient
 
   return (
@@ -110,7 +122,7 @@ export default function JackpotCard({
               isSpinning || !isActive || isParticipated ? "cursor-not-allowed" : ""
             }`}
           >
-            {isParticipated ? "already in this place" : isSpinning ? "processing..." : `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
+            {isParticipated ? `already in with ${userTickets} ticket${userTickets===1?"":"s"}` : isSpinning ? "processing..." : `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
           </button>
         )}
       </div>
