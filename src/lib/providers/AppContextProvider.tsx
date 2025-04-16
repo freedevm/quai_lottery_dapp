@@ -76,16 +76,14 @@ export const AppContext = createContext<{
   data: ContextData;
   setData: (data: Partial<ContextData>) => void;
   setDataT: (value: SetStateAction<ContextData>) => void;
-  addParticipation: (gameIndex: number) => Promise<boolean>;
+  addParticipation: (gameIndex: number, userSeed: number, boostCards?:{id:number, count:number}[]) => Promise<boolean>;
   mintNFTs: (nfts: NFTCount) => Promise<boolean>;
-  boostNFTs: (gameIndex: number, nfts: NFT[]) => Promise<boolean>;
 }>({
   data: initialData,
   setData: () => {},
   setDataT: () => {},
   addParticipation: async () => false,
   mintNFTs: async () => false,
-  boostNFTs: async () => false,
 });
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
@@ -105,12 +103,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const getContracts = async () => {
     const walletConnected = !!walletClient; // Simplified check
+    console.log("### wallet connected => ", walletConnected)
   
     try {
       let signer;
       let publicProvider;
   
-      if (walletConnected && walletClient) {
+      if (walletConnected) {
         const provider = new ethers.BrowserProvider(walletClient);
         signer = await provider.getSigner();
       } else {
@@ -122,7 +121,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         ABI.lotteryGame,
         walletConnected && signer ? signer : publicProvider
       );
-  
+
       const nftContract = new ethers.Contract(
         CONTRACTS.nft,
         ABI.lotteryGameNFTCard,
@@ -191,7 +190,11 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const addParticipation = async (gameIndex: number): Promise<boolean> => {
+  const addParticipation = async (
+    gameIndex: number, 
+    userSeed: number,
+    boostCards?: {id: number, count: number}[],
+  ): Promise<boolean> => {
     if (!account.isConnected || !walletClient) {
       toast.error("Wallet not connected");
       return false;
@@ -204,14 +207,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const game = await lotteryContract.games(gameIndex);
-      if (game.state !== 0) {
+      if (parseInt(game.state) !== 0) {
         toast.error("Game is not active");
-        return false;
-      }
-
-      const hasEntered = await lotteryContract.hasEntered(gameIndex, account.address);
-      if (hasEntered) {
-        toast.error("You have already entered this game");
         return false;
       }
 
@@ -220,16 +217,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       let counts: number[] = [];
       let ticketCount = 1;
 
-      if (data.boostedNFTs[gameIndex]?.length > 0) {
-        tokenIds = data.boostedNFTs[gameIndex].map((nft) => parseInt(nft.id.split("-")[0]));
-        counts = data.boostedNFTs[gameIndex].map(() => 1);
-
-        const boost = await nftContract.getBoost(account.address, tokenIds, counts);
-        ticketCount = Number(boost) || 1; // Fallback to 1 if no boost
+      if (boostCards && boostCards.length > 0) {
+        tokenIds = boostCards.map(card => card.id);
+        counts = boostCards.map(card => card.count);
+        ticketCount = boostCards.reduce((sum, card) => sum + card.count, 1);
       }
 
-      const userRandom = Math.floor(Math.random() * 1000000);
-      const tx = await lotteryContract.buyTickets(gameIndex, tokenIds, counts, userRandom, {
+      const tx = await lotteryContract.buyTickets(gameIndex, tokenIds, counts, userSeed, {
         value: entryPrice,
       });
       await tx.wait();
@@ -245,46 +239,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         };
       });
 
-      toast.success(`Purchased ${ticketCount} ticket(s) successfully!`);
       return true;
     } catch (error: any) {
       console.error("Failed to buy ticket:", error);
-      toast.error(error.reason || "Failed to buy ticket");
-      return false;
-    }
-  };
-
-  const boostNFTs = async (gameIndex: number, nfts: NFT[]): Promise<boolean> => {
-    if (!account.isConnected || !walletClient) {
-      toast.error("Wallet not connected");
-      return false;
-    }
-
-    try {
-      const { nftContract } = await getContracts() || {};
-      if (!nftContract) throw new Error("Contracts not initialized");
-
-      const tokenIds = nfts.map((nft) => parseInt(nft.id.split("-")[0]));
-      const counts = nfts.map(() => 1);
-
-      const boost = await nftContract.getBoost(account.address, tokenIds, counts);
-      if (boost === 0) {
-        throw new Error("Selected NFTs are locked or invalid");
-      }
-
-      setDataT((prev) => ({
-        ...prev,
-        boostedNFTs: {
-          ...prev.boostedNFTs,
-          [gameIndex]: nfts,
-        },
-      }));
-
-      toast.success("NFTs selected for boosting!");
-      return true;
-    } catch (error: any) {
-      console.error("Failed to boost NFTs:", error);
-      toast.error(error.reason || "Failed to boost NFTs");
       return false;
     }
   };
@@ -314,7 +271,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       });
     } else {
       setData({
-        ...initialData,
         network: null,
         userAddress: null,
         userBalance: null,
@@ -322,20 +278,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       });
     }
   }, [account.isConnected, account.address, chainId, balanceData, data.userNFTCount]);
-
-  useEffect(() => {
-    const latestRewardedGame = data.games
-      .filter((game) => game.status === "rewarded")
-      .reduce((latest, game) => 
-        game.gameIndex > latest.gameIndex ? game : latest, 
-        { gameIndex: -1 }
-      );
-    if (latestRewardedGame.gameIndex !== -1) {
-      setData({
-        lastWinner: data.lastWinners[latestRewardedGame.gameIndex] || null,
-      });
-    }
-  }, [data.games, data.lastWinners]);
 
   useEffect(() => {
     (async function init() {
@@ -414,6 +356,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         }
 
         const games = await Promise.all(gamePromises);
+        console.log("### games => ", games)
 
         setData({
           entryPrice,
@@ -435,8 +378,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [firstLoad, account.address, account.isConnected, walletClient]);
 
   // useEffect(() => {
-  //   if (!account.isConnected || !CONTRACTS[chainId as keyof typeof CONTRACTS]) {
-  //     toast.error("Please switch to a supported network (Sepolia)");
+  //   if (account.isConnected && chainId === 11155111) {
+  //     toast.warning("Please switch to a supported network (Sepolia)");
   //     return;
   //   }
   
@@ -470,7 +413,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         setDataT,
         addParticipation,
         mintNFTs,
-        boostNFTs,
       }}
     >
       {children}
