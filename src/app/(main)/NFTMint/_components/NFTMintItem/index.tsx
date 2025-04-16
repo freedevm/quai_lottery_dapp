@@ -23,6 +23,7 @@ export default function NFTMintItem({
   description = "Boost your chances with this exclusive NFT card!",
 }: MintItemProps) {
   const { data: appData, mintNFTs } = useContext(AppContext);
+  console.log("stockNum > ", stockNum)
 
   const [nftToMint, setNftToMint] = useState<NFTCount>({
     name: data.cardName,

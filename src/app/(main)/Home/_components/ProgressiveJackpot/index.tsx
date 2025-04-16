@@ -114,7 +114,7 @@ export default function ProgressiveJackpot({
         {amount ? amount.toLocaleString() : 0} eth
       </div>
 
-      <button
+      {/* <button
         // onClick={onPlay}
         disabled={disabled || isSpinning}
         className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
@@ -125,7 +125,7 @@ export default function ProgressiveJackpot({
         aria-label="Participate in the Progressive Mega Jackpot"
       >
         {isSpinning ? "Spinning..." : "Investor Inquiry"}
-      </button>
+      </button> */}
 
       {/* Cycling Addresses */}
       {/* <CyclingAddresses

@@ -34,13 +34,13 @@ export default function JackpotCard({
   targetAmount,
   isSpinning = false,
   isActive,
+  isParticipated,
   onPlay,
   disabled = false,
   jackpotId,
 }: JackpotCardProps) {
   const { data: appData } = useContext(AppContext);
   const participatedJackpots = appData.participatedGames;
-  const hasParticipated = participatedJackpots.includes(jackpotId);
 
   // Calculate progress percentage
   let percentage = 0;
@@ -56,7 +56,7 @@ export default function JackpotCard({
   const color = getColor(percentage);
 
   // Define button style
-  const buttonStyle = isSpinning || !isActive || hasParticipated
+  const buttonStyle = isSpinning || !isActive || isParticipated
     ? { backgroundColor: "#9f7aea" } // Disabled state: purple-400
     : { background: `linear-gradient(to right, ${color} ${percentage}%, #D8B4FE ${percentage}%)` }; // Enabled state: progress gradient
 
@@ -104,13 +104,13 @@ export default function JackpotCard({
         ) : (
           <button
             onClick={onPlay}
-            disabled={isSpinning || !isActive || hasParticipated}
+            disabled={isSpinning || !isActive || isParticipated}
             style={buttonStyle}
             className={`uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 ${
-              isSpinning || !isActive || hasParticipated ? "cursor-not-allowed" : ""
+              isSpinning || !isActive || isParticipated ? "cursor-not-allowed" : ""
             }`}
           >
-            {hasParticipated ? "already in this place" : isSpinning ? "processing..." : `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
+            {isParticipated ? "already in this place" : isSpinning ? "processing..." : `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
           </button>
         )}
       </div>

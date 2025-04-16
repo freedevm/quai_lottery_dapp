@@ -47,6 +47,7 @@ interface ContextData {
   isNFTHolder: boolean;
   userNFTCount: number;
   userNFTs: number[];
+  mintedCounts: number[];
   boostedNFTs: { [gameIndex: string]: NFT[] };
   participatedGames: number[];
   userTickets: number;
@@ -67,6 +68,7 @@ const initialData: ContextData = {
   isNFTHolder: false,
   userNFTCount: 0,
   userNFTs: [0,0,0,0,0,0],
+  mintedCounts: [0,0,0,0,0,0],
   boostedNFTs: {},
   participatedGames: [],
   userTickets: 0,
@@ -154,6 +156,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
       const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
       const cardIndex = cardNames.indexOf(nftCounts.name);
+      console.log("### card index > ", cardIndex)
 
       if(cardIndex === -1) throw new Error(`Invalid card type: ${nftCounts.name}`);
       const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
@@ -176,12 +179,23 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       });
       await tx.wait(); // Wait for the transaction to be confirmed
 
-      setDataT((prev) => ({
-        ...prev,
-        userNFTCount: prev.userNFTCount + nftCounts.count,
-        userNFTs: prev.userNFTs.splice(cardIndex, 1, mintedCount),
-        isNFTHolder: true,
-      }));
+      setDataT((prev) => {
+        // Create copies of the arrays to avoid mutating the original state
+        const updatedUserNFTs = [...prev.userNFTs];
+        const updatedMintedCounts = [...prev.mintedCounts];
+      
+        // Update the specific index
+        updatedUserNFTs[cardIndex] = prev.userNFTs[cardIndex] + nftCounts.count;
+        updatedMintedCounts[cardIndex] = prev.mintedCounts[cardIndex] + nftCounts.count;
+      
+        return {
+          ...prev,
+          userNFTCount: prev.userNFTCount + nftCounts.count,
+          userNFTs: updatedUserNFTs,
+          mintedCounts: updatedMintedCounts,
+          isNFTHolder: true,
+        };
+      });
 
       return true;
     } catch (error: any) {
@@ -305,6 +319,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           const players = new Set(game.players).size;
           const currentSize = ethers.formatEther(game.currentSize);
           const jackpotSize = ethers.formatEther(game.jackpotSize);
+          const ticketInGame = await lotteryContract.getTickets(index, account.address);
+          const isParticipated = !!ticketInGame;
 
           // Calculate prize pool
           const mainRewardPercent = Number(await settingContract.MAIN_REWARD_PERCENT()) / 10000;
@@ -318,6 +334,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             gameIndex: Number(index),
             jackpotSize,
             currentSize,
+            isParticipated,
             status: ["started", "finished", "calculating", "rewarded"][game.state] as GameData["status"],
             userTickets,
             players,
@@ -329,18 +346,20 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
         const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
         const numCardTypes = parseInt(await nftContract.NUM_CARD_TYPES());
+        const {totalBalances, lockedBalances, unlockedBalances} = await nftContract.getUserBalances(account.address);
+        const userNFTs = totalBalances.map((balance: string) => parseInt(balance));
 
         let cardPrices = [];
         let boostValues = [];
         let supplyLimits = [];
-        let userNFTs = [];
+        let mintedCounts = [];
         let totalCount = 0;
 
         for (let i = 0; i < numCardTypes; i++) {
           cardPrices.push(ethers.formatEther(await nftContract.cardPrices(i)));
           boostValues.push(parseInt(await nftContract.boostValues(i)));
           supplyLimits.push(parseInt(await nftContract.totalSupplyLimits(i)));
-          userNFTs.push(parseInt(await nftContract.mintedCounts(i)));
+          mintedCounts.push(parseInt(await nftContract.mintedCounts(i)));
           totalCount += userNFTs[i];
         }
 
@@ -352,6 +371,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             cardPrice: cardPrices[i],
             boostValue: boostValues[i],
             supplyLimits: supplyLimits[i],
+            mintedCount: mintedCounts[i],
           })
         }
 
@@ -366,6 +386,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           maxMintCount,
           userNFTCount: totalCount,
           userNFTs,
+          mintedCounts,
           isNFTHolder: totalCount > 0,
         });
       } catch (error: any) {

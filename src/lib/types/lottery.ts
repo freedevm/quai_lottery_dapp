@@ -8,6 +8,7 @@ export interface JackpotState {
     targetAmount: number;
     isSpinning: boolean;
     isActive: boolean;
+    isParticipated: boolean;
 }
   
 export interface Jackpots {
@@ -26,6 +27,7 @@ export interface GameData {
   gameIndex: number;
   jackpotSize: number;
   currentSize: number;
+  isParticipated: boolean;
   status: "started" | "finished" | "calculating" | "rewarded";
   userTickets: number;
   players: number;
@@ -40,6 +42,7 @@ export interface Card {
   cardPrice: string;
   boostValue: number;
   supplyLimits: number;
+  mintedCount: number;
 }
 
 export interface NFTCount {

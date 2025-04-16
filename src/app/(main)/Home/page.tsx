@@ -81,6 +81,7 @@ export default function Page() {
           participants={[]}
           disabled={buttonDisabled}
           isActive={false}
+          isParticipated={false}
           isSpinning={false}
         />
 
@@ -95,6 +96,7 @@ export default function Page() {
                   jackpotId={game.gameIndex}
                   targetAmount={game.jackpotSize}
                   isActive={game.status === "started"}
+                  isParticipated={game.isParticipated}
                   amount={game.currentSize}
                   disabled={buttonDisabled}
                   isSpinning={false}
