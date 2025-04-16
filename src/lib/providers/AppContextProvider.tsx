@@ -6,13 +6,14 @@ import {
   createContext,
   useEffect,
   useState,
+  useCallback,
 } from "react";
 import { toast } from "react-toastify";
 import { useAccount, useChainId, useBalance, usePublicClient, useWalletClient } from "wagmi";
 import { ethers } from "ethers";
 import PreLoading from "@/components/PreLoading";
 import { ABI } from "../abi";
-import { Address, NFT, GameData, Card } from "../types/lottery";
+import { Address, NFT, GameData, Card, NFTCount } from "../types/lottery";
 
 interface ContractAddresses {
   lottery: string;
@@ -20,15 +21,13 @@ interface ContractAddresses {
   setting: string;
 }
 
-interface ContractsMap {
-  [chainId: number]: ContractAddresses;
-}
+const CONTRACTS: ContractAddresses = {
+  lottery: "0xC181C594EBC724A1Acc8EF711ff5921281ba461d",
+  nft: "0xBd24551fcce10c059614A18a46eF4D3E4118F1BA",
+  setting: "0xf95Ecbc1cBe909FF2F6ab50DA6897de83B3cB1d6",
+};
 
-const CONTRACTS = {
-  lottery: "0xddc8f2ef961678c604be9aada94e41e20e598337",
-  nft: "0xce710a9a71a9601da9744b698fc6aa3a758eae4c",
-  setting: "0xde3c7f250c65ae302148a700d2506bb200f7959f"
-}
+const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || "hra0WS7LQz4cQfdKoscbvfEFBDB54ELk";
 
 interface ContextData {
   network: number | null;
@@ -41,10 +40,11 @@ interface ContextData {
   cards: Card[] | null;
   maxMintCount: number;
   lastWinners: { [gameIndex: number]: Address };
-  lastWinner: Address | null; // Winner of the latest rewarded game
+  lastWinner: Address | null;
   isNFTHolder: boolean;
   userNFTCount: number;
-  userNFTs: NFT[];
+  userNFTs: number[];
+  mintedCounts: number[];
   boostedNFTs: { [gameIndex: string]: NFT[] };
   participatedGames: number[];
   userTickets: number;
@@ -55,7 +55,7 @@ const initialData: ContextData = {
   userAddress: null,
   userBalance: null,
   isWalletConnected: false,
-  entryPrice: 0,
+  entryPrice: null,
   games: [],
   megaJackpot: null,
   cards: [],
@@ -64,7 +64,8 @@ const initialData: ContextData = {
   lastWinner: null,
   isNFTHolder: false,
   userNFTCount: 0,
-  userNFTs: [],
+  userNFTs: [0, 0, 0, 0, 0, 0],
+  mintedCounts: [0, 0, 0, 0, 0, 0],
   boostedNFTs: {},
   participatedGames: [],
   userTickets: 0,
@@ -74,22 +75,21 @@ export const AppContext = createContext<{
   data: ContextData;
   setData: (data: Partial<ContextData>) => void;
   setDataT: (value: SetStateAction<ContextData>) => void;
-  addParticipation: (gameIndex: number) => Promise<boolean>;
-  mintNFTs: (nfts: number[]) => Promise<boolean>;
-  boostNFTs: (gameIndex: number, nfts: NFT[]) => Promise<boolean>;
+  addParticipation: (gameIndex: number, userSeed: number, boostCards?: { id: number; count: number }[]) => Promise<boolean>;
+  mintNFTs: (nfts: NFTCount) => Promise<boolean>;
 }>({
   data: initialData,
   setData: () => {},
   setDataT: () => {},
   addParticipation: async () => false,
   mintNFTs: async () => false,
-  boostNFTs: async () => false,
 });
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [data, setDataT] = useState<ContextData>(initialData);
   const [firstLoad, setFirstLoad] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false);
 
   const chainId = useChainId();
   const account = useAccount();
@@ -97,29 +97,39 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const setData = (d: Partial<ContextData>) =>
+  const setData = useCallback((d: Partial<ContextData>) => {
     setDataT((prevData) => ({ ...prevData, ...d }));
+  }, []);
 
   const getContracts = async () => {
+    const walletConnected = !!walletClient;
     try {
-      const provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/hra0WS7LQz4cQfdKoscbvfEFBDB54ELk');
+      let signer;
+      let publicProvider;
+
+      if (walletConnected) {
+        const provider = new ethers.BrowserProvider(walletClient);
+        signer = await provider.getSigner();
+      } else {
+        publicProvider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_KEY}`);
+      }
 
       const lotteryContract = new ethers.Contract(
         CONTRACTS.lottery,
         ABI.lotteryGame,
-        provider,
+        walletConnected && signer ? signer : publicProvider
       );
 
-      console.log("### lottery contract => ", lotteryContract)
       const nftContract = new ethers.Contract(
         CONTRACTS.nft,
         ABI.lotteryGameNFTCard,
-        provider,
+        walletConnected && signer ? signer : publicProvider
       );
+
       const settingContract = new ethers.Contract(
         CONTRACTS.setting,
         ABI.lotterySetting,
-        provider,
+        walletConnected && signer ? signer : publicProvider
       );
 
       return { lotteryContract, nftContract, settingContract };
@@ -130,7 +140,118 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const mintNFTs = async (nftCounts: number[]): Promise<boolean> => {
+  const fetchAppData = useCallback(async (userAddress?: string): Promise<ContextData> => {
+    try {
+      const contracts = await getContracts();
+      if (!contracts) throw new Error("Contracts not initialized");
+
+      const { lotteryContract, nftContract, settingContract } = contracts;
+
+      // Fetch wallet-independent data
+      const entryPrice = parseFloat(ethers.formatEther(await settingContract.ENTRY_PRICE()));
+      const megaJackpot = parseFloat(ethers.formatEther(await lotteryContract.megaJackpot()));
+      const activeIndices = await lotteryContract.getActiveGameIndices();
+      const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
+      const numCardTypes = parseInt(await nftContract.NUM_CARD_TYPES());
+      const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
+
+      // Batch fetch card data
+      const cardPromises = Array.from({ length: numCardTypes }, async (_, i) => {
+        const [cardPrice, boostValue, supplyLimits, mintedCount] = await Promise.all([
+          nftContract.cardPrices(i).then(ethers.formatEther),
+          nftContract.boostValues(i).then((v: any) => parseInt(v)),
+          nftContract.totalSupplyLimits(i).then((v: any) => parseInt(v)),
+          nftContract.mintedCounts(i).then((v: any) => parseInt(v)),
+        ]);
+        return {
+          cardName: cardNames[i],
+          cardPrice,
+          boostValue,
+          supplyLimits,
+          mintedCount,
+        };
+      });
+
+      const cards: Card[] = await Promise.all(cardPromises);
+      const mintedCounts = cards.map((card) => card.mintedCount);
+
+      // Fetch game data
+      const gamePromises = activeIndices.map(async (index: number) => {
+        const game = await lotteryContract.games(index);
+        const mainRewardPercent = Number(await settingContract.MAIN_REWARD_PERCENT()) / 10000;
+        const randomTenPercent = Number(await settingContract.RANDOM_TEN_REWARD_PERCENT()) / 10000;
+        const currentSize = ethers.formatEther(game.currentSize);
+        const jackpotSize = ethers.formatEther(game.jackpotSize);
+        let userTickets = 0;
+        let isParticipated = false;
+
+        if (userAddress) {
+          userTickets = Number(await lotteryContract.getTickets(index, userAddress));
+          isParticipated = userTickets > 0;
+        }
+
+        return {
+          gameIndex: Number(index),
+          jackpotSize,
+          currentSize,
+          isParticipated,
+          status: ["started", "finished", "calculating", "rewarded"][game.state] as GameData["status"],
+          userTickets,
+          players: new Set(game.players).size,
+          prizePool: {
+            mainReward: (Number(currentSize) * mainRewardPercent).toFixed(4),
+            randomTenReward: (Number(currentSize) * randomTenPercent).toFixed(4),
+          },
+        };
+      });
+
+      const games: GameData[] = await Promise.all(gamePromises);
+
+      // Fetch wallet-dependent data (only if userAddress is provided)
+      let userNFTs = [0, 0, 0, 0, 0, 0];
+      let userNFTCount = 0;
+      let isNFTHolder = false;
+      let participatedGames: number[] = [];
+      let isWalletConnected = false;
+
+      if (userAddress) {
+        isWalletConnected = true;
+        const { totalBalances } = await nftContract.getUserBalances(userAddress);
+        userNFTs = totalBalances.map((balance: string) => parseInt(balance));
+        userNFTCount = userNFTs.reduce((sum, count) => sum + count, 0);
+        isNFTHolder = userNFTCount > 0;
+        participatedGames = games.filter((game) => game.isParticipated).map((game) => game.gameIndex);
+      }
+
+      // Return complete ContextData object
+      return {
+        network: chainId, // Set by wallet connection useEffect
+        userAddress: null, // Set by wallet connection useEffect
+        userBalance: null, // Set by wallet connection useEffect
+        isWalletConnected, // Set by wallet connection useEffect
+        entryPrice,
+        games,
+        megaJackpot,
+        cards,
+        maxMintCount,
+        lastWinners: {}, // Not fetched; use default
+        lastWinner: null, // Not fetched; use default
+        isNFTHolder,
+        userNFTCount,
+        userNFTs,
+        mintedCounts,
+        boostedNFTs: {}, // Not fetched; use default
+        participatedGames,
+        userTickets: 0, // Aggregate userTickets not implemented; use default
+      };
+    } catch (error: any) {
+      console.error("Failed to fetch app data:", error);
+      toast.error("Failed to load lottery data");
+      throw error;
+    }
+  }, []);
+
+  const mintNFTs = async (nftCounts: NFTCount): Promise<boolean> => {
     if (!account.isConnected || !walletClient) {
       toast.error("Wallet not connected");
       return false;
@@ -141,82 +262,60 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       if (!nftContract) throw new Error("Contracts not initialized");
 
       const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
-      const boostValues = [60, 40, 30, 20, 10, 5];
-      let newNFTs: NFT[] = [];
-      let totalCount = 0;
+      const cardIndex = cardNames.indexOf(nftCounts.name);
 
-      for (let i = 0; i < nftCounts.length; i++) {
-        if (nftCounts[i] > 3) throw new Error("Max 3 cards per mint");
+      if (cardIndex === -1) throw new Error(`Invalid card type: ${nftCounts.name}`);
+      const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
+      const cardPrice = ethers.formatEther(await nftContract.cardPrices(cardIndex));
+      const mintedCount = parseInt(await nftContract.mintedCounts(cardIndex));
+      const supplyLimits = parseInt(await nftContract.totalSupplyLimits(cardIndex));
+
+      if (nftCounts.count > maxMintCount) throw new Error(`Max ${maxMintCount} cards per mint`);
+      if (mintedCount + nftCounts.count > supplyLimits) {
+        throw new Error(`Exceeds supply limit for ${nftCounts.name}`);
       }
-      // for (const { cardType, count } of nfts) {
-      //   if (cardType >= 6) throw new Error(`Invalid card type: ${cardType}`);
-      //   if (count > 3) throw new Error("Max 3 cards per mint");
 
-      //   const price = await nftContract.cardPrices(i);
-      //   const minted = await nftContract.mintedCounts(i);
-      //   const supplyLimit = [5, 50, 100, 200, 400, 800][i];
+      const totalPrice = parseFloat(cardPrice) * nftCounts.count;
+      const tx = await nftContract.mint(account.address, cardIndex, nftCounts.count, {
+        value: ethers.parseEther(totalPrice.toString()),
+      });
+      await tx.wait();
 
-      //   if (Number(minted) + count > supplyLimit) {
-      //     throw new Error(`Exceeds supply limit for ${cardNames[cardType]}`);
-      //   }
+      // Refresh wallet-dependent data
+      const newData = await fetchAppData(account.address);
+      setDataT(newData);
 
-      //   const totalPrice = price * BigInt(count);
-      //   const tx = await nftContract.mint(account.address, cardType, count, {
-      //     value: totalPrice,
-      //   });
-      //   await tx.wait();
-
-      //   const uri = await nftContract.uri(cardType);
-      //   for (let i = 0; i < count; i++) {
-      //     const nftId = `${cardType}-${Number(minted) + i + 1}`;
-      //     newNFTs.push({
-      //       id: nftId,
-      //       name: cardNames[cardType],
-      //       imageUrl: uri.replace(".json", ".png"),
-      //       boostValue: boostValues[cardType],
-      //       isLocked: false,
-      //     });
-      //   }
-      //   totalCount += count;
-      // }
-
-      setDataT((prev) => ({
-        ...prev,
-        userNFTCount: prev.userNFTCount + totalCount,
-        userNFTs: [...prev.userNFTs, ...newNFTs],
-        isNFTHolder: true,
-      }));
-
-      toast.success("NFTs minted successfully!");
       return true;
     } catch (error: any) {
       console.error("Failed to mint NFTs:", error);
-      toast.error(error.reason || "Failed to mint NFTs");
+      if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds to mint NFTs");
+      } else if (error.reason) {
+        toast.error(`Minting failed: ${error.reason}`);
+      } else {
+        toast.error("Failed to mint NFTs");
+      }
       return false;
     }
   };
 
-  const addParticipation = async (gameIndex: number): Promise<boolean> => {
+  const addParticipation = async (
+    gameIndex: number,
+    userSeed: number,
+    boostCards?: { id: number; count: number }[]
+  ): Promise<boolean> => {
     if (!account.isConnected || !walletClient) {
       toast.error("Wallet not connected");
       return false;
     }
 
     try {
-      const { lotteryContract, settingContract, nftContract } = await getContracts() || {};
-      if (!lotteryContract || !settingContract || !nftContract) {
-        throw new Error("Contracts not initialized");
-      }
+      const { lotteryContract, settingContract } = await getContracts() || {};
+      if (!lotteryContract || !settingContract) throw new Error("Contracts not initialized");
 
       const game = await lotteryContract.games(gameIndex);
-      if (game.state !== 0) {
+      if (parseInt(game.state) !== 0) {
         toast.error("Game is not active");
-        return false;
-      }
-
-      const hasEntered = await lotteryContract.hasEntered(gameIndex, account.address);
-      if (hasEntered) {
-        toast.error("You have already entered this game");
         return false;
       }
 
@@ -225,255 +324,125 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       let counts: number[] = [];
       let ticketCount = 1;
 
-      if (data.boostedNFTs[gameIndex]?.length > 0) {
-        tokenIds = data.boostedNFTs[gameIndex].map((nft) => parseInt(nft.id.split("-")[0]));
-        counts = data.boostedNFTs[gameIndex].map(() => 1);
-
-        const boost = await nftContract.getBoost(account.address, tokenIds, counts);
-        ticketCount = Number(boost) || 1; // Fallback to 1 if no boost
+      if (boostCards && boostCards.length > 0) {
+        tokenIds = boostCards.map((card) => card.id);
+        counts = boostCards.map((card) => card.count);
+        ticketCount = boostCards.reduce((sum, card) => sum + card.count, 1);
       }
 
-      const userRandom = Math.floor(Math.random() * 1000000);
-      const tx = await lotteryContract.buyTickets(gameIndex, tokenIds, counts, userRandom, {
+      const tx = await lotteryContract.buyTickets(gameIndex, tokenIds, counts, userSeed, {
         value: entryPrice,
       });
       await tx.wait();
 
-      setDataT((prev) => {
-        const updatedGames = prev.games.map((g) =>
-          g.gameIndex === gameIndex ? { ...g, userTickets: ticketCount } : g
-        );
-        return {
-          ...prev,
-          games: updatedGames,
-          participatedGames: [...prev.participatedGames, gameIndex],
-        };
-      });
+      // Refresh wallet-dependent data
+      const newData = await fetchAppData(account.address);
+      setDataT(newData);
 
-      toast.success(`Purchased ${ticketCount} ticket(s) successfully!`);
       return true;
     } catch (error: any) {
       console.error("Failed to buy ticket:", error);
-      toast.error(error.reason || "Failed to buy ticket");
-      return false;
-    }
-  };
-
-  const boostNFTs = async (gameIndex: number, nfts: NFT[]): Promise<boolean> => {
-    if (!account.isConnected || !walletClient) {
-      toast.error("Wallet not connected");
-      return false;
-    }
-
-    try {
-      const { nftContract } = await getContracts() || {};
-      if (!nftContract) throw new Error("Contracts not initialized");
-
-      const tokenIds = nfts.map((nft) => parseInt(nft.id.split("-")[0]));
-      const counts = nfts.map(() => 1);
-
-      const boost = await nftContract.getBoost(account.address, tokenIds, counts);
-      if (boost === 0) {
-        throw new Error("Selected NFTs are locked or invalid");
+      if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds to buy tickets");
+      } else if (error.reason) {
+        toast.error(`Ticket purchase failed: ${error.reason}`);
+      } else {
+        toast.error("Failed to buy tickets");
       }
-
-      setDataT((prev) => ({
-        ...prev,
-        boostedNFTs: {
-          ...prev.boostedNFTs,
-          [gameIndex]: nfts,
-        },
-      }));
-
-      toast.success("NFTs selected for boosting!");
-      return true;
-    } catch (error: any) {
-      console.error("Failed to boost NFTs:", error);
-      toast.error(error.reason || "Failed to boost NFTs");
       return false;
     }
   };
 
+  // Initialize data on first load
   useEffect(() => {
-    if (data !== initialData) {
-      localStorage.setItem("lottery-app-data", JSON.stringify(data));
-    }
-  }, [data]);
+    if (!firstLoad) return;
+    (async () => {
+      setLoading(true);
+      try {
+        const newData = await fetchAppData();
+        setDataT(newData);
+      } finally {
+        setDataFetched(true);
+      }
+    })();
+  }, [firstLoad, fetchAppData]);
 
-  useEffect(() => {
-    const appDataJson = localStorage.getItem("lottery-app-data");
-    if (appDataJson) {
-      const appData = JSON.parse(appDataJson) as ContextData;
-      setData(appData);
-    }
-  }, []);
-
+  // Handle wallet connection changes
   useEffect(() => {
     if (account.isConnected && account.address) {
-      setData({
-        network: chainId,
-        userAddress: account.address,
-        userBalance: balanceData?.formatted || "0",
-        isWalletConnected: true,
-        isNFTHolder: data.userNFTCount > 0,
-      });
+      // Wallet connected: Fetch wallet-dependent data
+      (async () => {
+        try {
+          const newData = await fetchAppData(account.address);
+          setDataT({
+            ...newData,
+            network: chainId,
+            userAddress: account.address ?? null, // Normalize undefined to null
+            userBalance: balanceData?.formatted || "0",
+            isWalletConnected: true,
+          });
+        } catch (error) {
+          console.error("Failed to fetch wallet data:", error);
+        }
+      })();
     } else {
-      setData({
-        ...initialData,
+      (async () => {
+        try {
+          const newData = await fetchAppData();
+          setDataT({
+            ...newData,
+            network: null,
+            userAddress: null, // Normalize undefined to null
+            userBalance: null,
+            isWalletConnected: false,
+          });
+        } catch (error) {
+          console.error("Failed to fetch game data:", error);
+        }
+      })();
+      // Clear wallet-dependent data from localStorage
+      localStorage.setItem(
+        "lottery-app-data",
+        JSON.stringify({
+          ...data,
+          network: null,
+          userAddress: null,
+          userBalance: null,
+          isWalletConnected: false,
+          userNFTCount: 0,
+          userNFTs: [0, 0, 0, 0, 0, 0],
+          isNFTHolder: false,
+          participatedGames: [],
+          userTickets: 0,
+          lastWinners: {},
+          lastWinner: null,
+          boostedNFTs: {},
+        })
+      );
+    }
+  }, [account.isConnected, account.address, chainId, balanceData, fetchAppData]);
+
+  // Persist data to localStorage (excluding sensitive wallet data)
+  useEffect(() => {
+    localStorage.setItem(
+      "lottery-app-data",
+      JSON.stringify({
+        ...data,
         network: null,
         userAddress: null,
         userBalance: null,
         isWalletConnected: false,
-      });
-    }
-  }, [account.isConnected, account.address, chainId, balanceData, data.userNFTCount]);
-
-  useEffect(() => {
-    const latestRewardedGame = data.games
-      .filter((game) => game.status === "rewarded")
-      .reduce((latest, game) => 
-        game.gameIndex > latest.gameIndex ? game : latest, 
-        { gameIndex: -1 }
-      );
-    if (latestRewardedGame.gameIndex !== -1) {
-      setData({
-        lastWinner: data.lastWinners[latestRewardedGame.gameIndex] || null,
-      });
-    }
-  }, [data.games, data.lastWinners]);
-
-  useEffect(() => {
-    (async function init() {
-      if (!firstLoad) return;
-      setLoading(true);
-
-      try {
-        const contracts = await getContracts();
-        if (!contracts) throw new Error("Contracts not initialized");
-
-        const { lotteryContract, nftContract, settingContract } = contracts;
-
-        // Fetch Setting Data
-        const entryPrice = parseFloat(ethers.formatEther(await settingContract.ENTRY_PRICE()));
-        console.log("### entry price => ", entryPrice)
-        
-        // Fetch Game Data
-        const megaJackpot = parseFloat(ethers.formatEther(await lotteryContract.megaJackpot()));
-        const activeIndices = await lotteryContract.getActiveGameIndices();
-        
-        const gamePromises = activeIndices.map(async (index: number) => {
-          const game = await lotteryContract.games(index);
-          const userTickets = account.isConnected
-            ? Number(await lotteryContract.getTickets(index, account.address))
-            : 0;
-          const players = new Set(game.players).size;
-          const currentSize = ethers.formatEther(game.currentSize);
-          const jackpotSize = ethers.formatEther(game.jackpotSize);
-
-          // Calculate prize pool
-          const mainRewardPercent = Number(await settingContract.MAIN_REWARD_PERCENT()) / 10000;
-          const randomTenPercent = Number(await settingContract.RANDOM_TEN_REWARD_PERCENT()) / 10000;
-          const prizePool = {
-            mainReward: (Number(currentSize) * mainRewardPercent).toFixed(4),
-            randomTenReward: (Number(currentSize) * randomTenPercent).toFixed(4),
-          };
-
-          return {
-            gameIndex: Number(index),
-            jackpotSize,
-            currentSize,
-            status: ["started", "finished", "calculating", "rewarded"][game.state] as GameData["status"],
-            userTickets,
-            players,
-            prizePool,
-          };
-        });
-
-        // Fetch NFTs
-        const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
-        const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
-        const numCardTypes = parseInt(await nftContract.NUM_CARD_TYPES());
-        const balances = account.isConnected ? await nftContract.getUserBalances(account.address) : null;
-
-        let cardPrices = [];
-        let boostValues = [];
-        let supplyLimits = [];
-        let newNFTs: NFT[] = [];
-        let totalCount = 0;
-
-        for (let i = 0; i < numCardTypes; i++) {
-          cardPrices.push(ethers.formatEther(await nftContract.cardPrices(i)));
-          boostValues.push(parseInt(await nftContract.boostValues(i)));
-          supplyLimits.push(parseInt(await nftContract.totalSupplyLimits(i)));
-
-          if (balances) {
-            const totalBalance = Number(balances.totalBalances[i]);
-            const lockedBalance = Number(balances.lockedBalances[i]);
-            if (totalBalance > 0) {
-              const uri = await nftContract.uri(i);
-              for (let j = 0; j < totalBalance; j++) {
-                newNFTs.push({
-                  id: `${i}-${j + 1}`,
-                  name: cardNames[i],
-                  imageUrl: uri.replace(".json", ".png"),
-                  boostValue: boostValues[i],
-                  isLocked: j < lockedBalance,
-                });
-              }
-              totalCount += totalBalance;
-            }
-          }
-        }
-
-        let cards = [];
-
-        for (let i = 0; i < numCardTypes; i++) {
-          cards.push({
-            cardName: cardNames[i],
-            cardPrice: cardPrices[i],
-            boostValue: boostValues[i],
-            supplyLimits: supplyLimits[i],
-          })
-        }
-
-        const games = await Promise.all(gamePromises);
-
-        setData({
-          entryPrice,
-          games,
-          megaJackpot,
-          cards,
-          maxMintCount,
-          userNFTCount: totalCount,
-          userNFTs: newNFTs,
-          isNFTHolder: totalCount > 0,
-        });
-      } catch (error: any) {
-        console.error("Init error:", error);
-        toast.error("Failed to load lottery data");
-      } finally {
-        setFirstLoad(false);
-        setLoading(false);
-      }
-    })();
-  }, [firstLoad, account.address, account.isConnected, walletClient]);
-
-  // useEffect(() => {
-  //   if (!account.isConnected || !CONTRACTS[chainId as keyof typeof CONTRACTS]) {
-  //     toast.error("Please switch to a supported network (Sepolia)");
-  //     return;
-  //   }
-  
-  //   setData({ network: chainId });
-  
-  //   if (chainId !== 11155111) {
-  //     try {
-  //       walletClient?.switchChain({ id: 11155111 });
-  //     } catch (error) {
-  //       console.error("Failed to switch network:", error);
-  //     }
-  //   }
-  // }, [chainId, account.isConnected, walletClient]);
+        userNFTCount: 0,
+        userNFTs: [0, 0, 0, 0, 0, 0],
+        isNFTHolder: false,
+        participatedGames: [],
+        userTickets: 0,
+        lastWinners: {},
+        lastWinner: null,
+        boostedNFTs: {},
+      })
+    );
+  }, [data]);
 
   if (firstLoad && loading) {
     return (
@@ -481,6 +450,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         loading={firstLoad || loading}
         setLoading={setLoading}
         setFirstLoad={setFirstLoad}
+        dataFetched={dataFetched}
       />
     );
   }
@@ -493,7 +463,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         setDataT,
         addParticipation,
         mintNFTs,
-        boostNFTs,
       }}
     >
       {children}

@@ -1,53 +1,31 @@
 import { cardImages } from "@/lib/constants/cardImages";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { NFT } from "@/lib/types/lottery"; // Import NFT type
 
 interface Props {
+  index: number;
   nftName: string;
-  userNFTs: NFT[];
-  setSelectedNFTs: React.Dispatch<
-    React.SetStateAction<{ id: string; count: number }[]>
+  userNFTs: number[];
+  boostCards: {id:number; count:number}[];
+  setBoostCards: React.Dispatch<
+    React.SetStateAction<{ id: number; count: number }[]>
   >;
 }
 
-export default function NFTBoostCard({ nftName, userNFTs, setSelectedNFTs }: Props) {
-  // Count how many NFTs of this type the user owns
-  const availableCount = userNFTs.filter(
-    (nft) => nft.name.toLowerCase() === nftName.toLowerCase()
-  ).length;
-
+export default function NFTBoostCard({ index, nftName, userNFTs, boostCards, setBoostCards }: Props) {
   // Initialize count state
   const [count, setCount] = useState(0);
 
-  // Update selectedNFTs when count changes
   useEffect(() => {
-    setSelectedNFTs((prev) => {
-      const existing = prev.find(
-        (item) => item.id === `${nftName.toLowerCase()}-nft`
-      );
-      if (count === 0 && existing) {
-        return prev.filter((item) => item.id !== `${nftName.toLowerCase()}-nft`);
-      }
-      if (count > 0) {
-        if (existing) {
-          return prev.map((item) =>
-            item.id === `${nftName.toLowerCase()}-nft`
-              ? { ...item, count }
-              : item
-          );
-        }
-        return [
-          ...prev,
-          { id: `${nftName.toLowerCase()}-nft`, count },
-        ];
-      }
-      return prev;
-    });
-  }, [count, nftName, setSelectedNFTs]);
+    const updatedCards = boostCards.filter(item => item.id !== index);
+    setBoostCards([
+      ...updatedCards,
+      {id: index, count: count}
+    ])
+  }, [count, index, setBoostCards]);
 
   const handleIncrement = () => {
-    if (count < availableCount) {
+    if (count < userNFTs[index]) {
       setCount((prev) => prev + 1);
     }
   };
@@ -71,14 +49,14 @@ export default function NFTBoostCard({ nftName, userNFTs, setSelectedNFTs }: Pro
           fill
         />
       </div>
-      <p className="text-sm text-white">{nftName.toUpperCase()} : {availableCount}</p>
+      <p className="text-sm text-white">{nftName.toUpperCase()} : {userNFTs[index]}</p>
       {/* Counter */}
       <div className="w-full flex justify-center">
         <div className="inline-flex items-center overflow-hidden shadow-sm">
           <button
             onClick={handleDecrement}
             disabled={count === 0}
-            className="rounded-lg w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 active:bg-purple-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
+            className="rounded-lg w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 active:bg-purple-600 disabled:cursor-not-allowed transition-colors duration-200"
           >
             -
           </button>
@@ -87,13 +65,13 @@ export default function NFTBoostCard({ nftName, userNFTs, setSelectedNFTs }: Pro
             type="number"
             value={count}
             readOnly
-            className="w-14 h-7 text-center bg-purple-700 text-white text-lg px-2 focus:outline-none focus:ring-2 focus:ring-purple-700 appearance-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-14 h-7 text-center bg-purple-700 text-white text-lg px-2 focus:outline-none focus:ring-2 focus:ring-purple-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
 
           <button
             onClick={handleIncrement}
-            disabled={count >= availableCount}
-            className="rounded-lg w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 active:bg-purple-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors duration-200"
+            disabled={count >= userNFTs[index]}
+            className="rounded-lg w-7 h-7 flex items-center justify-center text-white text-lg font-semibold hover:bg-purple-500 active:bg-purple-600 disabled:cursor-not-allowed transition-colors duration-200"
           >
             +
           </button>

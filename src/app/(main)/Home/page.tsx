@@ -12,14 +12,23 @@ import ImageCarousel from "../_components/ImageCarousel";
 export default function Page() {
   // Access wallet connection status from AppContext
   const { data: appData } = useContext(AppContext);
-  console.log("### context data => ", appData)
   const isWalletConnected = appData.isWalletConnected;
+  console.log("##### appData => ", appData);
 
   const [games, setGames] = useState<GameData[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [showNFTBoostModal, setShowNFTBoostModal] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [selectedPotId, setSelectedPotId] = useState<number>(0);
+  const [userSeed, setUserSeed] = useState<number>(0)
+
+  const randomSeedGenerator = () => {
+    const seed = Math.floor(Math.random() * 1000000);
+    if (!!seed) {
+      localStorage.setItem("seed", JSON.stringify(seed));
+      setUserSeed(seed);
+    } else randomSeedGenerator();
+  }
 
   useEffect(() => {
     setButtonDisabled(!isWalletConnected)
@@ -35,10 +44,12 @@ export default function Page() {
   };
 
   const closeConfirmModal = () => {
+    setUserSeed(0);
     setShowConfirmModal(false);
   };
 
   const closeNFTBoostModal = () => {
+    setUserSeed(0);
     setShowNFTBoostModal(false);
   }
 
@@ -49,6 +60,8 @@ export default function Page() {
           isOpen={showConfirmModal}
           onClose={closeConfirmModal}
           jackpotId={selectedPotId}
+          userSeed={userSeed}
+          randomSeedGenerator={randomSeedGenerator}
           setShowNFTBoostModal={setShowNFTBoostModal}
         />
       )}
@@ -66,14 +79,12 @@ export default function Page() {
       {/* Progressive Jackpot Section */}
       <div className="p-3 sm:p-4 md:p-6">
         <ProgressiveJackpot
-          // {...jackpots.progressive}
           amount={appData.megaJackpot}
           targetAmount={100}
-          // winner={appData.lastWinner}
-          // onPlay={() => simulatePlay("progressive")}
           participants={[]}
           disabled={buttonDisabled}
           isActive={false}
+          isParticipated={false}
           isSpinning={false}
         />
 
@@ -84,10 +95,12 @@ export default function Page() {
               {games.map((game) => (
                 <JackpotCard
                   key={game.gameIndex}
-                  title={`${game.jackpotSize} ETH Jackpot`}
+                  title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
                   jackpotId={game.gameIndex}
                   targetAmount={game.jackpotSize}
                   isActive={game.status === "started"}
+                  isParticipated={game.isParticipated}
+                  userTickets={game.userTickets}
                   amount={game.currentSize}
                   disabled={buttonDisabled}
                   isSpinning={false}

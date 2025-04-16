@@ -10,44 +10,46 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   jackpotId?: number; // Add jackpotId to identify which jackpot the user is participating in
+  userSeed: number;
+  randomSeedGenerator: () => void;
   setShowNFTBoostModal: (value: boolean) => void;
 }
 
-export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoostModal }: ModalProps) {
+export default function ConfirmModal({ isOpen, onClose, jackpotId, userSeed, randomSeedGenerator, setShowNFTBoostModal }: ModalProps) {
   const { data: appData, addParticipation } = useContext(AppContext);
-  const { isWalletConnected, isNFTHolder } = appData;
+  const { isNFTHolder } = appData;
   const router = useRouter();
-  const [showNFTCheck, setShowNFTCheck] = useState(false);
-  const [isPlayTicketProcessing, setIsPlayTicketProcessing] = useState(false)
+  const [isPlayTicketProcessing, setIsPlayTicketProcessing] = useState<boolean>(false)
 
   if (!isOpen) return null;
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    if (isNFTHolder) {
-      setShowNFTCheck(false);
-    } else {
-      setShowNFTCheck(true);
-    }
-  }, [isNFTHolder]);
-
   const handleShowNFTBoostModal = () => {
+    if (!userSeed) {
+      toast.warning("You have to generate your seed");
+      return;
+    }
+    
     setShowNFTBoostModal(true);
     onClose();
   }
 
   const handlePlayWithTicket = async () => {
+    if (!userSeed) {
+      toast.warning("You have to generate your seed");
+      return;
+    }
+
     setIsPlayTicketProcessing(true);
     if (!jackpotId) {
       toast.error("Jackpot ID is missing!");
       return;
     }
 
-    const success = await addParticipation(jackpotId);
+    const success = await addParticipation(jackpotId, userSeed);
     if (success) {
-      toast.success("Added successfully!");
+      toast.success("You have been added in this game successfully!");
     } else {
-      toast.error("Failed to add participation!");
+      toast.error("Failed to play game!");
     }
     onClose(); // Close the modal after attempting to add participation
     setIsPlayTicketProcessing(false);
@@ -67,18 +69,29 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               <p className="text-center mb-6 text-white">
                 Are you ready to participate in this jackpot?
               </p>
+              <div className="w-full sm:w-[90%] h-8 justify-center items-center flex flex-row mb-3 border border-purple-900 rounded-lg overflow-hidden">
+                <p
+                  className="bg-purple-300 w-[60%] border-none cursor-not-allowed h-full text-center content-center"
+                >{!!userSeed ? userSeed : "Generate your seed..." }</p>
+                <button
+                  onClick={randomSeedGenerator}
+                  className="w-[40%] bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-1 text-white"
+                >
+                  Generate
+                </button>
+              </div>
               <div className="w-full justify-center flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={handlePlayWithTicket}
-                  className="bg-orange-500 hover:bg-orange-400 active:bg-orange-600 px-4 py-2 rounded-lg text-white uppercase"
-                >
-                  {isPlayTicketProcessing ? "processing..." : "buy one ticket"}
-                </button>
-                <button
                   onClick={handleShowNFTBoostModal}
-                  className="bg-red-500 hover:bg-red-400 active:bg-red-600 px-4 py-2 rounded-lg text-white uppercase animate-glare"
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   boost card(s)
+                </button>
+                <button
+                  onClick={handlePlayWithTicket}
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
+                >
+                  {isPlayTicketProcessing ? "processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={onClose}
@@ -94,18 +107,29 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               <p className="text-center mb-6 text-white">
                 You are not an NFT holder. Would you like to play with a ticket or buy NFTs?
               </p>
-              <div className="flex gap-3">
+              <div className="w-full sm:w-[90%] h-8 justify-center items-center flex flex-row mb-3 border border-purple-900 rounded-lg overflow-hidden">
+                <p
+                  className="bg-purple-300 w-[60%] border-none cursor-not-allowed h-full text-center content-center"
+                >{!!userSeed ? userSeed : "Generate your seed..." }</p>
                 <button
-                  onClick={handlePlayWithTicket}
-                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
+                  onClick={randomSeedGenerator}
+                  className="w-[40%] bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-1 text-white"
                 >
-                  {isPlayTicketProcessing ? "Processing..." : "buy one ticket"}
+                  Generate
                 </button>
+              </div>
+              <div className="flex gap-3">
                 <button
                   onClick={handlePurchaseNFT}
                   className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
                 >
                   buy card(s)
+                </button>
+                <button
+                  onClick={handlePlayWithTicket}
+                  className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase"
+                >
+                  {isPlayTicketProcessing ? "Processing..." : "buy one ticket"}
                 </button>
                 <button
                   onClick={onClose}
