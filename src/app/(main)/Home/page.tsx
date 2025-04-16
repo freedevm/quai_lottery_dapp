@@ -92,6 +92,9 @@ export default function Page() {
           games.length > 0 ? (
             <>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold my-3 sm:my-5 text-white uppercase text-center">active jackpots</h1>
+              {!games.filter(g => g.status !== "rewarded").length && <div className="text-xl w-full flex items-center justify-center">
+                There are no active games yet
+              </div>}
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
                 {games.map((game) => (
                   game.status !== "rewarded" && <JackpotCard
@@ -111,11 +114,31 @@ export default function Page() {
                 ))}
               </div>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold my-3 sm:my-5 text-white uppercase text-center">ended jackpots</h1>
-                
+              {!games.filter(g => g.status === "rewarded").length && <div className="text-xl w-full flex items-center justify-center">
+                There are no ended games yet
+              </div>}
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                {games.map((game) => (
+                  game.status === "rewarded" && <JackpotCard
+                    key={game.gameIndex}
+                    title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
+                    jackpotId={game.gameIndex}
+                    targetAmount={game.jackpotSize}
+                    isActive={game.status !== "rewarded"}
+                    isParticipated={game.isParticipated}
+                    userTickets={game.userTickets}
+                    amount={game.currentSize}
+                    status={game.status}
+                    disabled={buttonDisabled}
+                    isSpinning={false}
+                    onPlay={() => toggleConfirmModal(game.gameIndex)}
+                  />)
+                )}
+              </div>
             </>
           ) : (
             <div className="w-full flex items-center justify-center">
-              There are no active games yet
+              There are no games yet
             </div>
           )
         }
