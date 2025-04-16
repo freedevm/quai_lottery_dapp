@@ -69,7 +69,14 @@ export default function Header() {
                 className="header-button"
                 data-selected={/^\/NFTMint/.test(pathname)}
               >
-                Mint Cards
+                Card Mint
+              </Link>
+              <Link
+                href="https://ethereum-lottery-game-docs.vercel.app/"
+                className="header-button"
+                target="_blank"
+              >
+                Documentation
               </Link>
             </div>
             <div className="h-6 sm:h-8 flex items-center border border-[--border-primary-color] rounded-md overflow-hidden cursor-pointer">
