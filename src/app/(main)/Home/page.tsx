@@ -13,7 +13,6 @@ export default function Page() {
   // Access wallet connection status from AppContext
   const { data: appData } = useContext(AppContext);
   const isWalletConnected = appData.isWalletConnected;
-  console.log("##### appData => ", appData);
 
   const [games, setGames] = useState<GameData[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
@@ -77,7 +76,7 @@ export default function Page() {
       <ImageCarousel />
 
       {/* Progressive Jackpot Section */}
-      <div className="p-3 sm:p-4 md:p-6">
+      <div className="p-3 sm:p-4 md:p-6">   
         <ProgressiveJackpot
           amount={appData.megaJackpot}
           targetAmount={100}
@@ -91,23 +90,29 @@ export default function Page() {
         {/* Jackpot Cards Section */}
         {
           games.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              {games.map((game) => (
-                <JackpotCard
-                  key={game.gameIndex}
-                  title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
-                  jackpotId={game.gameIndex}
-                  targetAmount={game.jackpotSize}
-                  isActive={game.status === "started"}
-                  isParticipated={game.isParticipated}
-                  userTickets={game.userTickets}
-                  amount={game.currentSize}
-                  disabled={buttonDisabled}
-                  isSpinning={false}
-                  onPlay={() => toggleConfirmModal(game.gameIndex)}
-                />
-              ))}
-            </div>
+            <>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold my-3 sm:my-5 text-white uppercase text-center">active jackpots</h1>
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                {games.map((game) => (
+                  game.status !== "rewarded" && <JackpotCard
+                    key={game.gameIndex}
+                    title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
+                    jackpotId={game.gameIndex}
+                    targetAmount={game.jackpotSize}
+                    isActive={game.status === "started"}
+                    isParticipated={game.isParticipated}
+                    userTickets={game.userTickets}
+                    amount={game.currentSize}
+                    status={game.status}
+                    disabled={buttonDisabled}
+                    isSpinning={false}
+                    onPlay={() => toggleConfirmModal(game.gameIndex)}
+                  />
+                ))}
+              </div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold my-3 sm:my-5 text-white uppercase text-center">ended jackpots</h1>
+                
+            </>
           ) : (
             <div className="w-full flex items-center justify-center">
               There are no active games yet

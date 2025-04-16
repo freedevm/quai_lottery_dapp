@@ -37,7 +37,6 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
     }
 
     const totalCount = boostCards.reduce((sum, card) => sum + card.count, 0);
-    console.log("### totalcount => ", totalCount)
     if (totalCount === 0) {
       toast.warning("You have to choose at least 1 card.");
       return;
@@ -54,7 +53,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
 
     const success = await addParticipation(jackpotId, userSeed, boostCardsArr);
     if (success) {
-      toast.success("You have been added successfully!");
+      toast.success("You have been added by Card Boost successfully!");
     } else {
       toast.error("Failed to play game!");
     }
@@ -66,7 +65,6 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
   const handlePurchaseNFT = () => {
     router.push("/NFTMint");
   };
-  console.log("### seed => ", userSeed)
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[110] overflow-y-auto">

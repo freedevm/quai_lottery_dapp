@@ -12,6 +12,7 @@ interface JackpotCardProps extends JackpotState {
   onPlay: () => void;
   disabled?: boolean;
   jackpotId: number;
+  status: string;
   userTickets: number;
 }
 
@@ -40,10 +41,11 @@ export default function JackpotCard({
   onPlay,
   disabled = false,
   jackpotId,
+  status,
 }: JackpotCardProps) {
   const { data: appData } = useContext(AppContext);
   const participatedJackpots = appData.participatedGames;
-  console.log("### => ", isActive, disabled, isParticipated)
+  console.log("### status => ", status, disabled)
 
   // Calculate progress percentage
   let percentage = 0;
@@ -122,7 +124,11 @@ export default function JackpotCard({
               isSpinning || !isActive || isParticipated ? "cursor-not-allowed" : ""
             }`}
           >
-            {isParticipated ? `already in with ${userTickets} ticket${userTickets===1?"":"s"}` : isSpinning ? "processing..." : `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
+            {status === "finished" ?  "waiting reward" : 
+              isParticipated ? `already in with ${userTickets} ticket${userTickets===1?"":"s"}` : 
+              isSpinning ? "processing..." : 
+              
+                `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
           </button>
         )}
       </div>
