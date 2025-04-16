@@ -11,14 +11,14 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   jackpotId?: number;
+  userSeed: number;
 }
 
-export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps) {
-  const { data: appData, addParticipation, boostNFTs } = useContext(AppContext);
+export default function NFTBoostModal({ isOpen, onClose, jackpotId, userSeed }: ModalProps) {
+  const { data: appData, addParticipation } = useContext(AppContext);
   const router = useRouter();
-  const [isPlayTicketProcessing, setIsPlayTicketProcessing] = useState(false);
   const [isNFTBoostProcessing, setIsNFTBoostProcessing] = useState(false);
-  const [selectedNFTs, setSelectedNFTs] = useState<{ id: string; count: number }[]>([]); // Track selected NFT IDs and counts
+  const [boostCards, setBoostCards] = useState<{ id: number; count: number }[]>([]); // Track selected NFT IDs and counts
 
   if (!isOpen) return null;
 
@@ -28,47 +28,21 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
       return;
     }
 
-    if (selectedNFTs.length === 0 || selectedNFTs.every((nft) => nft.count === 0)) {
-      toast.error("Please select at least one Card to boost!");
-      return;
+    if (!userSeed) {
+      toast.error("Seed is missing!");
     }
 
     setIsNFTBoostProcessing(true);
-    // Map selectedNFTs to the format expected by boostNFTs
-    // const nftsToBoost = selectedNFTs
-    //   .filter((nft) => nft.count > 0)
-    //   .map((nft) => ({
-    //     id: nft.id,
-    //     name: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.name || "",
-    //     imageUrl: appData.userNFTs.find((userNFT) => userNFT.id === nft.id)?.imageUrl || "",
-    //     count: nft.count,
-    //   }));
 
-    // const success = await boostNFTs(jackpotId, nftsToBoost);
-    // if (success) {
-    //   toast.success("Card(s) boosted successfully!");
-    // } else {
-    //   toast.error("Failed to boost Card(s)!");
-    // }
+    const success = await addParticipation(jackpotId, userSeed, boostCards);
+    if (success) {
+      toast.success("You have been added successfully!");
+    } else {
+      toast.error("Failed to play game!");
+    }
+
     setIsNFTBoostProcessing(false);
     onClose();
-  };
-
-  const handlePlayWithTicket = async () => {
-    setIsPlayTicketProcessing(true);
-    if (!jackpotId) {
-      toast.error("Jackpot ID is missing!");
-      return;
-    }
-
-    const success = await addParticipation(jackpotId);
-    if (success) {
-      toast.success("Added successfully!");
-    } else {
-      toast.error("Failed to add participation!");
-    }
-    onClose();
-    setIsPlayTicketProcessing(false);
   };
 
   const handlePurchaseNFT = () => {
@@ -100,7 +74,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                   index={index}
                   nftName={card.cardName}
                   userNFTs={appData.userNFTs}
-                  setSelectedNFTs={setSelectedNFTs}
+                  setBoostCards={setBoostCards}
                 />
               ))}
             </div>
@@ -115,15 +89,6 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
               }`}
             >
               {isNFTBoostProcessing ? "processing..." : "yes, boost card(s)"}
-            </button>
-            <button
-              onClick={handlePlayWithTicket}
-              disabled={isPlayTicketProcessing}
-              className={`bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-2 rounded-lg text-white uppercase ${
-                isPlayTicketProcessing ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              {isPlayTicketProcessing ? "processing..." : "no, buy one ticket"}
             </button>
             <button
               onClick={onClose}

@@ -10,44 +10,46 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   jackpotId?: number; // Add jackpotId to identify which jackpot the user is participating in
+  userSeed: number;
+  randomSeedGenerator: () => void;
   setShowNFTBoostModal: (value: boolean) => void;
 }
 
-export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoostModal }: ModalProps) {
+export default function ConfirmModal({ isOpen, onClose, jackpotId, userSeed, randomSeedGenerator, setShowNFTBoostModal }: ModalProps) {
   const { data: appData, addParticipation } = useContext(AppContext);
-  const { isWalletConnected, isNFTHolder } = appData;
+  const { isNFTHolder } = appData;
   const router = useRouter();
-  const [showNFTCheck, setShowNFTCheck] = useState(false);
-  const [isPlayTicketProcessing, setIsPlayTicketProcessing] = useState(false)
+  const [isPlayTicketProcessing, setIsPlayTicketProcessing] = useState<boolean>(false)
 
   if (!isOpen) return null;
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    if (isNFTHolder) {
-      setShowNFTCheck(false);
-    } else {
-      setShowNFTCheck(true);
-    }
-  }, [isNFTHolder]);
-
   const handleShowNFTBoostModal = () => {
+    if (!userSeed) {
+      toast.warning("You have to generate your seed");
+      return;
+    }
+    
     setShowNFTBoostModal(true);
     onClose();
   }
 
   const handlePlayWithTicket = async () => {
+    if (!userSeed) {
+      toast.warning("You have to generate your seed");
+      return;
+    }
+
     setIsPlayTicketProcessing(true);
     if (!jackpotId) {
       toast.error("Jackpot ID is missing!");
       return;
     }
 
-    const success = await addParticipation(jackpotId);
+    const success = await addParticipation(jackpotId, userSeed);
     if (success) {
-      toast.success("Added successfully!");
+      toast.success("You have been added successfully!");
     } else {
-      toast.error("Failed to add participation!");
+      toast.error("Failed to play game!");
     }
     onClose(); // Close the modal after attempting to add participation
     setIsPlayTicketProcessing(false);
@@ -67,6 +69,17 @@ export default function ConfirmModal({ isOpen, onClose, jackpotId, setShowNFTBoo
               <p className="text-center mb-6 text-white">
                 Are you ready to participate in this jackpot?
               </p>
+              <div className="w-full sm:w-[90%] h-8 justify-center items-center flex flex-row mb-3 border border-purple-900 rounded-lg overflow-hidden">
+                <p
+                  className="bg-purple-300 w-[60%] border-none cursor-not-allowed h-full text-center content-center"
+                >{!!userSeed ? userSeed : "" }</p>
+                <button
+                  onClick={randomSeedGenerator}
+                  className="w-[40%] bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-4 py-1 text-white"
+                >
+                  Generate
+                </button>
+              </div>
               <div className="w-full justify-center flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleShowNFTBoostModal}

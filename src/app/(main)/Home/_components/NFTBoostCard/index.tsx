@@ -6,23 +6,23 @@ interface Props {
   index: number;
   nftName: string;
   userNFTs: number[];
-  setSelectedNFTs: React.Dispatch<
-    React.SetStateAction<{ id: string; count: number }[]>
+  setBoostCards: React.Dispatch<
+    React.SetStateAction<{ id: number; count: number }[]>
   >;
 }
 
-export default function NFTBoostCard({ index, nftName, userNFTs, setSelectedNFTs }: Props) {
+export default function NFTBoostCard({ index, nftName, userNFTs, setBoostCards }: Props) {
   // Initialize count state
   const [count, setCount] = useState(0);
 
   // Update selectedNFTs when count changes
   useEffect(() => {
-    setSelectedNFTs((prev) => {
-      const index = prev.findIndex(item => item.id === nftName);
-      prev.splice(index, 1, {id: nftName, count: count});
+    setBoostCards((prev) => {
+      const index = prev.findIndex(item => item.id === index);
+      prev.splice(index, 1, {id: index, count: count});
       return prev;
     });
-  }, [count, nftName, setSelectedNFTs]);
+  }, [count, index, setBoostCards]);
 
   const handleIncrement = () => {
     if (count < userNFTs[index]) {
