@@ -25,9 +25,9 @@ interface ContractsMap {
 }
 
 const CONTRACTS = {
-  lottery: "0xddc8f2ef961678c604be9aada94e41e20e598337",
-  nft: "0xce710a9a71a9601da9744b698fc6aa3a758eae4c",
-  setting: "0xde3c7f250c65ae302148a700d2506bb200f7959f"
+  lottery: "0xf95Ecbc1cBe909FF2F6ab50DA6897de83B3cB1d6",
+  nft: "0xBd24551fcce10c059614A18a46eF4D3E4118F1BA",
+  setting: "0xC181C594EBC724A1Acc8EF711ff5921281ba461d"
 }
 
 const ALCHEMY_KEY = "hra0WS7LQz4cQfdKoscbvfEFBDB54ELk";
