@@ -2,6 +2,7 @@ import ScrollTop from "@/components/ScrollTop";
 
 import { ReactNode } from "react";
 import Header from "./_components/Header";
+import Footer from "./_components/Footer";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="pt-12 sm:pt-16 md:pt-20 pb-28 lg:pb-4 flex-auto">
         {children}
       </div>
+      <Footer />
       <ScrollTop />
     </div>
   );
