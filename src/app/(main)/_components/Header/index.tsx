@@ -30,7 +30,7 @@ export default function Header() {
             <div className="sm:hidden">
               <DensityMediumIcon onClick={() => setSideBarVisible(true)} fontSize="medium" />
             </div>
-            <Link href="/Home">
+            <Link href="/Jackpots">
               <div className="relative w-[80px] h-12 sm:h-16 md:h-20">
                 <Image
                   src={"https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4"}
@@ -50,11 +50,11 @@ export default function Header() {
                 </div>
               } */}
               <Link
-                href="/Home"
+                href="/Jackpots"
                 className="header-button"
-                data-selected={/^\/Home/.test(pathname)}
+                data-selected={/^\/Jackpots/.test(pathname)}
               >
-                Home
+                Jackpots
               </Link>
               <Link
                 href="/NFTMint"
@@ -75,7 +75,7 @@ export default function Header() {
                 className="header-button"
                 target="_blank"
               >
-                Documentation
+                Docs
               </Link>
             </div>
             <div className="h-6 sm:h-8 flex items-center border border-[--border-primary-color] rounded-md overflow-hidden cursor-pointer">

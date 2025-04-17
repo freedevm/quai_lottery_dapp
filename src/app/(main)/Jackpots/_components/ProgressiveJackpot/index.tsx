@@ -1,4 +1,3 @@
-// app/(main)/Home/_components/ProgressiveJackpot.tsx
 import { ReactNode } from "react";
 import { JackpotState } from "@/lib/types/lottery";
 import { useRouter } from "next/navigation";
@@ -78,11 +77,7 @@ export default function ProgressiveJackpot({
 
       <button
         onClick={() => router.push('/Investors')}
-        className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
-          disabled
-            ? "bg-purple-400 cursor-not-allowed"
-            : "bg-purple-500 hover:bg-purple-600"
-        }`}
+        className="uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 bg-purple-500 hover:bg-purple-600"
         aria-label="Participate in the Progressive Mega Jackpot"
       >
         Investor Inquiry

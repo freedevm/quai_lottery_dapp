@@ -6,7 +6,7 @@ export enum Theme {
 export const defaultTheme = Theme.dark;
 
 export type PageName =
-  | "home"
+  | "jackpots"
   | "nftMint"
   | "investors";
 

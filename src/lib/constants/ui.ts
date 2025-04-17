@@ -3,10 +3,10 @@ import { BasicSearchParams, PageData, PageName } from "../types/ui";
 export const appTitle = "ETH Lottery";
 
 export const pages: { [key in PageName]: PageData } = {
-  home: {
-    name: "home",
-    title: `Home | ${appTitle}`,
-    path: "/Home",
+  jackpots: {
+    name: "jackpots",
+    title: `Jackpots | ${appTitle}`,
+    path: "/Jackpots",
   },
   nftMint: {
     name: "nftMint",

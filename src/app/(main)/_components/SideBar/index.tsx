@@ -33,7 +33,7 @@ export default function SideBar({ visible, onClose }: Props) {
 
   return (
     <div
-      className="overflow-hidden bg-purple-950 w-[300px] h-full max-h-full overflow-y-auto py-6 flex flex-col fixed -left-[300px] top-0 opacity-0 z-[9995] transition-all duration-200 ease-in-out whitespace-nowrap pt-12 pl-5 pb-4 data-[visible=true]:left-0 data-[visible=true]:opacity-100"
+      className="overflow-hidden bg-purple-950 w-[250px] h-full max-h-full overflow-y-auto py-6 flex flex-col fixed -left-[300px] top-0 opacity-0 z-[9995] transition-all duration-200 ease-in-out whitespace-nowrap pt-12 pl-5 pb-4 data-[visible=true]:left-0 data-[visible=true]:opacity-100"
       data-visible={visible}
     >
       <div className="lg:hidden z-[-1] w-[173px] h-[173px] bg-[#BDFF00] rounded-full blur-[150px] absolute top-[250px] left-[-235px]"></div>
@@ -59,12 +59,12 @@ export default function SideBar({ visible, onClose }: Props) {
         <div className="flex flex-col text-base max-h-[60%]">
           <div
             className="px-6 py-1 rounded-l-full border-b-1 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
-            data-selected={/^\/Home/.test(pathname)}
-            onClick={() => goToLeague("/Home")}
+            data-selected={/^\/Jackpots/.test(pathname)}
+            onClick={() => goToLeague("/Jackpots")}
           >
             <div className="flex items-center justify-end">
               <span className="text-inherit text-md">
-                Home
+                Jackpots
               </span>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function SideBar({ visible, onClose }: Props) {
             >
             <div className="flex items-center justify-end">
               <span className="text-inherit text-md">
-                Documentation
+                Docs
               </span>
             </div>
           </Link>
