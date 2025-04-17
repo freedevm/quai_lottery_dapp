@@ -28,6 +28,7 @@ export interface GameData {
   jackpotSize: number;
   currentSize: number;
   isParticipated: boolean;
+  totalTicketCount: number;
   status: "started" | "finished" | "calculating" | "rewarded";
   userTickets: number;
   players: number;

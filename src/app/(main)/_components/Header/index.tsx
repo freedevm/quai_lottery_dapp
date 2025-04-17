@@ -64,6 +64,13 @@ export default function Header() {
                 Card Mint
               </Link>
               <Link
+                href="/Investors"
+                className="header-button"
+                data-selected={/^\/Investors/.test(pathname)}
+              >
+                Investors
+              </Link>
+              <Link
                 href="https://ethereum-lottery-game-docs.vercel.app/"
                 className="header-button"
                 target="_blank"
