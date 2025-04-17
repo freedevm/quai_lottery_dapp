@@ -1,34 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { pages } from "@/lib/constants/ui";
-import { poppins } from "@/lib/utils/fonts";
-import CloseIcon from "@mui/icons-material/Close";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-const emojis: { [key: string]: string } = {
-  football: "🏈",
-  soccer: "⚽",
-  basketball: "🏀",
-  baseball: "⚾",
-  hockey: "🏒",
-  fighting: "🥊",
-  cricket: "🏏",
-  tennis: "🎾",
-  handball: "🤾",
-  motosport: "🏍️",
-  waterpolo: "🤽",
-  tabletennis: "🏓",
-  volleyball: "🏐",
-  rugby: "🏉",
-  esports: "🎮",
-  golf: "🏌️",
-  politics: "🏛️",
-};
+import Link from "next/link";
 
 interface Props {
   visible: boolean;
@@ -41,48 +19,22 @@ export default function SideBar({ visible, onClose }: Props) {
   const onCloseRef = useRef(onClose);
   localVisibleRef.current = localVisible;
   onCloseRef.current = onClose;
-  const ref = useRef<any>();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     setLoalVisible(visible);
   }, [visible]);
 
-  useEffect(() => {
-    const clickListner = (e: MouseEvent) => {
-      const element = ref.current;
-      if (!element) return;
-      if (localVisibleRef.current && !element.contains(e.target)) {
-        onCloseRef.current();
-      }
-    };
-
-    addEventListener("click", clickListner);
-    return () => removeEventListener("click", clickListner);
-  }, []);
-
-//   const orderSports = useMemo(() => {
-//     const newItems: string[] = [];
-//     for (const item of Array.from(
-//       new Set(Object.values(sports ?? {}).map(({ sport }) => sport))
-//     )) {
-//       if (item === "Soccer") newItems.unshift(item);
-//       else newItems.push(item);
-//     }
-//     return newItems;
-//   }, [sports]);
-
-//   const goToLeague = (sport: string) => {
-//     router.push(pages.scheduled.path);
-//     setData({ sport, leagueId: undefined });
-//     onClose();
-//   };
+  const goToLeague = (path: string) => {
+    router.push(path);
+    onClose();
+  };
 
   return (
     <div
-      className="overflow-hidden bg-purple-950 w-[300px] h-full max-h-full overflow-y-auto py-6 flex flex-col fixed -left-[300px] top-0 opacity-0 z-[9995] transition-all duration-200 ease-in-out whitespace-nowrap pt-12 pb-4 px-4 data-[visible=true]:left-0 data-[visible=true]:opacity-100"
+      className="overflow-hidden bg-purple-950 w-[300px] h-full max-h-full overflow-y-auto py-6 flex flex-col fixed -left-[300px] top-0 opacity-0 z-[9995] transition-all duration-200 ease-in-out whitespace-nowrap pt-12 pl-5 pb-4 data-[visible=true]:left-0 data-[visible=true]:opacity-100"
       data-visible={visible}
-      ref={ref}
     >
       <div className="lg:hidden z-[-1] w-[173px] h-[173px] bg-[#BDFF00] rounded-full blur-[150px] absolute top-[250px] left-[-235px]"></div>
       <button
@@ -104,54 +56,41 @@ export default function SideBar({ visible, onClose }: Props) {
             fill
           />
         </div>
-        {/* <MarketFilter />
-        <SearchBox
-          inputProps={{
-            placeholder: "Search games",
-            value: filterMarket,
-            onChange: (e) => setData({ filterMarket: e.target.value }),
-            autoFocus: true,
-          }}
-        /> */}
-        {/* <div className="flex flex-col text-base max-h-[60%]">
-          {["Live", ...orderSports].map((sport) => {
-            const icon = sport !== "Live" && emojis[sport.toLocaleLowerCase()];
-
-            return (
-              <div
-                key={sport}
-                className="px-4 py-1 data-[selected=true]:text-[#5BEF00] data-[selected=true]:font-bold"
-                onClick={() => goToLeague(sport)}
-              >
-                <div className="flex justify-between cursor-pointer hover:text-[#5bef00]">
-                  <div className="flex items-center">
-                    {icon ? (
-                      <span>{icon}</span>
-                    ) : (
-                      <span className="live-dot px-[10px]"></span>
-                    )}
-
-                    <span className="ml-2 text-inherit text-sm font-[MuseoModerno] font-bold">
-                      {sport}
-                    </span>
-                  </div>
-                  <span
-                    className={`${poppins.className} text-[#5BEF00] text-base`}
-                  >
-                    {sport === "Live"
-                      ? liveMarkets?.markets
-                        ? liveMarkets?.markets.length
-                        : 0
-                      : Object.values(markets?.[sport] ?? {}).reduce(
-                          (acc, marketsArr) => [...acc, ...marketsArr],
-                          []
-                        ).length}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
+        <div className="flex flex-col text-base max-h-[60%]">
+          <div
+            className="px-6 py-1 rounded-l-full data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            data-selected={/^\/Home/.test(pathname)}
+            onClick={() => goToLeague("/Home")}
+          >
+            <div className="flex items-center justify-end">
+              <span className="text-inherit text-md">
+                Home
+              </span>
+            </div>
+          </div>
+          <div
+            className="px-6 py-1 rounded-l-full data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            data-selected={/^\/NFTMint/.test(pathname)}
+            onClick={() => goToLeague("/NFTMint")}
+          >
+            <div className="flex items-center justify-end">
+              <span className="text-inherit text-md">
+                Card Mint
+              </span>
+            </div>
+          </div>
+          <Link
+            href="https://ethereum-lottery-game-docs.vercel.app/"
+            target="_blank"
+            className="px-6 py-1 rounded-l-full data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            >
+            <div className="flex items-center justify-end">
+              <span className="text-inherit text-md">
+                Documentation
+              </span>
+            </div>
+          </Link>
+        </div>
       </div>
       <div className="flex flex-row items-center justify-center gap-4">
         <div className="text-sm text-center">

@@ -24,32 +24,24 @@ export default function Header() {
         className="fixed left-0 top-0 flex flex-col w-screen z-[100] shadow-xl bg-purple-800"
       >
         <div className="container mx-auto px-4 sm:px-8 h-12 sm:h-16 md:h-20 flex justify-between items-center">
-          {/* <button
+          <button
             className="flex items-center gap-2"
-            onClick={() => setSideBarVisible(true)}
           >
-            <DensityMediumIcon fontSize="medium" />
-            <div className="relative w-[80px] h-12 sm:h-16 md:h-20">
-              <Image
-                src={"https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4"}
-                alt=""
-                fill
-                style={{ objectFit: "contain" }}
-                priority
-              />
+            <div className="sm:hidden">
+              <DensityMediumIcon onClick={() => setSideBarVisible(true)} fontSize="medium" />
             </div>
-          </button> */}
-          <Link href="/Home">
-            <div className="relative w-[80px] h-12 sm:h-16 md:h-20">
-              <Image
-                src="https://ipfs.io/ipfs/bafybeiaq5jsajyddcvi5ym5kjjmgjgsyzhs3hmuuwgu2ufsz2nngypiaby"
-                alt="logo"
-                fill
-                style={{ objectFit: "contain" }}
-                priority
-              />
-            </div>
-          </Link>
+            <Link href="/Home">
+              <div className="relative w-[80px] h-12 sm:h-16 md:h-20">
+                <Image
+                  src={"https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4"}
+                  alt=""
+                  fill
+                  style={{ objectFit: "contain" }}
+                  priority
+                />
+              </div>
+            </Link>
+          </button>
           <div className="flex relative gap-2 h-full items-center">
             <div className="hidden lg:flex h-full">
               {/* {isWalletConnected &&
