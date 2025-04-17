@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 interface Props {
   index: number;
   nftName: string;
+  boostValue: number;
   userNFTs: number[];
   boostCards: {id:number; count:number}[];
   setBoostCards: React.Dispatch<
@@ -15,7 +16,7 @@ interface Props {
 >;
 }
 
-export default function NFTBoostCard({ index, nftName, userNFTs, boostCards, setBoostCards, setBoostCount }: Props) {
+export default function NFTBoostCard({ index, nftName, boostValue, userNFTs, boostCards, setBoostCards, setBoostCount }: Props) {
   // Initialize count state
   const [count, setCount] = useState(0);
 
@@ -31,14 +32,14 @@ export default function NFTBoostCard({ index, nftName, userNFTs, boostCards, set
   const handleIncrement = () => {
     if (count < userNFTs[index]) {
       setCount((prev) => prev + 1);
-      setBoostCount((prev) => prev + 1);
+      setBoostCount((prev) => prev + boostValue);
     }
   };
 
   const handleDecrement = () => {
     if (count > 0) {
       setCount((prev) => prev - 1);
-      setBoostCount((prev) => prev - 1);
+      setBoostCount((prev) => prev - boostValue);
     }
   };
 
