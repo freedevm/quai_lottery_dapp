@@ -1,50 +1,14 @@
 // app/(main)/Home/_components/ProgressiveJackpot.tsx
-import { useState, useEffect, ReactNode, useContext } from "react";
-import { AppContext } from "@/lib/providers/AppContextProvider";
-import { Address, JackpotState } from "@/lib/types/lottery";
-
-// Define interfaces for props
-interface CyclingAddressesProps {
-  addresses: Address[];
-  isSpinning: boolean;
-  winner: Address | null;
-}
+import { ReactNode } from "react";
+import { JackpotState } from "@/lib/types/lottery";
+import { useRouter } from "next/navigation";
 
 interface TooltipProps {
   children: ReactNode;
 }
 
 interface ProgressiveJackpotProps extends JackpotState {
-  // onPlay: () => void;
-  // winner: Address | null;
-  participants: Address[];
   disabled?: boolean;
-}
-
-function CyclingAddresses({ addresses, isSpinning, winner }: CyclingAddressesProps) {
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-
-  useEffect(() => {
-    if (!isSpinning) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % addresses.length);
-    }, 100);
-    return () => clearInterval(interval);
-  }, [isSpinning, addresses.length]);
-
-  if (winner) {
-    return (
-      <div className="text-purple-300 text-xs sm:text-sm mt-2">
-        {winner.address}
-      </div>
-    );
-  }
-
-  return (
-    <div className="text-purple-300 text-xs sm:text-sm mt-2 h-6">
-      {isSpinning && addresses[currentIndex] ? addresses[currentIndex].address : ""}
-    </div>
-  );
 }
 
 function Tooltip({ children }: TooltipProps) {
@@ -63,11 +27,9 @@ export default function ProgressiveJackpot({
   amount = 0,
   targetAmount= 100,
   isSpinning = false,
-  // winner,
-  // onPlay,
-  participants = [],
   disabled = false,
 }: ProgressiveJackpotProps) {
+  const router = useRouter()
   // Calculate progress percentage
   let percentage = 0;
   if (amount) percentage = Math.min((amount / targetAmount) * 100, 100);
@@ -114,34 +76,17 @@ export default function ProgressiveJackpot({
         {amount ? amount.toLocaleString() : 0} eth
       </div>
 
-      {/* <button
-        // onClick={onPlay}
-        disabled={disabled || isSpinning}
+      <button
+        onClick={() => router.push('/Investors')}
         className={`uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 ${
-          disabled || isSpinning
+          disabled
             ? "bg-purple-400 cursor-not-allowed"
             : "bg-purple-500 hover:bg-purple-600"
         }`}
         aria-label="Participate in the Progressive Mega Jackpot"
       >
-        {isSpinning ? "Spinning..." : "Investor Inquiry"}
-      </button> */}
-
-      {/* Cycling Addresses */}
-      {/* <CyclingAddresses
-        addresses={participants}
-        isSpinning={isSpinning}
-        winner={winner}
-      /> */}
-
-      {/* Winner Announcement */}
-      {/* {winner && (
-        <div className="mt-4 sm:mt-6 text-center">
-          <div className="text-lg sm:text-xl font-bold text-yellow-400">
-            Winner!
-          </div>
-        </div>
-      )} */}
+        Investor Inquiry
+      </button>
     </div>
   );
 }

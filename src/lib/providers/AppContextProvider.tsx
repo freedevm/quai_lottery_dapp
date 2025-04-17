@@ -22,9 +22,9 @@ interface ContractAddresses {
 }
 
 const CONTRACTS: ContractAddresses = {
-  lottery: process.env.LOTTERY_GAME_ADDRESS || "0x9a3c308B1839Bf3520Dfa374c70658671A645B24",
-  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS || "0x0De82Ff6daA10c325Acaa4C1bCa7Bc80B49B6715",
-  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS || "0xd8A0d0E9B516B0e6b0b17049F715444cd731c125",
+  lottery: process.env.LOTTERY_GAME_ADDRESS || "0x682c4A399cCc89B0250D4e16A406aF536b100791",
+  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS || "0x603E29E549E9b33197fAaFF52bBea85F165A14c5",
+  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS || "0x1be18D91C2Fb5069Ed47B4f067A0D926359eDbFE",
 };
 
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || "hra0WS7LQz4cQfdKoscbvfEFBDB54ELk";
@@ -35,6 +35,7 @@ interface ContextData {
   userBalance: string | null;
   isWalletConnected: boolean;
   entryPrice: number | null;
+  investors: Address[];
   games: GameData[];
   megaJackpot: number | null;
   cards: Card[] | null;
@@ -56,6 +57,7 @@ const initialData: ContextData = {
   userBalance: null,
   isWalletConnected: false,
   entryPrice: null,
+  investors: [],
   games: [],
   megaJackpot: null,
   cards: [],
@@ -154,6 +156,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       const maxMintCount = parseInt(await nftContract.MAX_MINT_COUNT());
       const numCardTypes = parseInt(await nftContract.NUM_CARD_TYPES());
       const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
+      const investors = await lotteryContract.getInvestorList()
 
       // Batch fetch card data
       const cardPromises = Array.from({ length: numCardTypes }, async (_, i) => {
@@ -182,6 +185,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         const randomTenPercent = Number(await settingContract.RANDOM_TEN_REWARD_PERCENT()) / 10000;
         const currentSize = ethers.formatEther(game.currentSize);
         const jackpotSize = ethers.formatEther(game.jackpotSize);
+        const totalTicketCount = parseInt(await game.totalTicketCount);
         let userTickets = 0;
         let isParticipated = false;
 
@@ -194,6 +198,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           gameIndex: Number(index),
           jackpotSize,
           currentSize,
+          totalTicketCount,
           isParticipated,
           status: ["started", "finished", "calculating", "rewarded"][game.state] as GameData["status"],
           userTickets,
@@ -234,6 +239,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         megaJackpot,
         cards,
         maxMintCount,
+        investors,
         lastWinners: {}, // Not fetched; use default
         lastWinner: null, // Not fetched; use default
         isNFTHolder,

@@ -7,7 +7,8 @@ export const defaultTheme = Theme.dark;
 
 export type PageName =
   | "home"
-  | "nftMint";
+  | "nftMint"
+  | "investors";
 
 export interface PageData {
   name: PageName;

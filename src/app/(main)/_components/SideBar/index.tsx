@@ -58,7 +58,7 @@ export default function SideBar({ visible, onClose }: Props) {
         </div>
         <div className="flex flex-col text-base max-h-[60%]">
           <div
-            className="px-6 py-1 rounded-l-full data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            className="px-6 py-1 rounded-l-full border-b-1 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
             data-selected={/^\/Home/.test(pathname)}
             onClick={() => goToLeague("/Home")}
           >
@@ -69,7 +69,7 @@ export default function SideBar({ visible, onClose }: Props) {
             </div>
           </div>
           <div
-            className="px-6 py-1 rounded-l-full data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            className="px-6 py-1 rounded-l-full border-b-1 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
             data-selected={/^\/NFTMint/.test(pathname)}
             onClick={() => goToLeague("/NFTMint")}
           >
@@ -79,10 +79,21 @@ export default function SideBar({ visible, onClose }: Props) {
               </span>
             </div>
           </div>
+          <div
+            className="px-6 py-1 rounded-l-full border-b-1 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            data-selected={/^\/Investors/.test(pathname)}
+            onClick={() => goToLeague("/Investors")}
+          >
+            <div className="flex items-center justify-end">
+              <span className="text-inherit text-md">
+                Investors
+              </span>
+            </div>
+          </div>
           <Link
             href="https://ethereum-lottery-game-docs.vercel.app/"
             target="_blank"
-            className="px-6 py-1 rounded-l-full data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
+            className="px-6 py-1 rounded-l-full border-b-1 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
             >
             <div className="flex items-center justify-end">
               <span className="text-inherit text-md">

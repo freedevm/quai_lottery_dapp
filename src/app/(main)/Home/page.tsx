@@ -8,6 +8,7 @@ import { AppContext } from "@/lib/providers/AppContextProvider";
 import { Address, GameData, JackpotState, Jackpots } from "@/lib/types/lottery";
 import NFTBoostModal from "./_components/NFTBoostModal";
 import ImageCarousel from "../_components/ImageCarousel";
+import InvesterListModal from "./_components/InvesterListModal";
 
 export default function Page() {
   // Access wallet connection status from AppContext
@@ -17,6 +18,7 @@ export default function Page() {
   const [games, setGames] = useState<GameData[]>([]);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [showNFTBoostModal, setShowNFTBoostModal] = useState<boolean>(false);
+  const [showInvesterListModal, setShowInvesterListModal] = useState<boolean>(false);
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
   const [selectedPotId, setSelectedPotId] = useState<number>(0);
   const [userSeed, setUserSeed] = useState<number>(0)
@@ -52,6 +54,10 @@ export default function Page() {
     setShowNFTBoostModal(false);
   }
 
+  const closeInvesterListModal = () => {
+    setShowInvesterListModal(false);
+  }
+
   return (
     <div className="h-full max-h-full">
       {showConfirmModal && (
@@ -71,6 +77,12 @@ export default function Page() {
           jackpotId={selectedPotId}
         />
       )}
+      {showInvesterListModal && (
+        <InvesterListModal
+          isOpen={showInvesterListModal}
+          onClose={closeInvesterListModal}
+        />
+      )}
 
       {/* Image Carousel */}
       <ImageCarousel />
@@ -80,7 +92,6 @@ export default function Page() {
         <ProgressiveJackpot
           amount={appData.megaJackpot}
           targetAmount={100}
-          participants={[]}
           disabled={buttonDisabled}
           isActive={false}
           isParticipated={false}
@@ -94,7 +105,8 @@ export default function Page() {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold my-3 sm:my-5 text-white uppercase text-center">active jackpots</h1>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
                 {games.map((game) => (
-                  game.status !== "rewarded" && <JackpotCard
+                  game.status !== "rewarded" && 
+                  <JackpotCard
                     key={game.gameIndex}
                     title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
                     jackpotId={game.gameIndex}
@@ -102,6 +114,7 @@ export default function Page() {
                     isActive={game.status === "started"}
                     isParticipated={game.isParticipated}
                     userTickets={game.userTickets}
+                    totalTicketCount={game.totalTicketCount}
                     amount={game.currentSize}
                     status={game.status}
                     disabled={buttonDisabled}

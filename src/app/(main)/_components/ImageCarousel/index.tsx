@@ -63,7 +63,7 @@ export default function ImageCarousel () {
   };
 
   return (
-    <div className="relative px-1 py-8 sm:px-2 md:px-3 w-full">
+    <div className="relative px-1 py-5 sm:px-2 md:px-3 w-full">
       <div className="overflow-hidden">
         <motion.div
           className="flex"

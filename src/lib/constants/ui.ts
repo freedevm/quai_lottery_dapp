@@ -13,6 +13,11 @@ export const pages: { [key in PageName]: PageData } = {
     title: `Card Mint | ${appTitle}`,
     path: "/NFTMint",
   },
+  investors: {
+    name: "investors",
+    title: `Investors | ${appTitle}`,
+    path: "/Investors",
+  },
 };
 
 export const cards = [

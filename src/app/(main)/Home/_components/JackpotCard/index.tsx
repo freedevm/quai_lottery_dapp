@@ -14,6 +14,7 @@ interface JackpotCardProps extends JackpotState {
   jackpotId: number;
   status: string;
   userTickets: number;
+  totalTicketCount: number;
 }
 
 const imageFolder = "https://ipfs.io/ipfs/bafybeidt4rnvygim42sxyy4icxyasabzbvoegxbw5ew5ww3lcnggyhyjoa/"
@@ -37,6 +38,7 @@ export default function JackpotCard({
   isSpinning = false,
   isActive,
   isParticipated,
+  totalTicketCount,
   userTickets,
   onPlay,
   disabled = false,
@@ -90,7 +92,7 @@ export default function JackpotCard({
         <h2 className="text-lg sm:text-xl font-bold text-white mb-2 animate-text-glare">{title}</h2>
         <div className="space-y-2">
           <p className="text-sm sm:text-base text-purple-200">
-            Current Amount: <span className="font-semibold text-white">{amount} ETH</span>
+            Current Amount: <span className="font-semibold text-white">{amount} ETH - {totalTicketCount} Tickets</span>
           </p>
           <p className="text-sm sm:text-base text-purple-200">
             Target Amount: <span className="font-semibold text-white">{targetAmount} ETH</span>

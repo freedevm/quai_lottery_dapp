@@ -10,6 +10,9 @@ export default function NFTMints() {
 
   return (
     <div className="w-full rounded-2xl p-2 sm:px-4 sm:py-5 flex flex-col justify-center ml-auto mr-auto lg:even:ml-0 lg:odd:mr-0 relative">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl text-center font-bold my-2 text-white uppercase">
+        Boost your luck with premium cards in the Ethereum Lottery
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2">
         {data.cards && data.cards.map((card, index) => (
           <NFTMintItem
