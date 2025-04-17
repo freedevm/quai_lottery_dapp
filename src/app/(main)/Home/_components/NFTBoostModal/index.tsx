@@ -78,7 +78,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
 
           <div className="mb-6 w-full">
             <div className="flex items-center mb-2 justify-between">
-              <p className="text-center text-white uppercase">total: {boostCount}</p>
+              <p className="text-center text-white uppercase">total ticket : {boostCount}</p>
               <button
                 onClick={handlePurchaseNFT}
                 className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-2 rounded-lg text-white uppercase"
@@ -92,6 +92,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                   key={index}
                   index={index}
                   nftName={card.cardName}
+                  boostValue={card.boostValue}
                   userNFTs={appData.userNFTs}
                   boostCards={boostCards}
                   setBoostCards={setBoostCards}
