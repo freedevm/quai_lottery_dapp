@@ -45,7 +45,6 @@ export default function JackpotCard({
 }: JackpotCardProps) {
   const { data: appData } = useContext(AppContext);
   const participatedJackpots = appData.participatedGames;
-  console.log("### status => ", status, disabled)
 
   // Calculate progress percentage
   let percentage = 0;

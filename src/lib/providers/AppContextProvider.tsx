@@ -22,9 +22,9 @@ interface ContractAddresses {
 }
 
 const CONTRACTS: ContractAddresses = {
-  lottery: "0xC181C594EBC724A1Acc8EF711ff5921281ba461d",
-  nft: "0xBd24551fcce10c059614A18a46eF4D3E4118F1BA",
-  setting: "0xf95Ecbc1cBe909FF2F6ab50DA6897de83B3cB1d6",
+  lottery: process.env.LOTTERY_GAME_ADDRESS || "0xC181C594EBC724A1Acc8EF711ff5921281ba461d",
+  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS || "0xBd24551fcce10c059614A18a46eF4D3E4118F1BA",
+  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS || "0xf95Ecbc1cBe909FF2F6ab50DA6897de83B3cB1d6",
 };
 
 const ALCHEMY_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || "hra0WS7LQz4cQfdKoscbvfEFBDB54ELk";
@@ -216,8 +216,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
       if (userAddress) {
         isWalletConnected = true;
-        const { totalBalances } = await nftContract.getUserBalances(userAddress);
-        userNFTs = totalBalances.map((balance: string) => parseInt(balance));
+        const { unlockedBalances } = await nftContract.getUserBalances(userAddress);
+        userNFTs = unlockedBalances.map((balance: string) => parseInt(balance));
         userNFTCount = userNFTs.reduce((sum, count) => sum + count, 0);
         isNFTHolder = userNFTCount > 0;
         participatedGames = games.filter((game) => game.isParticipated).map((game) => game.gameIndex);
@@ -420,7 +420,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         })
       );
     }
-  }, [account.isConnected, account.address, chainId, balanceData, fetchAppData]);
+  }, [data, account.isConnected, account.address, chainId, balanceData, fetchAppData]);
 
   // Persist data to localStorage (excluding sensitive wallet data)
   useEffect(() => {
