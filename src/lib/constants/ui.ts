@@ -10,18 +10,8 @@ export const pages: { [key in PageName]: PageData } = {
   },
   nftMint: {
     name: "nftMint",
-    title: `NFTMint | ${appTitle}`,
+    title: `Card Mint | ${appTitle}`,
     path: "/NFTMint",
-  },
-  nftBoost: {
-    name: "nftBoost",
-    title: `NFTBoost | ${appTitle}`,
-    path: "/NFTBoost",
-  },
-  jackpot: {
-    name: "jackpot",
-    title: `Jackpot | ${appTitle}`,
-    path: "/Jackpot",
   },
 };
 
