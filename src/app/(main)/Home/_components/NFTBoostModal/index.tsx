@@ -17,7 +17,8 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
   const { data: appData, addParticipation } = useContext(AppContext);
   const router = useRouter();
   const [isNFTBoostProcessing, setIsNFTBoostProcessing] = useState(false);
-  const [boostCards, setBoostCards] = useState<{ id: number; count: number }[]>([]); // Track selected NFT IDs and counts
+  const [boostCards, setBoostCards] = useState<{ id: number; count: number }[]>([]); // Track selected NFT IDs and counts\
+  const [boostCount, setBoostCount] = useState<number>(0);
   const [userSeed, setUserSeed] = useState<number>(0);
 
   useEffect(() => {
@@ -76,7 +77,8 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
           </p>
 
           <div className="mb-6 w-full">
-            <div className="flex items-center mb-2 justify-end">
+            <div className="flex items-center mb-2 justify-between">
+              <p className="text-center text-white uppercase">total: {boostCount}</p>
               <button
                 onClick={handlePurchaseNFT}
                 className="bg-purple-500 hover:bg-purple-400 active:bg-purple-600 px-2 rounded-lg text-white uppercase"
@@ -93,6 +95,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                   userNFTs={appData.userNFTs}
                   boostCards={boostCards}
                   setBoostCards={setBoostCards}
+                  setBoostCount={setBoostCount}
                 />
               ))}
             </div>
@@ -106,7 +109,7 @@ export default function NFTBoostModal({ isOpen, onClose, jackpotId }: ModalProps
                 isNFTBoostProcessing ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isNFTBoostProcessing ? "processing..." : "yes, boost card(s)"}
+              {isNFTBoostProcessing ? "processing..." : "boost card(s)"}
             </button>
             <button
               onClick={onClose}
