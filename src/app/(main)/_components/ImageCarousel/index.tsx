@@ -76,13 +76,13 @@ export default function ImageCarousel () {
               className={`flex-shrink-0 px-4`}
               style={{ width: `${100 / perView}%` }}
             >
-              <div className="relative flex h-48 items-center justify-center rounded-3xl shadow-xl/30 transition-transform duration-300 ease-in-out">
+              <div className="relative flex h-48 items-center justify-center rounded-lg shadow-xl/30 transition-transform duration-300 ease-in-out">
                 <Image
                   src={block.imageUrl}
                   alt={block.alt}
                   width={640}
                   height={640}
-                  className="h-full w-full rounded-3xl object-cover"
+                  className="h-full w-full rounded-lg object-cover"
                   priority={block.id === '1'} // Optimize first image
                 />
               </div>
