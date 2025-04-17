@@ -47,7 +47,7 @@ export default function SideBar({ visible, onClose }: Props) {
         />
       </button>
       <div className="w-full h-full overflow-auto flex flex-col relative gap-2 no-scrollbar">
-        <div className="relative w-full h-24">
+        <div className="relative w-full h-28">
           <Image
             src={"https://ipfs.io/ipfs/bafybeiaq5jsajyddcvi5ym5kjjmgjgsyzhs3hmuuwgu2ufsz2nngypiaby"}
             alt=""
@@ -105,7 +105,7 @@ export default function SideBar({ visible, onClose }: Props) {
       </div>
       <div className="flex flex-row items-center justify-center gap-4">
         <div className="text-sm text-center">
-          © {new Date().getFullYear()}&nbsp;Ethereum Lottery
+          © {new Date().getFullYear()}&nbsp;<Link href="https://ethereumlottery.org/" className="hover:underline">Ethereum Lottery™</Link>
           {/* <br /> */}
           {/* <a
             href="https://discord.gg/kemTYetJ"
