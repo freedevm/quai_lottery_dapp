@@ -252,7 +252,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       };
     } catch (error: any) {
       console.error("Failed to fetch app data:", error);
-      toast.error("Failed to load lottery data");
       throw error;
     }
   }, []);
