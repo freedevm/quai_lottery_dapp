@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { JackpotState } from "@/lib/types/lottery";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface TooltipProps {
   children: ReactNode;
@@ -75,13 +76,20 @@ export default function ProgressiveJackpot({
         {amount ? amount.toLocaleString() : 0} eth
       </div>
 
-      <button
+      {/* <button
         onClick={() => router.push('/Investors')}
         className="uppercase w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-xl font-bold text-white transition-colors duration-200 bg-purple-500 hover:bg-purple-600"
         aria-label="Participate in the Progressive Mega Jackpot"
       >
         Investor Inquiry
-      </button>
+      </button> */}
+      <Link href="/Investors" className="box-border relative z-30 inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 overflow-hidden font-bold text-white transition-all duration-300 bg-purple-600 rounded-md cursor-pointer group ring-offset-2 ring-1 ring-purple-500 ring-offset-purple-400 hover:ring-offset-purple-500 ease focus:outline-none">
+        <span className="absolute bottom-0 right-0 w-8 h-20 -mb-8 -mr-5 transition-all duration-300 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+        <span className="absolute top-0 left-0 w-20 h-8 -mt-1 -ml-12 transition-all duration-300 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:translate-x-0"></span>
+        <span className="relative z-20 flex items-center text-base sm:text-xl">
+            Investor Inquiry
+        </span>
+      </Link>
     </div>
   );
 }
