@@ -151,7 +151,7 @@ export default function SideBar({ visible, onClose }: Props) {
           </Link>
         </div>
         <div className="text-sm text-center">
-          © {new Date().getFullYear()}&nbsp;<Link href="https://ethereumlottery.org/" className="hover:underline">Ethereum Lottery™</Link>
+          © {new Date().getFullYear()}&nbsp;<Link href="https://ethereumlottery.org/" className="hover:underline">Ethereum Lottery</Link>
           {/* <br /> */}
           {/* <Link
             href="https://discord.gg/kemTYetJ"
