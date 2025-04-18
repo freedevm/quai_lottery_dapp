@@ -12,6 +12,7 @@ import { poppins } from "@/lib/utils/fonts";
 import Web3ModalProvider from "@/wallet-connect/Web3ModalProvider";
 import { config } from "@/wallet-connect/config";
 import { NextUIProvider } from "@nextui-org/react";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
   title: "Ethereum Lottery - Win Big with Crypto Jackpots",
@@ -55,6 +56,9 @@ export default function RootLayout({
           <NextUIProvider>
             <AppContextProvider>
               {children}
+              {process.env.NEXT_PUBLIC_GA_ID && (
+                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+              )}
             </AppContextProvider>
           </NextUIProvider>
         </Web3ModalProvider>
