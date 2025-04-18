@@ -75,7 +75,7 @@ export default function SideBar({ visible, onClose }: Props) {
           >
             <div className="flex items-center justify-end">
               <span className="text-inherit text-md">
-                Card Mint
+                Card Shop
               </span>
             </div>
           </div>
