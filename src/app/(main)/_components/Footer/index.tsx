@@ -10,7 +10,7 @@ export default function Footer () {
                         <img src="https://ipfs.io/ipfs/bafybeiaq5jsajyddcvi5ym5kjjmgjgsyzhs3hmuuwgu2ufsz2nngypiaby" className="w-16 h-16" alt="Flowbite Logo" />
                         <span className="self-center text-2xl font-semibold whitespace-nowrap hidden sm:flex">Ethereum Lottery</span>
                     </Link>
-                    <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-purple-500 sm:mb-0 dark:text-purple-400">
+                    <ul className="hidden sm:flex flex-wrap items-center mb-6 text-sm font-medium text-purple-500 sm:mb-0 dark:text-purple-400">
                         <li>
                             <Link href="/Jackpots" className="hover:underline me-4 md:me-6 uppercase">Jackpots</Link>
                         </li>

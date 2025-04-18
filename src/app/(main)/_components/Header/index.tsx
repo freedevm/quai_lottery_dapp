@@ -30,7 +30,7 @@ export default function Header() {
             <div className="sm:hidden">
               <DensityMediumIcon onClick={() => setSideBarVisible(true)} fontSize="medium" />
             </div>
-            <Link href="/Jackpots">
+            <Link href="https://ethereumlottery.org/">
               <div className="relative w-[80px] h-12 sm:h-16 md:h-20">
                 <Image
                   src={"https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4"}
