@@ -14,7 +14,7 @@ const metadata = {
   name: "Ethereum Lottery",
   description: "Ethereum Mega Jackpot",
   url: env.WALLET_CONNECT_ORIGIN!, // origin must match your domain & subdomain
-  icons: ["https://ipfs.io/ipfs/bafybeidm6vl3azmfjth4lbhpfctw7zxxwxg7dpt76vx5dvusmzquwc3gnm"],
+  icons: ["https://ipfs.io/ipfs/bafybeiaq5jsajyddcvi5ym5kjjmgjgsyzhs3hmuuwgu2ufsz2nngypiaby"],
 };
 
 // Create wagmiConfig

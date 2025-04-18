@@ -14,8 +14,31 @@ import { config } from "@/wallet-connect/config";
 import { NextUIProvider } from "@nextui-org/react";
 
 export const metadata: Metadata = {
-  title: "Eth Lottery",
-  description: "Ethereum | Jackpot | Lottery",
+  title: "Ethereum Lottery - Win Big with Crypto Jackpots",
+  description:
+    "Join Ethereum Lottery for a chance to win massive crypto jackpots. Secure, transparent, and powered by blockchain technology.",
+  keywords: ["Ethereum", "lottery", "jackpot", "Ethereum lottery", "crypto lottery"],
+  openGraph: {
+    title: "Ethereum Lottery - Win Big with Crypto Jackpots",
+    description:
+      "Participate in Ethereum Lottery to win huge crypto prizes with secure blockchain technology.",
+    url: "https://ethereumlottery.org/", // Replace with your domain
+    siteName: "Ethereum Lottery",
+    images: [
+      {
+        url: "https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4", // Replace with a relevant image URL
+        width: 1200,
+        height: 500,
+        alt: "Ethereum Lottery Banner",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
