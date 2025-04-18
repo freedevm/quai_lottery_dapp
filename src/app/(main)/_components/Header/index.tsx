@@ -50,11 +50,11 @@ export default function Header() {
                 </div>
               } */}
               <Link
-                href="/Jackpots"
+                href="/Play"
                 className="header-button"
-                data-selected={/^\/Jackpots/.test(pathname)}
+                data-selected={/^\/Play/.test(pathname)}
               >
-                Jackpots
+                Play
               </Link>
               <Link
                 href="/NFTMint"

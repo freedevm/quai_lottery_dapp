@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function Jackpots() {
-  redirect("/Jackpots");
+export default function Play() {
+  redirect("/Play");
 }

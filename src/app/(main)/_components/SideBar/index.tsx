@@ -59,12 +59,12 @@ export default function SideBar({ visible, onClose }: Props) {
         <div className="flex flex-col text-base max-h-[60%]">
           <div
             className="px-6 py-1 rounded-l-full border-b-1 text-purple-400 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
-            data-selected={/^\/Jackpots/.test(pathname)}
-            onClick={() => goToLeague("/Jackpots")}
+            data-selected={/^\/Play/.test(pathname)}
+            onClick={() => goToLeague("/Play")}
           >
             <div className="flex items-center justify-end">
               <span className="text-inherit text-md">
-                Jackpots
+                Play
               </span>
             </div>
           </div>
