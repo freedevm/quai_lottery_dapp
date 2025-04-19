@@ -16,7 +16,6 @@ export default function ProgressiveJackpot({
   // Calculate progress percentage
   let percentage = 0;
   if (amount) percentage = Math.min((amount / targetAmount) * 100, 100);
-  percentage=75
 
   let shimClass = "shim-green";
   if (percentage > 90) shimClass = "shim-rose";
