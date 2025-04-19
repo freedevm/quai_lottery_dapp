@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from 'tailwindcss/plugin'
 
 const { nextui } = require("@nextui-org/react");
 
@@ -95,6 +96,20 @@ const config: Config = {
           "50%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        dimlight: {
+          '0%, 18%, 20%, 50.1%, 60%, 65.1%, 80%, 90.1%, 92%': {
+            color: '#A855F7',
+            boxShadow: 'none',
+          },
+          '18.1%, 20.1%, 30%, 50%, 60.1%, 65%, 80.1%, 90%, 92.1%, 100%': {
+            color: '#E9D5FF',
+            textShadow: '0 0 10px #D8B4FE',
+          },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)', opacity: '1' },
+          '100%': { transform: 'translateX(0%)', opacity: '0' },
+        },
       },
       animation: {
         "vertical-title-possitive-crossing":
@@ -114,9 +129,88 @@ const config: Config = {
         "swipe-btn-fade-in": "swipeBtnFadeIn 5s forwards",
         glow: "glow 1.5s infinite",
         blinker: "blinker 1.5s step-start 0s infinite normal none running",
+        dimlight: 'dimlight 5s infinite',
+        shimmer: 'shimmer 2s ease-out infinite',
       },
     },
   },
-  plugins: [nextui()],
+  plugins: [
+    nextui(),
+    plugin(({ addComponents, theme }: { addComponents: (...args: any[]) => void, theme: (path: string) => string }) => {
+      addComponents({
+        '.box-reflect': {
+          '-webkit-box-reflect': 'below 1px linear-gradient(transparent, #0004)',
+        },
+        '.shim-green': {
+          backgroundColor: theme('colors.green.400'),
+          position: 'relative',
+          overflow: 'hidden',
+        },
+        '.shim-green::after': {
+          content: '""',
+          position: 'absolute',
+          top: '0',
+          right: '0',
+          bottom: '0',
+          left: '0',
+          transform: 'translateX(-100%)',
+          backgroundImage:
+            'linear-gradient(90deg, rgba(233,233,233,1) 0%, rgba(233,233,233,0.9) 50%, rgba(233,233,233,0.8) 100%)',
+          animation: 'shimmer 2s ease-out infinite',
+        },
+        '.shim-amber': {
+          backgroundColor: theme('colors.amber.400'),
+          position: 'relative',
+          overflow: 'hidden',
+        },
+        '.shim-amber::after': {
+          content: '""',
+          position: 'absolute',
+          top: '0',
+          right: '0',
+          bottom: '0',
+          left: '0',
+          transform: 'translateX(-100%)',
+          backgroundImage:
+            'linear-gradient(90deg, rgba(233,233,233,1) 0%, rgba(233,233,233,0.9) 50%, rgba(233,233,233,0.8) 100%)',
+          animation: 'shimmer 2.2s ease-out infinite',
+        },
+        '.shim-orange': {
+          backgroundColor: theme('colors.orange.500'),
+          position: 'relative',
+          overflow: 'hidden',
+        },
+        '.shim-orange::after': {
+          content: '""',
+          position: 'absolute',
+          top: '0',
+          right: '0',
+          bottom: '0',
+          left: '0',
+          transform: 'translateX(-100%)',
+          backgroundImage:
+            'linear-gradient(90deg, rgba(233,233,233,1) 0%, rgba(233,233,233,0.9) 50%, rgba(233,233,233,0.8) 100%)',
+          animation: 'shimmer 2.5s ease-out infinite',
+        },
+        '.shim-rose': {
+          backgroundColor: theme('colors.rose.500'),
+          position: 'relative',
+          overflow: 'hidden',
+        },
+        '.shim-rose::after': {
+          content: '""',
+          position: 'absolute',
+          top: '0',
+          right: '0',
+          bottom: '0',
+          left: '0',
+          transform: 'translateX(-100%)',
+          backgroundImage:
+            'linear-gradient(90deg, rgba(233,233,233,1) 0%, rgba(233,233,233,0.9) 50%, rgba(233,233,233,0.8) 100%)',
+          animation: 'shimmer 3s ease-out infinite',
+        },
+      })
+    }),
+  ],
 };
 export default config;
