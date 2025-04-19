@@ -9,6 +9,7 @@ import { Address, GameData, JackpotState, Jackpots } from "@/lib/types/lottery";
 import NFTBoostModal from "./_components/NFTBoostModal";
 import ImageCarousel from "../_components/ImageCarousel";
 import InvesterListModal from "./_components/InvesterListModal";
+import { toast } from "react-toastify";
 
 export default function Page() {
   // Access wallet connection status from AppContext
@@ -40,8 +41,9 @@ export default function Page() {
   }, [appData])
 
   const toggleConfirmModal = (id: number) => {
-    setSelectedPotId(id);
-    setShowConfirmModal(true);
+    !isWalletConnected && toast.warning("You must connect your wallet to play")
+    isWalletConnected && setSelectedPotId(id);
+    isWalletConnected && setShowConfirmModal(true);
   };
 
   const closeConfirmModal = () => {
@@ -130,7 +132,6 @@ export default function Page() {
             </div>
           )
         }
-      
       </div>
     </div>
   );

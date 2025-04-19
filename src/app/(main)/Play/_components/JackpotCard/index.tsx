@@ -51,51 +51,46 @@ export default function JackpotCard({
   // Calculate progress percentage
   let percentage = 0;
   if(amount) percentage = Math.min((amount / targetAmount) * 100, 100);
-
-  // Determine color based on percentage
-  const getColor = (percent: number) => {
-    if (percent <= 30) return "#22c55e"; // green-500
-    else if (percent <= 60) return "#eab308"; // yellow-500
-    else if (percent <= 90) return "#f97316"; // orange-500
-    else return "#ef4444"; // red-500
-  };
-
-  const getDisabledColor = (percent: number) => {
-    if (percent <= 30) return "#4ade80"; // green-400
-    else if (percent <= 60) return "#facc15"; // yellow-400
-    else if (percent <= 90) return "#fb923c"; // orange-400
-    else return "#f87171"; // red-400
-  };
-
-  const color = getColor(percentage);
-  const disabledColor = getDisabledColor(percentage);
-
-  // Define button style
-  const buttonStyle = isSpinning || !isActive || isParticipated
-    ? { background: `linear-gradient(to right, ${disabledColor} ${percentage}%, #E9D5FF ${percentage}%)` } // Disabled state: purple-400
-    : { background: `linear-gradient(to right, ${color} ${percentage}%, #D8B4FE ${percentage}%)` }; // Enabled state: progress gradient
+ 
+  let shimClass = "shim-green";
+  if (percentage > 90) shimClass = "shim-rose";
+  else if (percentage > 60) shimClass = "shim-orange";
+  else if (percentage > 30) shimClass = "shim-amber"
 
   return (
-    <div className="w-full bg-purple-800 rounded-lg shadow-xl/20 transition-all duration-300 hover:shadow-xl/30 max-w-sm mx-auto">
-      {/* Image */}
-      <div className="w-full h-0 pb-[100%] relative rounded-lg overflow-hidden mb-4">
-        <Image
-          src={`${imageFolder}${(jackpotId%12===0)?12:(jackpotId%12)}.jpg`}
-          alt={title}
-          layout="fill" 
-          objectFit="cover" 
-        />
+    <div className="w-full bg-transparent rounded-lg shadow-xl/20 transition-all duration-300 hover:shadow-xl/30 max-w-sm mx-auto">
+      <div className="w-full h-0 pb-[100%] relative [perspective:1000px] group">
+        <div className="absolute inset-0 w-full h-full duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+          <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-t-lg overflow-hidden">
+            <Image
+              src={`${imageFolder}${(jackpotId%12===0)?12:(jackpotId%12)}.jpg`}
+              alt={title}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-t-lg overflow-hidden">
+            <div className="w-full h-full relative scale-x-[-1]">
+              <Image
+                src={`${imageFolder}${(jackpotId%12===0)?12:(jackpotId%12)}.jpg`}
+                alt={`${title} (Back)`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-4">
-        <h2 className="text-lg sm:text-xl font-bold text-white mb-2 animate-text-glare">{title}</h2>
+      <div className="flex-1 p-4 bg-purple-800 rounded-b-lg">
+        <h2 className="text-lg sm:text-xl font-bold text-white mb-2 animate-text-glare uppercase">{title}</h2>
         <div className="space-y-2">
-          <p className="text-sm sm:text-base text-purple-200">
-            Current Amount: <span className="font-semibold text-white">{amount} ETH - {totalTicketCount} Tickets</span>
+          <p className="text-sm sm:text-base text-purple-200 uppercase">
+            Current: <span className="font-semibold text-white">{amount} ETH ({totalTicketCount} Tickets)</span>
           </p>
-          <p className="text-sm sm:text-base text-purple-200">
-            Target Amount: <span className="font-semibold text-white">{targetAmount} ETH</span>
+          <p className="text-sm sm:text-base text-purple-200 uppercase">
+            Target: <span className="font-semibold text-white">{targetAmount} ETH</span>
           </p>
         </div>
         {/* {winner && (
@@ -105,33 +100,23 @@ export default function JackpotCard({
         )} */}
 
         {/* Play Button */}
-        {disabled ? (
-          <Tooltip>
-            <button
-              onClick={onPlay}
-              disabled={true}
-              style={buttonStyle}
-              className=" uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 cursor-not-allowed"
-            >
-              play now
-            </button>
-          </Tooltip>
-        ) : (
-          <button
+        <div className="w-full py-2 flex flex-col space-y-3 text-sm sm:text-base font-semibold text-white uppercase">
+          <div
             onClick={onPlay}
-            disabled={isSpinning || !isActive || isParticipated}
-            style={buttonStyle}
-            className={`uppercase mt-4 w-full py-2 rounded-lg text-sm sm:text-base font-semibold text-white transition-colors duration-200 ${
-              isSpinning || !isActive || isParticipated ? "cursor-not-allowed" : ""
-            }`}
+            className="relative flex justify-center items-center w-full bg-purple-300 rounded-lg overflow-hidden h-9 sm:h-10 cursor-pointer"
           >
-            {status === "finished" ?  "waiting reward" : 
-              isParticipated ? `already in with ${userTickets} ticket${userTickets===1?"":"s"}` : 
-              isSpinning ? "processing..." : 
-              
-                `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}
-          </button>
-        )}
+            <div
+              style={{ width: `${percentage}%` }}
+              className={`absolute top-0 left-0 h-9 sm:h-10 opacity-80 ${shimClass}`}
+            ></div>
+            <span className="z-10">
+              {disabled ? "play now" :
+                status === "finished" ?  "waiting reward" : 
+                isParticipated ? `already in with ${userTickets} ticket${userTickets===1?"":"s"}` : 
+                isSpinning ? "processing..." : 
+                `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
