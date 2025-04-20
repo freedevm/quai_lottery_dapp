@@ -5,7 +5,7 @@ import JackpotCard from "./_components/JackpotCard";
 import ProgressiveJackpot from "./_components/ProgressiveJackpot";
 import ConfirmModal from "./_components/ConfirmModal";
 import { AppContext } from "@/lib/providers/AppContextProvider";
-import { Address, GameData, JackpotState, Jackpots } from "@/lib/types/lottery";
+import { GameData } from "@/lib/types/lottery";
 import NFTBoostModal from "./_components/NFTBoostModal";
 import ImageCarousel from "../_components/ImageCarousel";
 import InvesterListModal from "./_components/InvesterListModal";
@@ -41,7 +41,7 @@ export default function Page() {
   }, [appData])
 
   const toggleConfirmModal = (id: number) => {
-    !isWalletConnected && toast.warning("You must connect your wallet to play")
+    !isWalletConnected && toast.warning("Please connect your wallet to play")
     isWalletConnected && setSelectedPotId(id);
     isWalletConnected && setShowConfirmModal(true);
   };
