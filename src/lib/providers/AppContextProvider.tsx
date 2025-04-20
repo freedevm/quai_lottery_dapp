@@ -49,6 +49,7 @@ interface ContextData {
   boostedNFTs: { [gameIndex: string]: NFT[] };
   participatedGames: number[];
   userTickets: number;
+  totalInvestorTicketCount: number;
 }
 
 const initialData: ContextData = {
@@ -71,6 +72,7 @@ const initialData: ContextData = {
   boostedNFTs: {},
   participatedGames: [],
   userTickets: 0,
+  totalInvestorTicketCount: 0,
 };
 
 export const AppContext = createContext<{
@@ -78,12 +80,14 @@ export const AppContext = createContext<{
   setData: (data: Partial<ContextData>) => void;
   setDataT: (value: SetStateAction<ContextData>) => void;
   addParticipation: (gameIndex: number, userSeed: number, boostCards?: { id: number; count: number }[]) => Promise<boolean>;
+  showInvestorTicketCount: (address: Address) => void;
   mintNFTs: (nfts: NFTCount) => Promise<boolean>;
 }>({
   data: initialData,
   setData: () => {},
   setDataT: () => {},
   addParticipation: async () => false,
+  showInvestorTicketCount: async () => 0,
   mintNFTs: async () => false,
 });
 
@@ -249,6 +253,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         boostedNFTs: {}, // Not fetched; use default
         participatedGames,
         userTickets: 0, // Aggregate userTickets not implemented; use default
+        totalInvestorTicketCount: 0,
       };
     } catch (error: any) {
       console.error("Failed to fetch app data:", error);
@@ -357,6 +362,19 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       return false;
     }
   };
+
+  const showInvestorTicketCount = async (address: Address) => {
+    try {
+      const { lotteryContract } = await getContracts() || {};
+      if (!lotteryContract) throw new Error("Contracts not initialized");
+
+      const totalInvestorTicketCount = Number(await lotteryContract.totalUserTicket(address));
+
+      return totalInvestorTicketCount;
+    } catch (error: any) {
+      console.error("Failed to load investor ticket count")
+    }
+  }
 
   // Initialize data on first load
   useEffect(() => {
@@ -467,6 +485,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         setData,
         setDataT,
         addParticipation,
+        showInvestorTicketCount,
         mintNFTs,
       }}
     >

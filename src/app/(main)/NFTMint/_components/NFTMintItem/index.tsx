@@ -69,10 +69,10 @@ export default function NFTMintItem({
   };
 
   return (
-    <div className="w-full mx-auto p-4">
-      <div className="bg-purple-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row">
+    <div className="flex justify-center w-full mx-auto p-4">
+      <div className="max-w-2xl rounded-xl shadow-lg overflow-hidden bg-purple-800 transition-all duration-300 hover:shadow-xl flex flex-col sm:flex-row">
         {/* Image Container */}
-        <div className="relative w-full sm:w-[200px] h-64 shrink-0">
+        <div className="relative w-full sm:w-[200px] h-64 shrink-0 hover:opacity-70 cursor-pointer">
           <Image
             src={cardImages[data.cardName]}
             alt={`${data.cardName}`}
@@ -114,9 +114,13 @@ export default function NFTMintItem({
             <button
               onClick={handleMintClick}
               disabled={isLoading}
-              className="w-full max-w-xs px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-400 active:bg-red-600 disabled:bg-red-400 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full max-w-xs px-6 py-1 box-border z-30 inline-flex items-center justify-center overflow-hidden font-bold rounded-md cursor-pointer group bg-purple-500 relative hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-400 text-white hover:ring-2 hover:ring-purple-400 transition-all ease-out duration-300 focus:outline-none"
             >
-              {isLoading ? "Processing..." : "Mint"}
+              <span className="absolute bottom-0 right-0 w-12 h-32 -mb-10 -mr-5 transition-all duration-500 ease-out transform rotate-45 translate-x-1 bg-white opacity-10 group-hover:translate-x-10"></span>
+              <span className="absolute top-0 left-0 w-32 h-12 -mt-1 -ml-12 transition-all duration-500 ease-out transform -rotate-45 -translate-x-1 bg-white opacity-10 group-hover:-translate-x-10"></span>
+              <span className="relative z-20 flex items-center text-base sm:text-xl uppercase">
+                Mint
+              </span>
             </button>
           </div>
         </div>
