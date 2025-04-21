@@ -40,13 +40,16 @@ export default function Investors () {
                 setSearchKey={setSearchKey}
             />
             <ul className="w-full bg-purple-800 rounded-lg shadow divide-y divide-purple-600 mx-auto">
-                {filteredData && filteredData.map((investor, index) => 
-                <li key={index} className="px-2 sm:px-6 py-2 w-full cursor-pointer hover:opacity-80 flex justify-between" onClick={() => showTicketCount(investor)} >
-                    <span className={`text-purple-200 text-sm sm:text-md truncate  
-                    ${(selectedUserTickets !== 0 && selectedUserAddress === investor) && "w-2/3 max-w-2/3"}
-                    `}>{investor.toLocaleString()}</span>
-                    {(selectedUserTickets !== 0 && selectedUserAddress === investor) && <span className="text-sm sm:text-md">{selectedUserTickets} Tickets</span>}
-                </li>
+                {filteredData.length ? filteredData.map((investor, index) => 
+                    <li key={index} className="px-2 sm:px-6 py-2 w-full cursor-pointer hover:opacity-80 flex justify-between" onClick={() => showTicketCount(investor)} >
+                        <span className={`text-purple-200 text-sm sm:text-md truncate  
+                        ${(selectedUserTickets !== 0 && selectedUserAddress === investor) && "w-2/3 max-w-2/3"}
+                        `}>{investor.toLocaleString()}</span>
+                        {(selectedUserTickets !== 0 && selectedUserAddress === investor) && <span className="text-sm sm:text-md">{selectedUserTickets} Tickets</span>}
+                    </li>
+                )
+                : (
+                    <p className="text-center text-md sm:text-lg uppercase py-3">There are no active investors yet</p>
                 )}
             </ul>
         </div>
