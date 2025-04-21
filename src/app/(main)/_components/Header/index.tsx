@@ -78,7 +78,7 @@ export default function Header() {
                 Docs
               </Link>
             </div>
-            <div className="h-6 sm:h-8 flex items-center border border-[--border-primary-color] rounded-md overflow-hidden cursor-pointer">
+            <div className="h-6 sm:h-8 flex hover:bg-purple-300 hover:text-purple-800 items-center border border-purple-300 rounded-md overflow-hidden cursor-pointer">
               <ConnectButton />
             </div>
           </div>
