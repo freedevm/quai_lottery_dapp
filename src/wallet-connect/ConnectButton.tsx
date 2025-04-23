@@ -16,20 +16,21 @@ export default function ConnectButton() {
       <span>
         <FontAwesomeIcon icon={faWallet} />
       </span>
-      {isConnected ?
+      {/* {isConnected ? */}
         <span
           className="text-xs px-3 py-1 rounded-lg font-semibold"
           onClick={() => open({ view: "Account" })}
         >
           {truncateAddress(address)}
-        </span> :
+        </span> 
+      {/* :
         <span
           className="text-xs py-1 rounded-lg font-semibold"
           onClick={() => open()}
         >
           connect wallet
         </span>
-      }
+      } */}
     </div>
   );
 }
