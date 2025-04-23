@@ -8,7 +8,6 @@ import Image from "next/image";
 import Logo from "../../../public/images/brand_logo_with_text.png";
 
 interface Props {
-  loading: boolean;
   setLoading: (e: boolean) => void;
   setFirstLoad: (e: boolean) => void;
   dataFetched: boolean;
@@ -17,7 +16,6 @@ interface Props {
 // let globalLoading: boolean = true;
 
 export default function PreLoading({
-  loading,
   setLoading,
   setFirstLoad,
   dataFetched,

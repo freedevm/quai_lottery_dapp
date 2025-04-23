@@ -32,10 +32,6 @@ export interface GameData {
   status: "started" | "finished" | "calculating" | "rewarded";
   userTickets: number;
   players: number;
-  prizePool?: {
-    mainReward: string;
-    randomTenReward: string;
-  };
 }
 
 export interface Card {

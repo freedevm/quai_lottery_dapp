@@ -18,7 +18,6 @@ export default function Investors () {
     useEffect(() => {
         let investorArr: InvestorData[] = [];
         data.investors.map(address => investorArr.push({address, ticketCount: 0}))
-        console.log("### investor arr => ", investorArr)
         setFilteredData(investorArr)
     }, [])
 
@@ -33,13 +32,10 @@ export default function Investors () {
         
         const res = await showInvestorTicketCount(address)
         setFilteredData(prev => {
-            // let  unmatchedUsers: InvestorData[] = [];
             prev.map(investor => investor.address === address && (investor.ticketCount = Number(res)));
             return prev
         })
     }
-
-    console.log("#### filtered data => ", filteredData)
 
     return (
         <div className="p-2 w-full max-w-3xl mx-auto sm:px-6 sm:py-4 md:px-10 flex flex-col">

@@ -37,7 +37,7 @@ export default function Page() {
   }, [isWalletConnected])
 
   useEffect(() => {
-    appData.games.length && setGames(appData.games);
+    setGames(appData.games);
   }, [appData])
 
   const toggleConfirmModal = (id: number) => {
@@ -59,6 +59,8 @@ export default function Page() {
   const closeInvesterListModal = () => {
     setShowInvesterListModal(false);
   }
+  console.log(" data => ", appData)
+  console.log(" games => ", games)
 
   return (
     <div className="h-full max-h-full">
@@ -102,26 +104,26 @@ export default function Page() {
 
         {/* Jackpot Cards Section */}
         {
-          games.length > 0 ? (
+          appData.activeGames.length > 0 ? (
             <>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold my-3 sm:my-5 text-white uppercase text-center">active jackpots</h1>
               <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-                {games.map((game) => (
-                  game.status !== "rewarded" && 
+                {appData.activeGames.map((id, index) => (
+                  (games[index]?.status !== "rewarded" || !games[index]) && 
                   <JackpotCard
-                    key={game.gameIndex}
-                    title={`Jackpot ${game.gameIndex} - ${game.jackpotSize} ETH`}
-                    jackpotId={game.gameIndex}
-                    targetAmount={game.jackpotSize}
-                    isActive={game.status === "started"}
-                    isParticipated={game.isParticipated}
-                    userTickets={game.userTickets}
-                    totalTicketCount={game.totalTicketCount}
-                    amount={game.currentSize}
-                    status={game.status}
+                    key={id}
+                    title={`Jackpot ${id} ${games[index]?.jackpotSize ? `- ${games[index].jackpotSize} ETH` : ""}`}
+                    jackpotId={id}
+                    targetAmount={games[index]?.jackpotSize}
+                    isActive={games[index]?.status && games[index].status === "started"}
+                    isParticipated={games[index]?.isParticipated}
+                    userTickets={games[index]?.userTickets}
+                    totalTicketCount={games[index]?.totalTicketCount}
+                    amount={games[index]?.currentSize}
+                    status={games[index]?.status}
                     disabled={buttonDisabled}
                     isSpinning={false}
-                    onPlay={() => toggleConfirmModal(game.gameIndex)}
+                    onPlay={() => toggleConfirmModal(id)}
                   />
                 ))}
               </div>
