@@ -59,8 +59,6 @@ export default function Page() {
   const closeInvesterListModal = () => {
     setShowInvesterListModal(false);
   }
-  console.log(" data => ", appData)
-  console.log(" games => ", games)
 
   return (
     <div className="h-full max-h-full">
