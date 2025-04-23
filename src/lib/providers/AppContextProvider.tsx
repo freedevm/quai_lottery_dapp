@@ -428,7 +428,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       return true;
     } catch (error: any) {
       console.error("Failed to buy ticket:", error);
-      toast.error(`Ticket purchase failed: ${error.message}`);
       return false;
     }
   };
@@ -442,7 +441,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       return totalInvestorTicketCount;
     } catch (error: any) {
       console.error("Failed to load investor ticket count:", error);
-      toast.error("Failed to fetch ticket count");
       return 0;
     }
   };
