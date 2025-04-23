@@ -58,7 +58,7 @@ export default function JackpotCard({
   else if (percentage > 30) shimClass = "shim-amber"
 
   const handlePlayBtnClick = () => {
-    if (!disabled && !isParticipated && status!== "finished" && !isSpinning) {
+    if (!isParticipated && status!== "finished" && !isSpinning) {
       onPlay();
     }
   }
