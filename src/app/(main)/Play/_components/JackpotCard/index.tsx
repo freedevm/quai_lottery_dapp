@@ -86,12 +86,12 @@ export default function JackpotCard({
       <div className="flex-1 p-4 bg-purple-800 rounded-b-lg">
         <h2 className="text-lg sm:text-xl font-bold text-white mb-2 animate-text-glare uppercase">{title}</h2>
         <div className="space-y-2">
-          <p className="text-sm sm:text-base text-purple-200 uppercase">
+          {amount && <p className="text-sm sm:text-base text-purple-200 uppercase">
             Current: <span className="font-semibold text-white">{amount} ETH ({totalTicketCount} Tickets)</span>
-          </p>
-          <p className="text-sm sm:text-base text-purple-200 uppercase">
+          </p>}
+          {targetAmount && <p className="text-sm sm:text-base text-purple-200 uppercase">
             Target: <span className="font-semibold text-white">{targetAmount} ETH</span>
-          </p>
+          </p>}
         </div>
         {/* {winner && (
           <p className="mt-3 text-sm sm:text-base text-purple-300">
