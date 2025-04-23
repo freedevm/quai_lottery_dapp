@@ -38,7 +38,7 @@ export default function PreLoading({
               Powered by&nbsp;&nbsp;&nbsp;
             </span>
             <span className="font-extrabold text-[#DADADA] text-[14px] leading-[10.47px] font-[Monument] fade-in">
-              Rainbow
+              Ethereum Lottery
             </span>
           </div>
         </div>
