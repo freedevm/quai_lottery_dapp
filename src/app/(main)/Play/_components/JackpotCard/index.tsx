@@ -57,6 +57,12 @@ export default function JackpotCard({
   else if (percentage > 60) shimClass = "shim-orange";
   else if (percentage > 30) shimClass = "shim-amber"
 
+  const handlePlayBtnClick = () => {
+    if (!disabled && !isParticipated && status!== "finished" && !isSpinning) {
+      onPlay();
+    }
+  }
+
   return (
     <div className="w-full bg-transparent rounded-lg shadow-xl/20 transition-all duration-300 hover:shadow-xl/30 max-w-sm mx-auto">
       <div className="w-full h-0 pb-[100%] relative [perspective:1000px] group">
@@ -102,7 +108,7 @@ export default function JackpotCard({
         {/* Play Button */}
         <div className="w-full py-2 flex flex-col space-y-3 text-sm sm:text-base font-semibold text-white uppercase">
           <div
-            onClick={onPlay}
+            onClick={handlePlayBtnClick}
             className="relative flex justify-center items-center w-full bg-purple-300 rounded-lg overflow-hidden h-9 sm:h-10 cursor-pointer"
           >
             <div
