@@ -1,36 +1,30 @@
+// App.tsx
 import "react-toastify/dist/ReactToastify.css";
-
 import "./globals.css";
-
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { ToastContainer } from "react-toastify";
-import { cookieToInitialState } from "wagmi";
-
 import { AppContextProvider } from "@/lib/providers/AppContextProvider";
 import { poppins } from "@/lib/utils/fonts";
-import Web3ModalProvider from "@/wallet-connect/Web3ModalProvider";
-import { config } from "@/wallet-connect/config";
 import { NextUIProvider } from "@nextui-org/react";
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
-  title: "Ethereum Lottery - Win Big with Crypto Jackpots",
+  title: "Orchard Lottery - Win Big with Crypto Jackpots",
   description:
-    "Join Ethereum Lottery for a chance to win massive crypto jackpots. Secure, transparent, and powered by blockchain technology.",
-  keywords: ["Ethereum", "lottery", "jackpot", "Ethereum lottery", "crypto lottery"],
+    "Join Orchard Lottery for a chance to win massive crypto jackpots. Secure, transparent, and powered by blockchain technology.",
+  keywords: ["Orchard", "lottery", "jackpot", "Orchard lottery", "crypto lottery"],
   openGraph: {
-    title: "Ethereum Lottery - Win Big with Crypto Jackpots",
+    title: "Orchard Lottery - Win Big with Crypto Jackpots",
     description:
-      "Participate in Ethereum Lottery to win huge crypto prizes with secure blockchain technology.",
-    url: "https://ethereumlottery.org/", // Replace with your domain
-    siteName: "Ethereum Lottery",
+      "Participate in Orchard Lottery to win huge crypto prizes with secure blockchain technology.",
+    url: "https://orchardlottery.org/", // Update with your domain
+    siteName: "Orchard Lottery",
     images: [
       {
-        url: "https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4", // Replace with a relevant image URL
+        url: "https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4",
         width: 1200,
         height: 500,
-        alt: "Ethereum Lottery Banner",
+        alt: "Orchard Lottery Banner",
       },
     ],
     locale: "en_US",
@@ -47,21 +41,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialState = cookieToInitialState(config, headers().get("cookie"));
-
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <Web3ModalProvider initialState={initialState}>
-          <NextUIProvider>
-            <AppContextProvider>
-              {children}
-              {process.env.NEXT_PUBLIC_GA_ID && (
-                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-              )}
-            </AppContextProvider>
-          </NextUIProvider>
-        </Web3ModalProvider>
+        <NextUIProvider>
+          <AppContextProvider>
+            {children}
+            {process.env.NEXT_PUBLIC_GA_ID && (
+              <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+            )}
+          </AppContextProvider>
+        </NextUIProvider>
         <ToastContainer theme="dark" />
       </body>
     </html>

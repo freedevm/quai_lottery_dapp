@@ -1,3 +1,4 @@
+// AppContextProvider.tsx
 "use client";
 
 import {
@@ -9,14 +10,15 @@ import {
   useCallback,
 } from "react";
 import { toast } from "react-toastify";
-import { useAccount, useChainId, useBalance, usePublicClient, useWalletClient } from "wagmi";
-import { ethers, Contract, BrowserProvider } from "ethers";
+import { ethers } from "ethers";
+import { quais, Contract } from "quais";
 import PreLoading from "@/components/PreLoading";
 import { ABI } from "../abi";
 import { Address, NFT, GameData, Card, NFTCount } from "../types/lottery";
 
-// Define chain ID
-const CHAIN_ID: number = 1;
+// Define chain ID and RPC URL
+const CHAIN_ID: number = 15000;
+const RPC_URL: string = "https://orchard.rpc.quai.network";
 
 // Define contract addresses
 interface ContractAddresses {
@@ -26,13 +28,10 @@ interface ContractAddresses {
 }
 
 const CONTRACTS: ContractAddresses = {
-  lottery: process.env.LOTTERY_GAME_ADDRESS || "0x90Bf9a12a8456d038Cf22E51536D6D7d624D6732",
-  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS || "0xFA93dBa2A2F10dE8b77ccB452943Fcb2EF3794C8",
-  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS || "0x4AbCc0D1DdE8ad398a36907113cdfe08B470FFf9",
+  lottery: process.env.LOTTERY_GAME_ADDRESS || "0x00634a279852a4f824a41972922415d5bf29739E",
+  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS || "0x0028743cE5e1EDAca8b6c2ABBab0763eb1fd3fE3",
+  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS || "0x003E5ff9bD6205Cb435b0D2a85e2FA9b87484e6C",
 };
-
-// Fallback Alchemy URL
-const ALCHEMY_URL = process.env.NEXT_PUBLIC_ALCHEMY_KEY_MAINNET || "https://eth-mainnet.g.alchemy.com/v2/VvvXuTxKhe0crIcgxiUSc2Bvf9NcT4bT";
 
 // Interface for ContextData
 interface ContextData {
@@ -90,6 +89,7 @@ export const AppContext = createContext<{
   addParticipation: (gameIndex: number, userSeed: number, boostCards?: { id: number; count: number }[]) => Promise<boolean>;
   showInvestorTicketCount: (address: Address) => Promise<number>;
   mintNFTs: (nfts: NFTCount) => Promise<boolean>;
+  connectWallet: () => Promise<boolean>;
 }>({
   data: initialData,
   setData: () => {},
@@ -97,6 +97,7 @@ export const AppContext = createContext<{
   addParticipation: async () => false,
   showInvestorTicketCount: async () => 0,
   mintNFTs: async () => false,
+  connectWallet: async () => false,
 });
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
@@ -105,63 +106,47 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
 
-  const chainId = useChainId();
-  const account = useAccount();
-  const { data: balanceData } = useBalance({ address: account.address });
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-
   const setData = useCallback((d: Partial<ContextData>) => {
     setDataT((prevData) => ({ ...prevData, ...d }));
   }, []);
+
+  const getProvider = () => {
+    if (typeof window !== "undefined" && window.pelagus) {
+      return new quais.BrowserProvider(window.pelagus);
+    }
+    
+    return new quais.JsonRpcProvider(RPC_URL, undefined, {usePathing: true});
+  };
 
   const getContracts = async (): Promise<{
     lotteryContract: Contract;
     nftContract: Contract;
     settingContract: Contract;
   } | null> => {
-    const walletConnected = !!walletClient;
     try {
-      // Validate chain ID and contract addresses
-      if (!CONTRACTS || !CONTRACTS.lottery || !CONTRACTS.nft || !CONTRACTS.setting) {
-        toast.error(`Missing contract addresses for network: Chain ID ${chainId}`);
-        throw new Error(`Invalid contract configuration for chain ID ${chainId}`);
-      }
-
+      const quaiProvider = getProvider();
       let signer;
-      let publicProvider;
 
-      if (walletConnected) {
-        const provider = new BrowserProvider(walletClient);
-        signer = await provider.getSigner();
-      } else {
-        publicProvider = new ethers.JsonRpcProvider(ALCHEMY_URL);
-
-        // Verify contract deployment (basic check)
-        const lotteryCode = await publicProvider.getCode(CONTRACTS.lottery);
-        const nftCode = await publicProvider.getCode(CONTRACTS.nft);
-        if (lotteryCode === "0x" || nftCode === "0x") {
-          throw new Error("One or more contracts are not deployed at the specified addresses");
-        }
+      if (data.isWalletConnected && window.pelagus) {
+        signer = await quaiProvider.getSigner();
       }
 
-      // Initialize contracts
-      const lotteryContract = new ethers.Contract(
+      const lotteryContract = new quais.Contract(
         CONTRACTS.lottery,
         ABI.lotteryGame,
-        walletConnected && signer ? signer : publicProvider
+        signer || quaiProvider
       );
 
-      const nftContract = new ethers.Contract(
+      const nftContract = new quais.Contract(
         CONTRACTS.nft,
         ABI.lotteryGameNFTCard,
-        walletConnected && signer ? signer : publicProvider
+        signer || quaiProvider
       );
 
-      const settingContract = new ethers.Contract(
+      const settingContract = new quais.Contract(
         CONTRACTS.setting,
         ABI.lotterySetting,
-        walletConnected && signer ? signer : publicProvider
+        signer || quaiProvider
       );
 
       return { lotteryContract, nftContract, settingContract };
@@ -176,9 +161,14 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     try {
       const contracts = await getContracts();
       if (!contracts) throw new Error("Contracts not initialized");
-  
+
       const { lotteryContract, nftContract, settingContract } = contracts;
-  
+
+      // Get chain ID
+      const provider = getProvider();
+      const network = await provider.getNetwork();
+      const chainId = Number(network.chainId);
+
       // Fetch wallet-independent data
       const entryPricePromise = settingContract.ENTRY_PRICE().then(ethers.formatEther).then(parseFloat);
       const megaJackpotPromise = lotteryContract.megaJackpot().then(ethers.formatEther).then(parseFloat);
@@ -192,7 +182,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         console.error("Failed to fetch investors:", e);
         return [];
       });
-  
+
       const [entryPrice, megaJackpot, activeIndices, maxMintCount, numCardTypes, investors] = await Promise.all([
         entryPricePromise,
         megaJackpotPromise,
@@ -201,13 +191,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         numCardTypesPromise,
         investorsPromise,
       ]);
-  
-      // Debug: Log active indices
-      console.log("Active game indices:", activeIndices);
-  
+
       const cardNames = ["diamond", "platinum", "gold", "silver", "bronze", "iron"];
-  
-      // Batch fetch card data
+
       const cardPromises = Array.from({ length: numCardTypes }, async (_, i) => {
         try {
           const [cardPrice, boostValue, supplyLimits, mintedCount] = await Promise.all([
@@ -234,33 +220,30 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           };
         }
       });
-  
+
       const cards: Card[] = await Promise.all(cardPromises);
       const mintedCounts = cards.map((card) => card.mintedCount);
-      const activeGames = activeIndices.map((i: any) => Number(i))
-  
-      // Fetch game data with robust error handling
+      const activeGames = activeIndices.map((i: any) => Number(i));
+
       const gamePromises = userAddress && activeIndices.map(async (index: number) => {
         try {
           const game = await lotteryContract.games(index);
-  
-          // Verify game is initialized (non-zero values or valid state)
           if (!game || game.jackpotSize === 0 || game.currentSize === 0) {
             console.warn(`Game index ${index} is not initialized or has invalid data`);
             return null;
           }
-  
+
           const currentSize = ethers.formatEther(game.currentSize);
           const jackpotSize = ethers.formatEther(game.jackpotSize);
           const totalTicketCount = parseInt(game.totalTicketCount) || 0;
           let userTickets = 0;
           let isParticipated = false;
-  
+
           if (userAddress) {
             userTickets = Number(await lotteryContract.getTickets(index, userAddress));
             isParticipated = userTickets > 0;
           }
-  
+
           return {
             gameIndex: Number(index),
             jackpotSize,
@@ -269,26 +252,23 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             isParticipated,
             status: ["started", "finished", "calculating", "rewarded"][game.state],
             userTickets,
-            players: new Set(game.players).size, // Note: players field is not in ABI, see below
+            players: new Set(game.players).size,
           };
         } catch (err: any) {
           console.warn(`Skipping game index ${index} due to error:`, err.message);
-          return null; // Skip invalid or reverted games
+          return null;
         }
       });
-  
+
       const games: GameData[] = userAddress ? (await Promise.all(gamePromises)).filter((g): g is GameData => g !== null) : [];
-  
-      // Debug: Log fetched games
-      console.log("Fetched games:", games);
-  
-      // Fetch wallet-dependent data
+
       let userNFTs = [0, 0, 0, 0, 0, 0];
       let userNFTCount = 0;
       let isNFTHolder = false;
       let participatedGames: number[] = [];
       let isWalletConnected = false;
-  
+      let userBalance = null;
+
       if (userAddress) {
         isWalletConnected = true;
         try {
@@ -297,15 +277,16 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           userNFTCount = userNFTs.reduce((sum, count) => sum + count, 0);
           isNFTHolder = userNFTCount > 0;
           participatedGames = games.filter((game) => game.isParticipated).map((game) => game.gameIndex);
+          userBalance = ethers.formatEther(await provider.getBalance(userAddress));
         } catch (error) {
           console.error("Failed to fetch user NFT data:", error);
         }
       }
-  
+
       return {
         network: chainId,
         userAddress: userAddress || null,
-        userBalance: balanceData?.formatted || null,
+        userBalance,
         isWalletConnected,
         entryPrice,
         activeGames,
@@ -327,19 +308,79 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       };
     } catch (error: any) {
       console.error("Failed to fetch app data:", error);
-      // toast.error(`Failed to load application data: ${error.message}`);
       throw error;
     }
-  }, [chainId, balanceData]);
+  }, [data.isWalletConnected]);
+
+  const connectWallet = async (): Promise<boolean> => {
+    if (!window.pelagus) {
+      toast.error("Pelagus wallet not detected. Please install Pelagus.");
+      return false;
+    }
+
+    try {
+      const provider = new ethers.BrowserProvider(window.pelagus);
+      const accounts = await provider.send("eth_requestAccounts", []);
+      const userAddress = accounts[0];
+
+      const network = await provider.getNetwork();
+      const chainId = Number(network.chainId);
+
+      if (chainId !== CHAIN_ID) {
+        try {
+          await window.pelagus.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: `0x${CHAIN_ID.toString(16)}` }],
+          });
+        } catch (switchError: any) {
+          if (switchError.code === 4902) {
+            await window.pelagus.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: `0x${CHAIN_ID.toString(16)}`,
+                  chainName: "Orchard Network",
+                  rpcUrls: [RPC_URL],
+                  nativeCurrency: {
+                    name: "QUAI",
+                    symbol: "QUAI",
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ["https://explorer.quai.network"],
+                },
+              ],
+            });
+          } else {
+            throw switchError;
+          }
+        }
+      }
+
+      const newData = await fetchAppData(userAddress);
+      setDataT({
+        ...newData,
+        userAddress,
+        isWalletConnected: true,
+      });
+      toast.success("Wallet connected successfully");
+      return true;
+    } catch (error: any) {
+      console.error("Failed to connect wallet:", error);
+      toast.error(`Failed to connect wallet: ${error.message}`);
+      return false;
+    }
+  };
 
   const mintNFTs = async (nftCounts: NFTCount): Promise<boolean> => {
-    if (!account.isConnected || !walletClient) {
+    if (!data.isWalletConnected || !window.pelagus) {
       toast.error("Wallet not connected");
       return false;
     }
 
-    if (chainId !== CHAIN_ID) {
-      toast.error("Please switch to Ethereum Mainnet");
+    const provider = new ethers.BrowserProvider(window.pelagus);
+    const network = await provider.getNetwork();
+    if (Number(network.chainId) !== CHAIN_ID) {
+      toast.error("Please switch to Orchard Network");
       return false;
     }
 
@@ -363,12 +404,12 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
       const totalPrice = parseFloat(cardPrice) * nftCounts.count;
 
-      const tx = await nftContract.mint(account.address, cardIndex, nftCounts.count, {
+      const tx = await nftContract.mint(data.userAddress, cardIndex, nftCounts.count, {
         value: ethers.parseEther(totalPrice.toString()),
       });
       await tx.wait();
 
-      const newData = await fetchAppData(account.address);
+      const newData = await fetchAppData(data.userAddress!);
       setDataT(newData);
 
       toast.success(`Successfully minted ${nftCounts.count} ${nftCounts.name} NFTs`);
@@ -385,13 +426,15 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     userSeed: number,
     boostCards?: { id: number; count: number }[]
   ): Promise<boolean> => {
-    if (!account.isConnected || !walletClient) {
+    if (!data.isWalletConnected || !window.pelagus) {
       toast.error("Wallet not connected");
       return false;
     }
 
-    if (chainId !== CHAIN_ID) {
-      toast.error("Please switch to Ethereum Mainnet");
+    const provider = new ethers.BrowserProvider(window.pelagus);
+    const network = await provider.getNetwork();
+    if (Number(network.chainId) !== CHAIN_ID) {
+      toast.error("Please switch to Orchard Network");
       return false;
     }
 
@@ -421,13 +464,14 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       });
       await tx.wait();
 
-      const newData = await fetchAppData(account.address);
+      const newData = await fetchAppData(data.userAddress!);
       setDataT(newData);
 
       toast.success(`Successfully purchased ${ticketCount} ticket(s) for game ${gameIndex}`);
       return true;
     } catch (error: any) {
       console.error("Failed to buy ticket:", error);
+      toast.error(`Failed to buy ticket: ${error.message}`);
       return false;
     }
   };
@@ -451,7 +495,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       try {
         if (!CONTRACTS || !CONTRACTS.lottery) {
-          toast.error(`Unsupported network or missing contract addresses for Chain ID ${chainId}`);
+          toast.error(`Unsupported network or missing contract addresses for Chain ID ${CHAIN_ID}`);
           return;
         }
         const newData = await fetchAppData();
@@ -460,49 +504,25 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         console.error("Initial data fetch failed:", error);
       } finally {
         setDataFetched(true);
+        setLoading(false);
+        setFirstLoad(false);
       }
     })();
-  }, [firstLoad, chainId, fetchAppData]);
+  }, [firstLoad, fetchAppData]);
 
   useEffect(() => {
-    if (account.isConnected && account.address) {
-      if (chainId !== CHAIN_ID) {
-        toast.error("Please switch to Ethereum Mainnet");
-        return;
-      }
+    if (data.isWalletConnected && data.userAddress) {
       (async () => {
         try {
-          const newData = await fetchAppData(account.address);
-          setDataT({
-            ...newData,
-            network: chainId,
-            userAddress: account.address ?? null,
-            userBalance: balanceData?.formatted || "0",
-            isWalletConnected: true,
-          });
+          const newData = await fetchAppData(data.userAddress ? data.userAddress : "");
+          setDataT(newData);
         } catch (error) {
           console.error("Failed to fetch wallet data:", error);
           toast.error("Failed to load wallet data");
         }
       })();
-    } else {
-      (async () => {
-        try {
-          const newData = await fetchAppData();
-          setDataT({
-            ...newData,
-            network: chainId,
-            userAddress: null,
-            userBalance: null,
-            isWalletConnected: false,
-          });
-        } catch (error) {
-          console.error("Failed to fetch game data:", error);
-          toast.error("Failed to load game data");
-        }
-      })();
     }
-  }, [account.isConnected, account.address, chainId, balanceData, fetchAppData]);
+  }, [data.isWalletConnected, data.userAddress, fetchAppData]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -544,6 +564,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         addParticipation,
         showInvestorTicketCount,
         mintNFTs,
+        connectWallet,
       }}
     >
       {children}
