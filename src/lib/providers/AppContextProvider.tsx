@@ -127,6 +127,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     });
     toast.success("Wallet disconnected");
     localStorage.removeItem("lottery-app-data");
+
+    getContracts();
   }, [data]);
 
   const getProvider = () => {
@@ -243,10 +245,12 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       const cards: Card[] = await Promise.all(cardPromises);
       const mintedCounts = cards.map((card) => card.mintedCount);
       const activeGames = activeIndices.map((i: any) => Number(i));
-
+      
       const gamePromises = userAddress && activeIndices.map(async (index: number) => {
+      
         try {
           const game = await lotteryContract.games(index);
+          
           if (!game || game.jackpotSize === 0 || game.currentSize === 0) {
             console.warn(`Game index ${index} is not initialized or has invalid data`);
             return null;
@@ -274,7 +278,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             players: new Set(game.players).size,
           };
         } catch (err: any) {
-          console.warn(`Skipping game index ${index} due to error:`, err.message);
+          console.warn(`Skipping game index ${index} due to error:`, err);
           return null;
         }
       });
@@ -477,7 +481,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         counts = boostCards.map((card) => card.count);
         ticketCount = boostCards.reduce((sum, card) => sum + card.count, 1);
       }
-
+      
       const tx = await lotteryContract.buyTickets(gameIndex, tokenIds, counts, userSeed, {
         value: entryPrice,
       });

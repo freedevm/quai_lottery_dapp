@@ -47,9 +47,9 @@ export default function RootLayout({
         <NextUIProvider>
           <AppContextProvider>
             {children}
-            {process.env.NEXT_PUBLIC_GA_ID && (
+            {/* {process.env.NEXT_PUBLIC_GA_ID && (
               <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-            )}
+            )} */}
           </AppContextProvider>
         </NextUIProvider>
         <ToastContainer theme="dark" />
