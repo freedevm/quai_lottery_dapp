@@ -90,6 +90,7 @@ export const AppContext = createContext<{
   showInvestorTicketCount: (address: Address) => Promise<number>;
   mintNFTs: (nfts: NFTCount) => Promise<boolean>;
   connectWallet: () => Promise<boolean>;
+  disconnectWallet: () => void;
 }>({
   data: initialData,
   setData: () => {},
@@ -98,6 +99,7 @@ export const AppContext = createContext<{
   showInvestorTicketCount: async () => 0,
   mintNFTs: async () => false,
   connectWallet: async () => false,
+  disconnectWallet: () => {},
 });
 
 export const AppContextProvider = ({ children }: { children: ReactNode }) => {
@@ -109,6 +111,23 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const setData = useCallback((d: Partial<ContextData>) => {
     setDataT((prevData) => ({ ...prevData, ...d }));
   }, []);
+
+  const disconnectWallet = useCallback(() => {
+    setDataT({
+      ...initialData,
+      network: data.network, // Preserve network info
+      entryPrice: data.entryPrice, // Preserve static data
+      megaJackpot: data.megaJackpot,
+      activeGames: data.activeGames,
+      games: data.games,
+      cards: data.cards,
+      maxMintCount: data.maxMintCount,
+      investors: data.investors,
+      mintedCounts: data.mintedCounts,
+    });
+    toast.success("Wallet disconnected");
+    localStorage.removeItem("lottery-app-data");
+  }, [data]);
 
   const getProvider = () => {
     if (typeof window !== "undefined" && window.pelagus) {
@@ -565,6 +584,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
         showInvestorTicketCount,
         mintNFTs,
         connectWallet,
+        disconnectWallet,
       }}
     >
       {children}
