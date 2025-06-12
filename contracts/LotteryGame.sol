@@ -26,6 +26,7 @@ contract LotteryGame is Ownable {
         GameState state;                                // Game state
         uint256 jackpotSize;                            // Target jackpot size to finish the game
         uint256 currentSize;                            // Current ETH balance for this game
+        uint256 totalTicketCount;                       // Total tickets in the game for frontend display
     }
 
     mapping(uint256 => Game) public games; // Game Index => Game
@@ -89,6 +90,7 @@ contract LotteryGame is Ownable {
         newGame.state = GameState.Started;
         newGame.jackpotSize = jackpotSize;
         newGame.currentSize = 0;
+        newGame.totalTicketCount = 0; // Initialize totalTicketCount
         activeGameIndices[gameIndex] = true;
 
         emit GameStarted(gameIndex);
@@ -124,6 +126,7 @@ contract LotteryGame is Ownable {
         mapping(address => bool) storage hasEntered = game.hasEntered;
         mapping(address => uint256) storage ticketCounts = game.ticketCounts;
         uint256 currentSize = game.currentSize;
+        uint256 totalTicketCount = game.totalTicketCount;
 
         // Update game state for small game
         playerEntries[msg.sender] = PlayerEntry(tokenIds, counts);
@@ -131,6 +134,7 @@ contract LotteryGame is Ownable {
         players.push(msg.sender); // 25,000 gas
         hasEntered[msg.sender] = true; // 20,000 gas
         currentSize += msg.value;
+        totalTicketCount += ticketCount; // 5,000–20,000 gas for SSTORE
 
         if (tokenIds.length > 0) {
             nftContract.batchLockCards(msg.sender, tokenIds, counts); // ~50,000 gas
@@ -146,6 +150,7 @@ contract LotteryGame is Ownable {
 
         // Update storage
         game.currentSize = currentSize;
+        game.totalTicketCount = totalTicketCount;
 
         emit TicketPurchased(msg.sender, gameIndex, tokenIds, ticketCount); // ~10,000 gas
 
