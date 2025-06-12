@@ -28,7 +28,7 @@ interface ContractAddresses {
 }
 
 const CONTRACTS: ContractAddresses = {
-  lottery: '0x002054000563cDdA5e8151d50C62bB2d879a6782',
+  lottery: '0x002DEAd4C388d784Ccf50c24E45782cD8bB3116D',
   nft: '0x002803A631b1aeFaaec43f521514Bf6eebCCE891',
   setting: '0x001D3894E60BC1C5897a8d94aB9F058C7F40cE0B',
 };
@@ -260,6 +260,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           const currentSize = ethers.formatEther(game.currentSize);
           const jackpotSize = ethers.formatEther(game.jackpotSize);
           const totalTicketCount = parseInt(game.totalTicketCount) || 0;
+          console.log("totalTicketCount", totalTicketCount)
           let userTickets = 0;
           let isParticipated = false;
 
