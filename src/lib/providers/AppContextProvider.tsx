@@ -18,7 +18,7 @@ import { Address, NFT, GameData, Card, NFTCount } from "../types/lottery";
 
 // Define chain ID and RPC URL
 const CHAIN_ID: number = 15000;
-const RPC_URL: string = "https://orchard.rpc.quai.network";
+const RPC_URL: string = 'https://orchard.rpc.quai.network';
 
 // Define contract addresses
 interface ContractAddresses {
@@ -132,10 +132,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [data]);
 
   const getProvider = () => {
-    // if (typeof window !== "undefined" && window.pelagus) {
-    //   return new quais.BrowserProvider(window.pelagus);
-    // }
-    // console.log("RPC_URL", RPC_URL);
+    if (typeof window !== "undefined" && window.pelagus) {
+      return new quais.BrowserProvider(window.pelagus);
+    }
+    
     return new quais.JsonRpcProvider(RPC_URL, undefined, {usePathing: true});
   };
 
@@ -146,7 +146,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   } | null> => {
     try {
       const quaiProvider = getProvider();
-      console.log("quaiProvider", quaiProvider);
+      
       let signer;
 
       if (data.isWalletConnected && window.pelagus) {

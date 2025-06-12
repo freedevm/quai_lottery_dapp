@@ -93,10 +93,10 @@ export default function JackpotCard({
         <h2 className="text-lg sm:text-xl font-bold text-white mb-2 animate-text-glare uppercase">{title}</h2>
         <div className="space-y-2">
           {amount && <p className="text-sm sm:text-base text-purple-200 uppercase">
-            Current: <span className="font-semibold text-white">{amount} QUAI ({totalTicketCount} Tickets)</span>
+            Current: <span className="font-semibold text-white">{parseInt(amount.toString())} QUAI ({totalTicketCount} Tickets)</span>
           </p>}
           {targetAmount && <p className="text-sm sm:text-base text-purple-200 uppercase">
-            Target: <span className="font-semibold text-white">{targetAmount} QUAI</span>
+            Target: <span className="font-semibold text-white">{parseInt(targetAmount.toString())} QUAI</span>
           </p>}
         </div>
         {/* {winner && (
@@ -120,7 +120,7 @@ export default function JackpotCard({
                 status === "finished" ?  "waiting reward" : 
                 isParticipated ? `already in with ${userTickets} ticket${userTickets===1?"":"s"}` : 
                 isSpinning ? "processing..." : 
-                `play now - ${appData.entryPrice ? appData.entryPrice : 0}eth`}</span>
+                `play now - ${appData.entryPrice ? appData.entryPrice : 0} QUAI`}</span>
           </div>
         </div>
       </div>

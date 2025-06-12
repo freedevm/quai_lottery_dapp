@@ -37,7 +37,7 @@ export default function ProgressiveJackpot({
             style={{ width: `${percentage}%` }}
             className={`absolute top-0 left-0 h-10 sm:h-12 md:h-14 opacity-80 ${shimClass}`}
           ></div>
-          <span className="z-10">{amount ? amount.toFixed(2).toLocaleString() : 0} quai</span>
+          <span className="z-10">{amount ? amount.toFixed(0).toLocaleString() : 0} quai</span>
         </div>
       </div>
 

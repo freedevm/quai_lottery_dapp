@@ -38,7 +38,7 @@ export default function PreLoading({
               Powered by&nbsp;&nbsp;&nbsp;
             </span>
             <span className="font-extrabold text-[#DADADA] text-[14px] leading-[10.47px] font-[Monument] fade-in">
-              Quai Lottery
+              Lottery Team
             </span>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function PreLoading({
         <div className=" absolute w-full h-full">
           <div className=" h-full  flex items-center justify-center">
             <div className="text-center font-[Inter]">
-              <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] vertical-title-negative-crossing">
+              <p className="text-[#FF0000] font-extrabold leading-[64.64px] text-[60px] vertical-title-negative-crossing">
                 QUAI
               </p>
               <p className="text-[#FFFFFF] font-extrabold leading-[64.64px] text-[60px] vertical-title-possitive-crossing">
