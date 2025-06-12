@@ -33,8 +33,6 @@ const CONTRACTS: ContractAddresses = {
   setting: '0x003E5ff9bD6205Cb435b0D2a85e2FA9b87484e6C',
 };
 
-console.log(CONTRACTS)
-
 // Interface for ContextData
 interface ContextData {
   network: number | null;
@@ -148,6 +146,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   } | null> => {
     try {
       const quaiProvider = getProvider();
+      console.log("quaiProvider", quaiProvider);
       let signer;
 
       if (data.isWalletConnected && window.pelagus) {
