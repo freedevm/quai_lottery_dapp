@@ -71,7 +71,7 @@ export default function Header() {
                 Investors
               </Link>
               <Link
-                href="https://ethereum-lottery-game-docs.vercel.app/"
+                href="https://quai-lottery-book.vercel.app/"
                 className="header-button"
                 target="_blank"
               >
