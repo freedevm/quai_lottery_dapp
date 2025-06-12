@@ -135,7 +135,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window !== "undefined" && window.pelagus) {
       return new quais.BrowserProvider(window.pelagus);
     }
-    
+    console.log("RPC_URL", RPC_URL);
     return new quais.JsonRpcProvider(RPC_URL, undefined, {usePathing: true});
   };
 
