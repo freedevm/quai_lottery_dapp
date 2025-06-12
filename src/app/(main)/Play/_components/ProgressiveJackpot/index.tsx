@@ -8,7 +8,7 @@ interface ProgressiveJackpotProps extends JackpotState {
 
 export default function ProgressiveJackpot({
   amount = 0,
-  targetAmount= 100,
+  targetAmount= 1000000,
   isSpinning = false,
   disabled = false,
 }: ProgressiveJackpotProps) {
@@ -27,7 +27,7 @@ export default function ProgressiveJackpot({
       {/* Title */}
       <div className="w-full flex flex-col md:flex-row justify-center items-center md:mb-10">
         <h1 className="relative md:text-4xl text-2xl sm:tracking-[10px] tracking-[5px] uppercase text-center outline-none animate-dimlight box-reflect">
-          100 QUAI Progressive Mega Jackpot
+          1M QUAI Progressive Mega Jackpot
         </h1>
       </div>
       

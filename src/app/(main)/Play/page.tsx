@@ -93,7 +93,7 @@ export default function Page() {
       <div className="p-3 sm:p-4 md:p-6">   
         <ProgressiveJackpot
           amount={appData.megaJackpot}
-          targetAmount={100}
+          targetAmount={1000000}
           disabled={buttonDisabled}
           isActive={false}
           isParticipated={false}
