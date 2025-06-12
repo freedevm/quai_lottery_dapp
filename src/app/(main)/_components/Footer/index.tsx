@@ -97,7 +97,7 @@ export default function Footer () {
 
             <div className="w-full bg-black/5 p-4 text-center">
                 © {new Date().getFullYear()} Copyright&nbsp;|&nbsp;
-                <Link href="https://ethereumlottery.org/">Ethereum Lottery</Link>
+                <Link href="https://ethereumlottery.org/">Quai Lottery</Link>
             </div>
         </div>
     )

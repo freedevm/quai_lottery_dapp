@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Card Shop | ETH Lottery",
+  title: "Card Shop | QUAI Lottery",
 };
 
 export default function Layout({ children }: { children: ReactNode }) {

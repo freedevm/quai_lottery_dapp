@@ -33,7 +33,7 @@ export default function Header() {
             <Link href="https://ethereumlottery.org/">
               <div className="relative w-20 sm:w-28 h-12 sm:h-16 md:h-20">
                 <Image
-                  src={"https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4"}
+                  src={"https://ipfs.io/ipfs/bafkreihdvaliveg2nxk253h4ydpkpp5oo332lhzpdj53qzzsjefxui4pue"}
                   alt=""
                   fill
                   style={{ objectFit: "contain" }}

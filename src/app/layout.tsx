@@ -9,22 +9,22 @@ import { NextUIProvider } from "@nextui-org/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
-  title: "Orchard Lottery - Win Big with Crypto Jackpots",
+  title: "Quai Lottery - Win Big with Crypto Jackpots",
   description:
-    "Join Orchard Lottery for a chance to win massive crypto jackpots. Secure, transparent, and powered by blockchain technology.",
-  keywords: ["Orchard", "lottery", "jackpot", "Orchard lottery", "crypto lottery"],
+    "Join Quai Lottery for a chance to win massive crypto jackpots. Secure, transparent, and powered by blockchain technology.",
+  keywords: ["Quai", "lottery", "jackpot", "Quai lottery", "crypto lottery"],
   openGraph: {
-    title: "Orchard Lottery - Win Big with Crypto Jackpots",
+    title: "Quai Lottery - Win Big with Crypto Jackpots",
     description:
-      "Participate in Orchard Lottery to win huge crypto prizes with secure blockchain technology.",
-    url: "https://orchardlottery.org/", // Update with your domain
-    siteName: "Orchard Lottery",
+      "Participate in Quai Lottery to win huge crypto prizes with secure blockchain technology.",
+    url: "https://Quailottery.org/", // Update with your domain
+    siteName: "Quai Lottery",
     images: [
       {
-        url: "https://ipfs.io/ipfs/bafybeieo32jaqudin6s3sdahoikwllon2t5h62ueyfrcg7ceuz6mxjbpd4",
+        url: "https://ipfs.io/ipfs/bafkreihdvaliveg2nxk253h4ydpkpp5oo332lhzpdj53qzzsjefxui4pue",
         width: 1200,
         height: 500,
-        alt: "Orchard Lottery Banner",
+        alt: "Quai Lottery Banner",
       },
     ],
     locale: "en_US",

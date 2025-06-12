@@ -93,7 +93,7 @@ export default function NFTMintItem({
               {data.cardName} card
             </h3>
             <h3 className="text-md font-semibold text-white uppercase">
-                price: {data.cardPrice} ETH
+                price: {data.cardPrice} QUAI
             </h3>
             <h3 className="text-md font-semibold text-white uppercase">
               {(stockNum !== 0) ? `${stockNum} in stock` : "out of stock"} 

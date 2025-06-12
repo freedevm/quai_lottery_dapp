@@ -110,7 +110,7 @@ export default function Page() {
                   (games[index]?.status !== "rewarded" || !games[index]) && 
                   <JackpotCard
                     key={id}
-                    title={`Jackpot ${id} ${games[index]?.jackpotSize ? `- ${games[index].jackpotSize} ETH` : ""}`}
+                    title={`Jackpot ${id} ${games[index]?.jackpotSize ? `- ${games[index].jackpotSize} QUAI` : ""}`}
                     jackpotId={id}
                     targetAmount={games[index]?.jackpotSize}
                     isActive={games[index]?.status && games[index].status === "started"}

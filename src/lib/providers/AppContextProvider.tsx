@@ -352,13 +352,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       if (chainId !== CHAIN_ID) {
         try {
           await window.pelagus.request({
-            method: "wallet_switchEthereumChain",
+            method: "wallet_switchQuaiChain",
             params: [{ chainId: `0x${CHAIN_ID.toString(16)}` }],
           });
         } catch (switchError: any) {
           if (switchError.code === 4902) {
             await window.pelagus.request({
-              method: "wallet_addEthereumChain",
+              method: "wallet_addQuaiChain",
               params: [
                 {
                   chainId: `0x${CHAIN_ID.toString(16)}`,

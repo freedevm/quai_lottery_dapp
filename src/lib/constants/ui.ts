@@ -1,6 +1,6 @@
 import { BasicSearchParams, PageData, PageName } from "../types/ui";
 
-export const appTitle = "ETH Lottery";
+export const appTitle = "QUAI Lottery";
 
 export const pages: { [key in PageName]: PageData } = {
   play: {

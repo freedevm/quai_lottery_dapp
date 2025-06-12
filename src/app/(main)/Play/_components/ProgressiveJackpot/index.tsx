@@ -27,7 +27,7 @@ export default function ProgressiveJackpot({
       {/* Title */}
       <div className="w-full flex flex-col md:flex-row justify-center items-center md:mb-10">
         <h1 className="relative md:text-4xl text-2xl sm:tracking-[10px] tracking-[5px] uppercase text-center outline-none animate-dimlight box-reflect">
-          100ETH Progressive Mega Jackpot
+          100 QUAI Progressive Mega Jackpot
         </h1>
       </div>
       
@@ -37,7 +37,7 @@ export default function ProgressiveJackpot({
             style={{ width: `${percentage}%` }}
             className={`absolute top-0 left-0 h-10 sm:h-12 md:h-14 opacity-80 ${shimClass}`}
           ></div>
-          <span className="z-10">{amount ? amount.toFixed(2).toLocaleString() : 0} eth</span>
+          <span className="z-10">{amount ? amount.toFixed(2).toLocaleString() : 0} quai</span>
         </div>
       </div>
 
