@@ -17,20 +17,20 @@ import { ABI } from "../abi";
 import { Address, NFT, GameData, Card, NFTCount } from "../types/lottery";
 
 // Define chain ID and RPC URL
-const CHAIN_ID: number = 15000;
-const RPC_URL: string = "https://orchard.rpc.quai.network";
+const CHAIN_ID: number = process.env.CHAINID ? parseInt(process.env.CHAINID) : 15000;
+const RPC_URL: string = process.env.QUAI_ORCHARD_RPC_URL || "https://orchard.rpc.quai.network";
 
 // Define contract addresses
 interface ContractAddresses {
-  lottery: string;
-  nft: string;
-  setting: string;
+  lottery?: string;
+  nft?: string;
+  setting?: string;
 }
 
 const CONTRACTS: ContractAddresses = {
-  lottery: process.env.LOTTERY_GAME_ADDRESS || "0x00634a279852a4f824a41972922415d5bf29739E",
-  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS || "0x0028743cE5e1EDAca8b6c2ABBab0763eb1fd3fE3",
-  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS || "0x003E5ff9bD6205Cb435b0D2a85e2FA9b87484e6C",
+  lottery: process.env.LOTTERY_GAME_ADDRESS,
+  nft: process.env.LOTTERY_GAME_NFT_CARD_ADDRESS,
+  setting: process.env.LOTTERY_GAME_SETTING_ADDRESS,
 };
 
 // Interface for ContextData
@@ -153,19 +153,19 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const lotteryContract = new quais.Contract(
-        CONTRACTS.lottery,
+        CONTRACTS.lottery!,
         ABI.lotteryGame,
         signer || quaiProvider
       );
 
       const nftContract = new quais.Contract(
-        CONTRACTS.nft,
+        CONTRACTS.nft!,
         ABI.lotteryGameNFTCard,
         signer || quaiProvider
       );
 
       const settingContract = new quais.Contract(
-        CONTRACTS.setting,
+        CONTRACTS.setting!,
         ABI.lotterySetting,
         signer || quaiProvider
       );
