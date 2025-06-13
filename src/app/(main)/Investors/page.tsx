@@ -31,10 +31,13 @@ export default function Investors () {
     const showTicketCount = async (address: Address) => {
         const res = await showInvestorTicketCount(address)
         
-        setFilteredData(prev => {
-            prev.map(investor => investor.address === address && (investor.ticketCount = Number(res)));
-            return prev
-        })
+        setFilteredData(prev =>
+            prev.map(investor =>
+                investor.address === address
+                    ? { ...investor, ticketCount: Number(res) }
+                    : investor
+            )
+        );
     }
 
     return (
