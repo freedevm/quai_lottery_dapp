@@ -29,8 +29,8 @@ export default function Investors () {
     }, [searchKey])
 
     const showTicketCount = async (address: Address) => {
-        
         const res = await showInvestorTicketCount(address)
+        
         setFilteredData(prev => {
             prev.map(investor => investor.address === address && (investor.ticketCount = Number(res)));
             return prev

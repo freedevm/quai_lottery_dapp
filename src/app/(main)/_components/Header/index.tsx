@@ -30,7 +30,7 @@ export default function Header() {
             <div className="sm:hidden">
               <DensityMediumIcon onClick={() => setSideBarVisible(true)} fontSize="medium" />
             </div>
-            <Link href="https://ethereumlottery.org/">
+            <Link href="https://https://quai-lottery.vercel.app">
               <div className="relative w-20 sm:w-28 h-12 sm:h-16 md:h-20">
                 <Image
                   src={"https://ipfs.io/ipfs/bafkreihdvaliveg2nxk253h4ydpkpp5oo332lhzpdj53qzzsjefxui4pue"}
