@@ -49,7 +49,7 @@ export default function SideBar({ visible, onClose }: Props) {
       <div className="w-full h-full overflow-auto flex flex-col relative gap-2 no-scrollbar">
         <div className="relative w-full h-28">
           <Image
-            src={"https://ipfs.io/ipfs/bafybeiaq5jsajyddcvi5ym5kjjmgjgsyzhs3hmuuwgu2ufsz2nngypiaby"}
+            src={"https://ipfs.io/ipfs/bafkreihdvaliveg2nxk253h4ydpkpp5oo332lhzpdj53qzzsjefxui4pue"}
             alt=""
             style={{ objectFit: "contain", zIndex: -1 }}
             priority
@@ -91,7 +91,7 @@ export default function SideBar({ visible, onClose }: Props) {
             </div>
           </div>
           <Link
-            href="https://ethereum-lottery-game-docs.vercel.app/"
+            href="https://quai-lottery-book.vercel.app/"
             target="_blank"
             className="px-6 py-1 rounded-l-full border-b-1 text-purple-400 border-purple-400 data-[selected=true]:text-purple-900 data-[selected=true]:font-bold data-[selected=true]:bg-purple-400 cursor-pointer"
             >
@@ -106,7 +106,7 @@ export default function SideBar({ visible, onClose }: Props) {
       <div className="flex flex-col items-center justify-center">
         <div className="mb-6 flex justify-center space-x-2">
           <Link
-            href="https://x.com/etherum_lottery"
+            href="https://x.com/quailottery"
             type="button"
             className="rounded-full bg-[#55acee] p-3 uppercase leading-normal text-white shadow-dark-3 shadow-black/30 transition duration-150 ease-in-out hover:shadow-dark-1 focus:shadow-dark-1 focus:outline-none focus:ring-0 active:shadow-1 dark:text-white"
             data-twe-ripple-init
@@ -122,7 +122,7 @@ export default function SideBar({ visible, onClose }: Props) {
             </span>
           </Link>
 
-          <Link
+          {/* <Link
             href="https://www.instagram.com/ethereum_lottery/"
             type="button"
             className="rounded-full bg-[#ac2bac] p-3 uppercase leading-normal text-white shadow-dark-3 shadow-black/30 transition duration-150 ease-in-out hover:shadow-dark-1 focus:shadow-dark-1 focus:outline-none focus:ring-0 active:shadow-1 dark:text-white"
@@ -137,7 +137,7 @@ export default function SideBar({ visible, onClose }: Props) {
                   d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
               </svg>
             </span>
-          </Link>
+          </Link> */}
 
           <Link
             href="https://discord.gg/M6nUYVf3PY"
@@ -149,7 +149,7 @@ export default function SideBar({ visible, onClose }: Props) {
               <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 16 16"><path fill="currentColor" d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011a.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0a8 8 0 0 0-.412-.833a.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02a.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595a.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085a8 8 0 0 1-1.249.594a.05.05 0 0 0-.03.03a.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019a13.2 13.2 0 0 0 4.001-2.02a.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613c0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613c0 .888-.631 1.612-1.438 1.612"/></svg>
             </span>
           </Link>
-          <Link
+          {/* <Link
             href="https://discord.gg/M6nUYVf3PY"
             type="button"
             className="rounded-full bg-blue-400 p-3 uppercase leading-normal text-white shadow-dark-3 shadow-black/30 transition duration-150 ease-in-out hover:shadow-dark-1 focus:shadow-dark-1 focus:outline-none focus:ring-0 active:shadow-1 dark:text-white"
@@ -158,10 +158,10 @@ export default function SideBar({ visible, onClose }: Props) {
             <span className="mx-auto [&>svg]:h-5 [&>svg]:w-5">
               <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 512 512"><path fill="currentColor" d="M470.435 45.423L16.827 221.249c-18.254 8.188-24.428 24.585-4.412 33.484l116.37 37.173l281.368-174.79c15.363-10.973 31.091-8.047 17.557 4.024L186.053 341.075l-7.591 93.076c7.031 14.371 19.905 14.438 28.117 7.295l66.858-63.589l114.505 86.187c26.595 15.826 41.066 5.613 46.788-23.394l75.105-357.47c7.798-35.705-5.5-51.437-39.4-37.757"/></svg>
             </span>
-          </Link>
+          </Link> */}
         </div>
         <div className="text-sm text-center">
-          © {new Date().getFullYear()}&nbsp;<Link href="https://ethereumlottery.org/" className="hover:underline">Quai Lottery</Link>
+          © {new Date().getFullYear()}&nbsp;<Link href="https://quai-lottery.vercel.app/" className="hover:underline">Quai Lottery</Link>
           {/* <br /> */}
           {/* <Link
             href="https://discord.gg/kemTYetJ"
