@@ -140,6 +140,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
     return new quais.JsonRpcProvider(RPC_URL, undefined, {usePathing: true});
   };
 
+  const getRpcProvider = () => {
+    return new quais.JsonRpcProvider(RPC_URL, undefined, {usePathing: true});
+  }
+
   const getContracts = async (): Promise<{
     lotteryContract: Contract;
     nftContract: Contract;
@@ -270,6 +274,8 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
             isParticipated = userTickets > 0;
           }
 
+          console.log("userTickets, isParticipated", userTickets, isParticipated);
+
           return {
             gameIndex: Number(index),
             jackpotSize,
@@ -287,7 +293,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const games: GameData[] = userAddress ? (await Promise.all(gamePromises)).filter((g): g is GameData => g !== null) : [];
-
+      console.log("games--", games);
       let userNFTs = [0, 0, 0, 0, 0, 0];
       let userNFTCount = 0;
       let isNFTHolder = false;
@@ -303,7 +309,13 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           userNFTCount = userNFTs.reduce((sum, count) => sum + count, 0);
           isNFTHolder = userNFTCount > 0;
           participatedGames = games.filter((game) => game.isParticipated).map((game) => game.gameIndex);
-          userBalance = ethers.formatEther(await provider.getBalance(userAddress));
+          console.log("participatedGames", participatedGames);
+
+          const rpcProvider = getRpcProvider()
+          const userQUAIBalance = await rpcProvider.getBalance(userAddress)
+          console.log("userQUAIBalance", userQUAIBalance);
+          userBalance = ethers.formatEther(userQUAIBalance);
+          console.log("userBalance", userBalance);
         } catch (error) {
           console.error("Failed to fetch user NFT data:", error);
         }
@@ -381,8 +393,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       }
-
+      console.log("connect wallet", userAddress);
       const newData = await fetchAppData(userAddress);
+      console.log("connect wallet Appdata", newData);
       setDataT({
         ...newData,
         userAddress,
